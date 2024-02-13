@@ -97,7 +97,7 @@ export function createHandlers({
         expiresAt: tokens.expiresAt,
         tokenType: tokens.tokenType,
         scope: tokens.scope,
-        idToken: tokens.idToken,
+        idToken: tokens.idToken ?? null,
       });
     }
 
@@ -181,12 +181,12 @@ export function createHandlers({
       type: 'email',
       provider: 'email',
       providerAccountId: email,
-      refreshToken: undefined,
-      accessToken: undefined,
-      expiresAt: undefined,
-      tokenType: undefined,
-      scope: undefined,
-      idToken: undefined,
+      refreshToken: null,
+      accessToken: null,
+      expiresAt: null,
+      tokenType: null,
+      scope: null,
+      idToken: null,
     });
     await db.insertVerificationCode?.({
       email,

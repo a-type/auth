@@ -33,15 +33,15 @@ export interface AuthUser {
 export interface AuthAccount {
   id: string;
   userId: string;
-  type: 'email' | 'oidc' | 'oauth';
+  type: string;
   provider: string;
   providerAccountId: string;
-  refreshToken: string | undefined;
-  accessToken: string | undefined;
-  expiresAt: number | undefined;
-  tokenType: string | undefined;
-  scope: string | undefined;
-  idToken: string | undefined;
+  refreshToken: string | null;
+  accessToken: string | null;
+  expiresAt: number | null;
+  tokenType: string | null;
+  scope: string | null;
+  idToken: string | null;
 }
 
 export interface AuthVerificationCode {
