@@ -1,5 +1,7 @@
 export interface AuthDB {
-  insertUser(user: Omit<AuthUser, 'id'>): Promise<Pick<AuthUser, 'id'>>;
+  insertUser(
+    user: Omit<AuthUser, 'id'> & { plaintextPassword: string | null },
+  ): Promise<Pick<AuthUser, 'id'>>;
   insertAccount(
     account: Omit<AuthAccount, 'id'>,
   ): Promise<Pick<AuthAccount, 'id'>>;
@@ -26,7 +28,6 @@ export interface AuthUser {
   email: string;
   emailVerifiedAt: string | null;
   imageUrl: string | null;
-  plaintextPassword: string | null;
 }
 
 export interface AuthAccount {

@@ -16,7 +16,7 @@
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",
-    "prepublish": "pnpm build"
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "cookie": "^0.6.0",
