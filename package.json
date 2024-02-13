@@ -1,6 +1,6 @@
 {
   "name": "@a-type/auth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "My personal auth request handlers",
   "module": "dist/esm/index.js",
   "main": "dist/esm/index.js",
