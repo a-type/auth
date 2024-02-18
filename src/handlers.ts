@@ -2,7 +2,7 @@ import { AuthDB } from './db.js';
 import { Email } from './email.js';
 import { AuthProvider } from './providers/types.js';
 import { RETURN_TO_COOKIE } from './returnTo.js';
-import { getOrCreateSession } from './session.js';
+import { Session, getOrCreateSession } from './session.js';
 import * as z from 'zod';
 
 export function createHandlers({
@@ -10,11 +10,13 @@ export function createHandlers({
   db,
   defaultReturnTo = '/',
   email: emailService,
+  createSession,
 }: {
   providers: Record<string, AuthProvider>;
   db: AuthDB;
   defaultReturnTo?: string;
   email?: Email;
+  createSession: (userId: string) => Session;
 }) {
   const supportsEmail =
     !!db.insertVerificationCode &&
@@ -108,7 +110,8 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    session.userId = userId;
+    const sessionDetails = createSession(userId);
+    Object.assign(session, sessionDetails);
     await session.save();
     return res;
   }
@@ -235,7 +238,8 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    session.userId = user.id;
+    const sessionDetails = createSession(user.id);
+    Object.assign(session, sessionDetails);
     await session.save();
     return res;
   }
@@ -294,7 +298,8 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    session.userId = user.id;
+    const sessionDetails = createSession(user.id);
+    Object.assign(session, sessionDetails);
     await session.save();
     return res;
   }
