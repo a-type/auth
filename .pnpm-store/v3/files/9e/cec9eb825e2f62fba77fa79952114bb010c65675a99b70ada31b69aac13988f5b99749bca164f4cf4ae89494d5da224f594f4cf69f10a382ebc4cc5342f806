@@ -1,0 +1,50 @@
+{
+    "name": "@types/simple-oauth2",
+    "version": "5.0.7",
+    "description": "TypeScript definitions for simple-oauth2",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/simple-oauth2",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Michael Müller",
+            "githubUsername": "mad-mike",
+            "url": "https://github.com/mad-mike"
+        },
+        {
+            "name": "Troy Lamerton",
+            "githubUsername": "troy-lamerton",
+            "url": "https://github.com/troy-lamerton"
+        },
+        {
+            "name": "Martín Rodriguez",
+            "githubUsername": "netux",
+            "url": "https://github.com/netux"
+        },
+        {
+            "name": "Linus Unnebäck",
+            "githubUsername": "LinusU",
+            "url": "https://github.com/LinusU"
+        },
+        {
+            "name": "Do Nam",
+            "githubUsername": "namdien177",
+            "url": "https://github.com/namdien177"
+        },
+        {
+            "name": "Lyubin Pavel",
+            "githubUsername": "pafik13",
+            "url": "https://github.com/pafik13"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/simple-oauth2"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "c7c56e947e73b71ea0cc17fa6ae127d490cac0f27f234baf9b7dac4e4f69acc7",
+    "typeScriptVersion": "4.5"
+}
