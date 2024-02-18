@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.1.4
+
+### Patch Changes
+
+- f0c9f22: Make createSession async
+
 ## 0.1.3
 
 ### Patch Changes
