@@ -16,7 +16,7 @@ export function createHandlers({
   db: AuthDB;
   defaultReturnTo?: string;
   email?: Email;
-  createSession: (userId: string) => Session;
+  createSession: (userId: string) => Promise<Session>;
 }) {
   const supportsEmail =
     !!db.insertVerificationCode &&
@@ -110,7 +110,7 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    const sessionDetails = createSession(userId);
+    const sessionDetails = await createSession(userId);
     Object.assign(session, sessionDetails);
     await session.save();
     return res;
@@ -204,7 +204,8 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    session.userId = user.id;
+    const sessionDetails = createSession(user.id);
+    Object.assign(session, sessionDetails);
     await session.save();
     return res;
   }
@@ -238,7 +239,7 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    const sessionDetails = createSession(user.id);
+    const sessionDetails = await createSession(user.id);
     Object.assign(session, sessionDetails);
     await session.save();
     return res;
@@ -298,7 +299,7 @@ export function createHandlers({
       },
     });
     const session = await getOrCreateSession(req, res);
-    const sessionDetails = createSession(user.id);
+    const sessionDetails = await createSession(user.id);
     Object.assign(session, sessionDetails);
     await session.save();
     return res;
