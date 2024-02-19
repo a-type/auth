@@ -1,5 +1,6 @@
 import { AuthDB } from './db.js';
 import { Email } from './email.js';
+import { AuthError } from './error.js';
 import { AuthProvider } from './providers/types.js';
 import { RETURN_TO_COOKIE } from './returnTo.js';
 import { Session, SessionManager } from './session.js';
@@ -23,9 +24,12 @@ export function createHandlers({
   const supportsEmail =
     !!db.insertVerificationCode &&
     !!db.getUserByEmailAndPassword &&
-    !!db.getVerificationCode;
+    !!db.getVerificationCode &&
+    !!db.consumeVerificationCode;
   if (emailService && !supportsEmail) {
-    throw new Error('Implement optional db fields to support email');
+    throw new Error(
+      'Implement optional db fields "insertVerificationCode", "getUserByEmailAndPassword", "getVerificationCode", and "consumeVerificationCode" to support email',
+    );
   }
 
   function handleOAuthLoginRequest(req: Request, opts: { provider: string }) {
@@ -170,8 +174,12 @@ export function createHandlers({
     const url = new URL(req.url);
     const code = url.searchParams.get('code');
     const email = url.searchParams.get('email');
+    const password = url.searchParams.get('password');
     if (!code || !email) {
       throw new Error('Missing code or email');
+    }
+    if (!password) {
+      throw new Error('Missing password');
     }
     const dbCode = await db.getVerificationCode?.(email, code);
     if (!dbCode) {
@@ -181,11 +189,19 @@ export function createHandlers({
       throw new Error('Code expired');
     }
     const user = await db.getUserByEmail(email);
-    if (!user) {
-      throw new Error('User not found');
+    if (user) {
+      throw new AuthError('User already exists', 409);
     }
+    const { id: userId } = await db.insertUser({
+      fullName: dbCode.name,
+      friendlyName: null,
+      email,
+      imageUrl: null,
+      plaintextPassword: password,
+      emailVerifiedAt: new Date().toISOString(),
+    });
     await db.insertAccount({
-      userId: user.id,
+      userId,
       type: 'email',
       provider: 'email',
       providerAccountId: email,
@@ -196,13 +212,8 @@ export function createHandlers({
       scope: null,
       idToken: null,
     });
-    await db.insertVerificationCode?.({
-      email,
-      code,
-      expiresAt: 0,
-      name: '',
-    });
-    const session = await sessions.createSession(user.id);
+    await db.consumeVerificationCode?.(email, code);
+    const session = await sessions.createSession(userId);
     return new Response(null, {
       status: 302,
       headers: {

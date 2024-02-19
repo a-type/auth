@@ -11,6 +11,7 @@ export interface AuthDB {
     providerAccountId: string,
   ): Promise<AuthAccount | undefined>;
   insertVerificationCode?(data: AuthVerificationCode): Promise<void>;
+  consumeVerificationCode?(email: string, code: string): Promise<void>;
   getVerificationCode?(
     email: string,
     code: string,
