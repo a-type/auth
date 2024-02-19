@@ -2,7 +2,7 @@ import { AuthDB } from './db.js';
 import { Email } from './email.js';
 import { AuthProvider } from './providers/types.js';
 import { RETURN_TO_COOKIE } from './returnTo.js';
-import { SessionManager } from './session.js';
+import { Session, SessionManager } from './session.js';
 import * as z from 'zod';
 
 export function createHandlers({
@@ -11,12 +11,14 @@ export function createHandlers({
   defaultReturnTo = '/',
   email: emailService,
   sessions,
+  getPublicSession = (session) => session,
 }: {
   providers: Record<string, AuthProvider>;
   db: AuthDB;
   defaultReturnTo?: string;
   email?: Email;
   sessions: SessionManager;
+  getPublicSession?: (session: Session) => Record<string, any>;
 }) {
   const supportsEmail =
     !!db.insertVerificationCode &&
@@ -299,6 +301,30 @@ export function createHandlers({
     });
   }
 
+  async function handleSessionRequest(req: Request) {
+    const session = await sessions.getSession(req);
+    if (!session) {
+      return new Response(JSON.stringify({ session: null }), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+    }
+    // refresh session
+    const sessionHeaders = await sessions.updateSession(session);
+    return new Response(
+      JSON.stringify({ session: getPublicSession(session) }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+          ...sessionHeaders,
+        },
+      },
+    );
+  }
+
   return {
     handleOAuthLoginRequest,
     handleOAuthCallbackRequest,
@@ -308,5 +334,6 @@ export function createHandlers({
     handleEmailLoginRequest,
     handleResetPasswordRequest,
     handleVerifyPasswordResetRequest,
+    handleSessionRequest,
   };
 }
