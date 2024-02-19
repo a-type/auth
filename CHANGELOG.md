@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.2.2
+
+### Patch Changes
+
+- 8af2aa0: Add session request
+
 ## 0.2.1
 
 ### Patch Changes
