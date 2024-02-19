@@ -73,7 +73,7 @@ export class SessionManager {
     return session;
   };
 
-  updateSession = async (session: Session): Promise<HeadersInit> => {
+  updateSession = async (session: Session): Promise<Record<string, string>> => {
     const builder = new SignJWT(
       Object.fromEntries(
         Object.entries(session).map(([key, value]) => [
@@ -99,7 +99,7 @@ export class SessionManager {
     };
   };
 
-  clearSession = (): HeadersInit => {
+  clearSession = (): Record<string, string> => {
     return {
       'Set-Cookie': `${this.options.cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
     };
