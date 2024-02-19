@@ -2,7 +2,7 @@ import { AuthDB } from './db.js';
 import { Email } from './email.js';
 import { AuthProvider } from './providers/types.js';
 import { RETURN_TO_COOKIE } from './returnTo.js';
-import { Session, getOrCreateSession } from './session.js';
+import { SessionManager } from './session.js';
 import * as z from 'zod';
 
 export function createHandlers({
@@ -10,13 +10,13 @@ export function createHandlers({
   db,
   defaultReturnTo = '/',
   email: emailService,
-  createSession,
+  sessions,
 }: {
   providers: Record<string, AuthProvider>;
   db: AuthDB;
   defaultReturnTo?: string;
   email?: Email;
-  createSession: (userId: string) => Promise<Session>;
+  sessions: SessionManager;
 }) {
   const supportsEmail =
     !!db.insertVerificationCode &&
@@ -103,31 +103,27 @@ export function createHandlers({
       });
     }
 
-    const res = new Response(null, {
+    const session = await sessions.createSession(userId);
+    const sessionHeaders = await sessions.updateSession(session);
+    return new Response(null, {
       status: 302,
       headers: {
+        ...sessionHeaders,
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
-    const session = await getOrCreateSession(req, res);
-    const sessionDetails = await createSession(userId);
-    Object.assign(session, sessionDetails);
-    await session.save();
-    return res;
   }
 
   async function handleLogoutRequest(req: Request) {
     const url = new URL(req.url);
     const returnTo = url.searchParams.get('returnTo') ?? defaultReturnTo;
-    const res = new Response(null, {
+    return new Response(null, {
       status: 302,
       headers: {
+        ...sessions.clearSession(),
         location: returnTo,
       },
     });
-    const session = await getOrCreateSession(req, res);
-    session.destroy();
-    return res;
   }
 
   async function handleSendEmailVerificationRequest(req: Request) {
@@ -158,6 +154,13 @@ export function createHandlers({
       to: params.email,
       code,
       returnTo: params.returnTo || defaultReturnTo,
+    });
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json',
+      },
     });
   }
 
@@ -197,17 +200,14 @@ export function createHandlers({
       expiresAt: 0,
       name: '',
     });
-    const res = new Response(null, {
+    const session = await sessions.createSession(user.id);
+    return new Response(null, {
       status: 302,
       headers: {
+        ...(await sessions.updateSession(session)),
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
-    const session = await getOrCreateSession(req, res);
-    const sessionDetails = createSession(user.id);
-    Object.assign(session, sessionDetails);
-    await session.save();
-    return res;
   }
 
   async function handleEmailLoginRequest(req: Request) {
@@ -232,17 +232,14 @@ export function createHandlers({
     if (!user) {
       throw new Error('Invalid email or password');
     }
-    const res = new Response(null, {
+    const session = await sessions.createSession(user.id);
+    return new Response(null, {
       status: 302,
       headers: {
+        ...(await sessions.updateSession(session)),
         location: params.returnTo ?? defaultReturnTo,
       },
     });
-    const session = await getOrCreateSession(req, res);
-    const sessionDetails = await createSession(user.id);
-    Object.assign(session, sessionDetails);
-    await session.save();
-    return res;
   }
 
   async function handleResetPasswordRequest(req: Request) {
@@ -292,17 +289,14 @@ export function createHandlers({
     if (!user) {
       throw new Error('User not found');
     }
-    const res = new Response(null, {
+    const session = await sessions.createSession(user.id);
+    return new Response(null, {
       status: 302,
       headers: {
+        ...(await sessions.updateSession(session)),
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
-    const session = await getOrCreateSession(req, res);
-    const sessionDetails = await createSession(user.id);
-    Object.assign(session, sessionDetails);
-    await session.save();
-    return res;
   }
 
   return {
