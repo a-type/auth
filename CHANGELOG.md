@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.3
+
+### Patch Changes
+
+- c695295: Use cookie parser, iss/aud in verify
+
 ## 0.3.2
 
 ### Patch Changes
