@@ -63,12 +63,9 @@ export class SessionManager {
     if (this.options.mode === 'development') {
       const keys = Object.keys(session);
       const expectedKeys = Object.keys(this.options.shortNames);
-      if (keys.length !== expectedKeys.length) {
-        throw new Error('Session has the wrong number of keys');
-      }
-      for (const key of keys) {
-        if (!expectedKeys.includes(key)) {
-          throw new Error(`Session has unexpected key: ${key}`);
+      for (const key of expectedKeys) {
+        if (!keys.includes(key)) {
+          throw new Error(`Session missing unexpected key: ${key}`);
         }
       }
     }
