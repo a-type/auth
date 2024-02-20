@@ -57,7 +57,10 @@ export class SessionManager {
     });
     // convert the JWT claims to a session object
     const session: Session = Object.fromEntries(
-      Object.entries(jwt).map(([key, value]) => [this.getLongName(key), value]),
+      Object.entries(jwt.payload).map(([key, value]) => [
+        this.getLongName(key),
+        value,
+      ]),
     ) as any;
     // in dev mode, validate session has the right keys
     if (this.options.mode === 'development') {
