@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.2
+
+### Patch Changes
+
+- 791c603: Allow undefined for getVerificationCode return
+
 ## 0.3.1
 
 ### Patch Changes
