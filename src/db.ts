@@ -19,7 +19,7 @@ export interface AuthDB {
   getUserByEmailAndPassword?(
     email: string,
     password: string,
-  ): Promise<AuthUser>;
+  ): Promise<AuthUser | undefined>;
 }
 
 export interface AuthUser {
