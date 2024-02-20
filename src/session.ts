@@ -1,3 +1,4 @@
+import { parse } from 'cookie';
 import { SignJWT, jwtVerify } from 'jose';
 
 export interface Session {
@@ -43,16 +44,17 @@ export class SessionManager {
   };
 
   getSession = async (req: Request) => {
-    const cookie = req.headers.get('cookie') ?? '';
-    const match = cookie.match(
-      new RegExp(`${this.options.cookieName}=([^;]+)`),
-    );
-    if (!match) {
+    const cookieHeader = req.headers.get('cookie') ?? '';
+    const cookies = parse(cookieHeader);
+    const cookieValue = cookies[this.options.cookieName];
+    if (!cookieValue) {
       return null;
     }
-    const cookieValue = match[1];
     // read the JWT from the cookie
-    const jwt = await jwtVerify(cookieValue, this.secret);
+    const jwt = await jwtVerify(cookieValue, this.secret, {
+      issuer: this.options.issuer,
+      audience: this.options.audience,
+    });
     // convert the JWT claims to a session object
     const session: Session = Object.fromEntries(
       Object.entries(jwt).map(([key, value]) => [this.getLongName(key), value]),
