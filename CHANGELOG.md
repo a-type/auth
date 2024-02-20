@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.5
+
+### Patch Changes
+
+- 99f400e: Set jwt subject
+
 ## 0.3.4
 
 ### Patch Changes
