@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.4
+
+### Patch Changes
+
+- 3f0dbb2: make session validation less strict (jwts don't work this way...)
+
 ## 0.3.3
 
 ### Patch Changes
