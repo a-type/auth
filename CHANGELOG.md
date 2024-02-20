@@ -1,5 +1,17 @@
 # @a-type/auth
 
+## 0.3.0
+
+### Minor Changes
+
+- 65cb7e6: Fix email login / signup flow
+
+## 0.2.2
+
+### Patch Changes
+
+- 8af2aa0: Add session request
+
 ## 0.2.1
 
 ### Patch Changes
