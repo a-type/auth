@@ -15,7 +15,7 @@ export interface AuthDB {
   getVerificationCode?(
     email: string,
     code: string,
-  ): Promise<AuthVerificationCode>;
+  ): Promise<AuthVerificationCode | undefined>;
   getUserByEmailAndPassword?(
     email: string,
     password: string,
