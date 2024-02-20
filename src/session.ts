@@ -26,6 +26,7 @@ export class SessionManager {
       createSession: (userId: string) => Promise<Session>;
       issuer?: string;
       audience?: string;
+      expiration?: string;
     },
   ) {
     this.secret = new TextEncoder().encode(options.secret);
@@ -86,7 +87,8 @@ export class SessionManager {
     )
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('1h');
+      .setExpirationTime(this.options.expiration ?? '12h')
+      .setSubject(session.userId);
 
     if (this.options.issuer) {
       builder.setIssuer(this.options.issuer);
