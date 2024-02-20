@@ -95,7 +95,7 @@ export class SessionManager {
       builder.setAudience(this.options.audience);
     }
 
-    const jwt = builder.sign(this.secret);
+    const jwt = await builder.sign(this.secret);
     return {
       'Set-Cookie': `${this.options.cookieName}=${jwt}; Path=/; HttpOnly; SameSite=Strict`,
     };
