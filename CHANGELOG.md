@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.6
+
+### Patch Changes
+
+- 8610d9d: Add generic email sending method
+
 ## 0.3.5
 
 ### Patch Changes
