@@ -49,6 +49,10 @@ export class Email extends EventEmitter {
     });
   }
 
+  sendMail(args: { to: string; subject: string; text: string; html: string }) {
+    return this.transporter.sendMail({ from: this.user, ...args });
+  }
+
   sendEmailVerification({
     to,
     code,
