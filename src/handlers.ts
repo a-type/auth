@@ -336,6 +336,17 @@ export function createHandlers({
     );
   }
 
+  async function handleRefreshSessionRequest(req: Request) {
+    const accessToken = sessions.getAccessToken(req);
+    const refreshToken = sessions.getRefreshToken(req);
+
+    if (!accessToken || !refreshToken) {
+      throw new AuthError('Invalid session', 401);
+    }
+
+    return sessions.refreshSession(accessToken, refreshToken);
+  }
+
   return {
     handleOAuthLoginRequest,
     handleOAuthCallbackRequest,
@@ -346,5 +357,6 @@ export function createHandlers({
     handleResetPasswordRequest,
     handleVerifyPasswordResetRequest,
     handleSessionRequest,
+    handleRefreshSessionRequest,
   };
 }
