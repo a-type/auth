@@ -28,10 +28,9 @@ describe('Session tools', () => {
       },
     );
 
-    // the JWT is in the cookie, the refresh token is on X-Refresh-Token
     const cookies = parse(headers['Set-Cookie']);
     const authToken = cookies['session'];
-    const refreshToken = headers['x-refresh-token'];
+    const refreshToken = cookies['session-refresh'];
 
     // verify that the token is accepted
     let req = {
@@ -62,10 +61,9 @@ describe('Session tools', () => {
       refreshToken,
     );
 
-    // the new JWT is in the cookie, the new refresh token is on X-Refresh-Token
     const newCookies = parse(newSessionHeaders['Set-Cookie']);
     const newAuthToken = newCookies['session'];
-    const newRefreshToken = newSessionHeaders['x-refresh-token'];
+    const newRefreshToken = newCookies['session-refresh'];
 
     // verify that the new token is accepted
     req = {
@@ -104,7 +102,7 @@ describe('Session tools', () => {
       },
     );
     const jti = verifiedAuth.payload.jti!;
-    const refreshToken = headers['x-refresh-token'];
+    const refreshToken = cookies['session-refresh'];
 
     // sign a JWT with some other signature
     const badToken = await new SignJWT({})

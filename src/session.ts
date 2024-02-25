@@ -1,4 +1,4 @@
-import { parse } from 'cookie';
+import { parse, serialize } from 'cookie';
 import {
   SignJWT,
   jwtVerify,
@@ -30,7 +30,7 @@ export class SessionManager {
     private options: {
       secret: string;
       cookieName: string;
-      refreshTokenHeader?: string;
+      refreshCookieName?: string;
       shortNames: ShortNames;
       mode?: 'production' | 'development';
       createSession: (userId: string) => Promise<Session>;
@@ -65,7 +65,13 @@ export class SessionManager {
   };
 
   getRefreshToken = (req: { headers: Headers }) => {
-    return req.headers.get(this.refreshTokenHeader);
+    const cookieHeader = req.headers.get('cookie') ?? '';
+    const cookies = parse(cookieHeader);
+    const cookieValue = cookies[this.refreshCookieName];
+    if (!cookieValue) {
+      return null;
+    }
+    return cookieValue;
   };
 
   getSession = async (req: { headers: Headers }) => {
@@ -141,14 +147,29 @@ export class SessionManager {
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
 
+    const authCookie = serialize(this.options.cookieName, jwt, {
+      httpOnly: true,
+      sameSite: 'strict',
+      path: '/',
+    });
     const headers: Record<string, string> = {
-      'Set-Cookie': `${this.options.cookieName}=${jwt}; Path=/; HttpOnly; SameSite=Strict`,
+      'Set-Cookie': authCookie,
     };
 
     if (sendRefreshToken) {
       const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
       const refreshToken = await refreshTokenBuilder.sign(this.secret);
-      headers[this.refreshTokenHeader] = refreshToken;
+      // add a refresh cookie, accessible to the client. this cookie should
+      // expire very quickly. it's not meant to be sent on every request;
+      // the client should store it locally and only send again when refreshing
+      // the session.
+      const refreshCookie = serialize(this.refreshCookieName, refreshToken, {
+        httpOnly: false,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60,
+      });
+      headers['Set-Cookie'] += `; ${refreshCookie}`;
     }
 
     return headers;
@@ -215,7 +236,9 @@ export class SessionManager {
     ) as any;
   };
 
-  private get refreshTokenHeader() {
-    return this.options.refreshTokenHeader ?? 'x-refresh-token';
+  private get refreshCookieName() {
+    return (
+      this.options.refreshCookieName ?? `${this.options.cookieName}-refresh`
+    );
   }
 }
