@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.8
+
+### Patch Changes
+
+- 354687d: Refreshing session tokens
+
 ## 0.3.7
 
 ### Patch Changes
