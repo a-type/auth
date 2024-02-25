@@ -110,7 +110,9 @@ export function createHandlers({
     }
 
     const session = await sessions.createSession(userId);
-    const sessionHeaders = await sessions.updateSession(session);
+    const sessionHeaders = await sessions.updateSession(session, {
+      sendRefreshToken: true,
+    });
     return new Response(null, {
       status: 302,
       headers: {
@@ -217,7 +219,7 @@ export function createHandlers({
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session)),
+        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
@@ -249,7 +251,7 @@ export function createHandlers({
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session)),
+        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
         location: params.returnTo ?? defaultReturnTo,
       },
     });
@@ -306,7 +308,7 @@ export function createHandlers({
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session)),
+        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
