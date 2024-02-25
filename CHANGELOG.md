@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.7
+
+### Patch Changes
+
+- fcf83f5: Improve errors thrown by session invalidation
+
 ## 0.3.6
 
 ### Patch Changes
