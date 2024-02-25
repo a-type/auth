@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.10
+
+### Patch Changes
+
+- a67b5aa: Use a cookie for refresh token
+
 ## 0.3.9
 
 ### Patch Changes
