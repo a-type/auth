@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.3.9
+
+### Patch Changes
+
+- 084bb86: Send refresh tokens from login endpoints
+
 ## 0.3.8
 
 ### Patch Changes
