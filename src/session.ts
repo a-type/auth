@@ -1,5 +1,6 @@
 import { parse } from 'cookie';
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT, jwtVerify, errors } from 'jose';
+import { AuthError } from './error.js';
 
 export interface Session {
   userId: string;
@@ -52,28 +53,42 @@ export class SessionManager {
       return null;
     }
     // read the JWT from the cookie
-    const jwt = await jwtVerify(cookieValue, this.secret, {
-      issuer: this.options.issuer,
-      audience: this.options.audience,
-    });
-    // convert the JWT claims to a session object
-    const session: Session = Object.fromEntries(
-      Object.entries(jwt.payload).map(([key, value]) => [
-        this.getLongName(key),
-        value,
-      ]),
-    ) as any;
-    // in dev mode, validate session has the right keys
-    if (this.options.mode === 'development') {
-      const keys = Object.keys(session);
-      const expectedKeys = Object.keys(this.options.shortNames);
-      for (const key of expectedKeys) {
-        if (!keys.includes(key)) {
-          throw new Error(`Session missing unexpected key: ${key}`);
+    try {
+      const jwt = await jwtVerify(cookieValue, this.secret, {
+        issuer: this.options.issuer,
+        audience: this.options.audience,
+      });
+      // convert the JWT claims to a session object
+      const session: Session = Object.fromEntries(
+        Object.entries(jwt.payload).map(([key, value]) => [
+          this.getLongName(key),
+          value,
+        ]),
+      ) as any;
+      // in dev mode, validate session has the right keys
+      if (this.options.mode === 'development') {
+        const keys = Object.keys(session);
+        const expectedKeys = Object.keys(this.options.shortNames);
+        for (const key of expectedKeys) {
+          if (!keys.includes(key)) {
+            throw new Error(`Session missing unexpected key: ${key}`);
+          }
         }
       }
+      return session;
+    } catch (e) {
+      // if the JWT is expired, throw a specific error.
+      // if it's otherwise invalid, throw a different one.
+      if (e instanceof errors.JWTExpired) {
+        throw new AuthError('Session expired', 401);
+      } else if (
+        e instanceof errors.JWTInvalid ||
+        e instanceof errors.JWSInvalid
+      ) {
+        throw new AuthError('Invalid session', 400);
+      }
+      throw e;
     }
-    return session;
   };
 
   updateSession = async (session: Session): Promise<Record<string, string>> => {
