@@ -20,8 +20,42 @@ describe('Session tools', () => {
     vi.useFakeTimers({ now: new Date('2020-01-01T00:00:00Z') });
   });
 
+  it('should send a refresh token in a cookie for the client domain', async () => {
+    const { headers } = await sessions.updateSession(
+      { userId: '123' },
+      {
+        sendRefreshToken: true,
+        clientDomain: 'client.com',
+      },
+    );
+
+    const cookies = parse(headers['Set-Cookie']);
+    const authToken = cookies['session'];
+    const refreshToken = cookies['session-refresh'];
+
+    expect(authToken).toBeTruthy();
+    expect(refreshToken).toBeTruthy();
+
+    // cookie should be for the client domain
+    expect(headers['Set-Cookie']).toMatch(
+      /session-refresh=(.*);\s+Domain=client.com;\s+Path=\/;/,
+    );
+
+    // without specifying client domain, it defaults to audience
+    const { headers: headers2 } = await sessions.updateSession(
+      { userId: '123' },
+      {
+        sendRefreshToken: true,
+      },
+    );
+
+    expect(headers2['Set-Cookie']).toMatch(
+      /session-refresh=(.*);\s+Domain=example.com;\s+Path=\/;/,
+    );
+  });
+
   it('should refresh an expired JWT', async () => {
-    const headers = await sessions.updateSession(
+    const { headers } = await sessions.updateSession(
       { userId: '123' },
       {
         sendRefreshToken: true,
@@ -56,7 +90,7 @@ describe('Session tools', () => {
     expect(sessions.getSession(req)).rejects.toThrowError('Session expired');
 
     // verify that the refresh token is accepted
-    const newSessionHeaders = await sessions.refreshSession(
+    const { headers: newSessionHeaders } = await sessions.refreshSession(
       authToken,
       refreshToken,
     );
@@ -81,7 +115,7 @@ describe('Session tools', () => {
   });
 
   it('should not allow refreshing any old token', async () => {
-    const headers = await sessions.updateSession(
+    const { headers } = await sessions.updateSession(
       { userId: '123' },
       {
         sendRefreshToken: true,
@@ -132,4 +166,12 @@ describe('Session tools', () => {
       sessions.refreshSession(newToken, refreshToken),
     ).rejects.toThrowError('Invalid refresh token');
   });
+
+  // does this need to happen? do I need to keep
+  // extending/reupping the session? or can I just rely on regular
+  // refresh token usage to keep sessions alive?
+  it.todo(
+    'can refresh a session that has been updated since original refresh token was issued',
+    async () => {},
+  );
 });

@@ -110,8 +110,11 @@ export function createHandlers({
     }
 
     const session = await sessions.createSession(userId);
-    const sessionHeaders = await sessions.updateSession(session, {
+    const clientDomain =
+      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
+    const { headers: sessionHeaders } = await sessions.updateSession(session, {
       sendRefreshToken: true,
+      clientDomain,
     });
     return new Response(null, {
       status: 302,
@@ -216,10 +219,16 @@ export function createHandlers({
     });
     await db.consumeVerificationCode?.(email, code);
     const session = await sessions.createSession(userId);
+    const clientDomain =
+      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
+    const { headers } = await sessions.updateSession(session, {
+      sendRefreshToken: true,
+      clientDomain,
+    });
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
+        ...headers,
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
@@ -248,10 +257,16 @@ export function createHandlers({
       throw new Error('Invalid email or password');
     }
     const session = await sessions.createSession(user.id);
+    const clientDomain =
+      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
+    const { headers } = await sessions.updateSession(session, {
+      sendRefreshToken: true,
+      clientDomain,
+    });
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
+        ...headers,
         location: params.returnTo ?? defaultReturnTo,
       },
     });
@@ -305,10 +320,16 @@ export function createHandlers({
       throw new Error('User not found');
     }
     const session = await sessions.createSession(user.id);
+    const clientDomain =
+      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
+    const { headers } = await sessions.updateSession(session, {
+      sendRefreshToken: true,
+      clientDomain,
+    });
     return new Response(null, {
       status: 302,
       headers: {
-        ...(await sessions.updateSession(session, { sendRefreshToken: true })),
+        ...headers,
         location: url.searchParams.get('returnTo') ?? defaultReturnTo,
       },
     });
@@ -325,14 +346,12 @@ export function createHandlers({
       });
     }
     // refresh session
-    const sessionHeaders = await sessions.updateSession(session);
     return new Response(
       JSON.stringify({ session: getPublicSession(session) }),
       {
         status: 200,
         headers: {
           'content-type': 'application/json',
-          ...sessionHeaders,
         },
       },
     );
@@ -346,7 +365,23 @@ export function createHandlers({
       throw new AuthError('Invalid session', 401);
     }
 
-    return sessions.refreshSession(accessToken, refreshToken);
+    const { headers } = await sessions.refreshSession(
+      accessToken,
+      refreshToken,
+    );
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+      }),
+      {
+        status: 200,
+        headers: {
+          ...headers,
+          'content-type': 'application/json',
+        },
+      },
+    );
   }
 
   return {

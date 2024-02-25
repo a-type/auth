@@ -37,6 +37,8 @@ export class SessionManager {
       issuer?: string;
       audience?: string;
       expiration?: string;
+      /** Specify a client domain */
+      clientDomain?: string;
     },
   ) {
     this.secret = new TextEncoder().encode(options.secret);
@@ -65,13 +67,7 @@ export class SessionManager {
   };
 
   getRefreshToken = (req: { headers: Headers }) => {
-    const cookieHeader = req.headers.get('cookie') ?? '';
-    const cookies = parse(cookieHeader);
-    const cookieValue = cookies[this.refreshCookieName];
-    if (!cookieValue) {
-      return null;
-    }
-    return cookieValue;
+    return req.headers.get('x-refresh-token');
   };
 
   getSession = async (req: { headers: Headers }) => {
@@ -119,7 +115,9 @@ export class SessionManager {
   refreshSession = async (
     accessToken: string,
     refreshToken: string,
-  ): Promise<Record<string, string>> => {
+  ): Promise<{
+    headers: Record<string, string>;
+  }> => {
     const refreshData = await jwtVerify(refreshToken, this.secret, {
       issuer: this.options.issuer,
       audience: this.options.audience,
@@ -141,8 +139,16 @@ export class SessionManager {
 
   updateSession = async (
     session: Session,
-    { sendRefreshToken } = { sendRefreshToken: false },
-  ): Promise<Record<string, string>> => {
+    {
+      sendRefreshToken,
+      clientDomain = this.options.audience,
+    }: {
+      sendRefreshToken?: boolean;
+      clientDomain?: string;
+    } = { sendRefreshToken: false },
+  ): Promise<{
+    headers: Record<string, string>;
+  }> => {
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
@@ -159,20 +165,22 @@ export class SessionManager {
     if (sendRefreshToken) {
       const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
       const refreshToken = await refreshTokenBuilder.sign(this.secret);
-      // add a refresh cookie, accessible to the client. this cookie should
-      // expire very quickly. it's not meant to be sent on every request;
-      // the client should store it locally and only send again when refreshing
-      // the session.
+      // construct a short lived cookie for the client domain
+      // which is client accessible. this lets us pass the refresh token
+      // to the client so it can store it itself, even if the response
+      // is a document.
       const refreshCookie = serialize(this.refreshCookieName, refreshToken, {
         httpOnly: false,
         sameSite: 'strict',
         path: '/',
-        maxAge: 60,
+        domain: clientDomain,
       });
-      headers['Set-Cookie'] += `; ${refreshCookie}`;
+      headers['Set-Cookie'] += '; ' + refreshCookie;
     }
 
-    return headers;
+    return {
+      headers,
+    };
   };
 
   clearSession = (): Record<string, string> => {
