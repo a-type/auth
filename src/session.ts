@@ -136,10 +136,8 @@ export class SessionManager {
     session: Session,
     {
       sendRefreshToken,
-      clientDomain = this.options.audience,
     }: {
       sendRefreshToken?: boolean;
-      clientDomain?: string;
     } = { sendRefreshToken: false },
   ) => {
     const jti = randomUUID();

@@ -128,11 +128,8 @@ export function createHandlers({
     }
 
     const session = await sessions.createSession(userId);
-    const clientDomain =
-      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
-      clientDomain,
     });
     return toRedirect(
       url.searchParams.get('returnTo') ?? defaultReturnTo,
@@ -235,11 +232,8 @@ export function createHandlers({
     });
     await db.consumeVerificationCode?.(email, code);
     const session = await sessions.createSession(userId);
-    const clientDomain =
-      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
-      clientDomain,
     });
     return toRedirect(
       url.searchParams.get('returnTo') ?? defaultReturnTo,
@@ -270,11 +264,8 @@ export function createHandlers({
       throw new Error('Invalid email or password');
     }
     const session = await sessions.createSession(user.id);
-    const clientDomain =
-      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
-      clientDomain,
     });
     return toRedirect(params.returnTo ?? defaultReturnTo, sessionUpdate);
   }
@@ -327,11 +318,8 @@ export function createHandlers({
       throw new Error('User not found');
     }
     const session = await sessions.createSession(user.id);
-    const clientDomain =
-      req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
-      clientDomain,
     });
     return toRedirect(
       url.searchParams.get('returnTo') ?? defaultReturnTo,

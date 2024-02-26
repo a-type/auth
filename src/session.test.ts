@@ -20,40 +20,6 @@ describe('Session tools', () => {
     vi.useFakeTimers({ now: new Date('2020-01-01T00:00:00Z') });
   });
 
-  it('should send a refresh token in a cookie for the client domain', async () => {
-    const { headers, searchParams } = await sessions.updateSession(
-      { userId: '123' },
-      {
-        sendRefreshToken: true,
-        clientDomain: 'client.com',
-      },
-    );
-
-    const cookies = parse(headers['Set-Cookie']);
-    const authToken = cookies['session'];
-    const refreshToken = searchParams.get('refreshToken');
-
-    expect(authToken).toBeTruthy();
-    expect(refreshToken).toBeTruthy();
-
-    // cookie should be for the client domain
-    expect(headers['Set-Cookie']).toMatch(
-      /session-refresh=(.*);\s+Domain=client.com;\s+Path=\/;/,
-    );
-
-    // without specifying client domain, it defaults to audience
-    const { headers: headers2 } = await sessions.updateSession(
-      { userId: '123' },
-      {
-        sendRefreshToken: true,
-      },
-    );
-
-    expect(headers2['Set-Cookie']).toMatch(
-      /session-refresh=(.*);\s+Domain=example.com;\s+Path=\/;/,
-    );
-  });
-
   it('should refresh an expired JWT', async () => {
     const { headers, searchParams } = await sessions.updateSession(
       { userId: '123' },
