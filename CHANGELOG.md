@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.1
+
+### Patch Changes
+
+- ada07bf: I give up - use get param for refresh token
+
 ## 0.4.0
 
 ### Minor Changes
