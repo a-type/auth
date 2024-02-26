@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.0
+
+### Minor Changes
+
+- c1d68ad: Change sessionmanager method return format. Fix client domain for refresh token cookie
+
 ## 0.3.10
 
 ### Patch Changes
