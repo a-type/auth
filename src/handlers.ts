@@ -32,6 +32,24 @@ export function createHandlers({
     );
   }
 
+  function toRedirect(
+    destination: string,
+    session: { headers: Record<string, string>; searchParams: URLSearchParams },
+  ) {
+    // add search params to destination
+    const url = new URL(destination);
+    for (const [key, value] of session.searchParams) {
+      url.searchParams.append(key, value);
+    }
+    return new Response(null, {
+      status: 302,
+      headers: {
+        location: url.toString(),
+        ...session.headers,
+      },
+    });
+  }
+
   function handleOAuthLoginRequest(req: Request, opts: { provider: string }) {
     const url = new URL(req.url);
     const providerName = opts.provider;
@@ -112,26 +130,24 @@ export function createHandlers({
     const session = await sessions.createSession(userId);
     const clientDomain =
       req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
-    const { headers: sessionHeaders } = await sessions.updateSession(session, {
+    const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
       clientDomain,
     });
-    return new Response(null, {
-      status: 302,
-      headers: {
-        ...sessionHeaders,
-        location: url.searchParams.get('returnTo') ?? defaultReturnTo,
-      },
-    });
+    return toRedirect(
+      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      sessionUpdate,
+    );
   }
 
   async function handleLogoutRequest(req: Request) {
     const url = new URL(req.url);
     const returnTo = url.searchParams.get('returnTo') ?? defaultReturnTo;
+    const { headers } = sessions.clearSession();
     return new Response(null, {
       status: 302,
       headers: {
-        ...sessions.clearSession(),
+        ...headers,
         location: returnTo,
       },
     });
@@ -221,17 +237,14 @@ export function createHandlers({
     const session = await sessions.createSession(userId);
     const clientDomain =
       req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
-    const { headers } = await sessions.updateSession(session, {
+    const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
       clientDomain,
     });
-    return new Response(null, {
-      status: 302,
-      headers: {
-        ...headers,
-        location: url.searchParams.get('returnTo') ?? defaultReturnTo,
-      },
-    });
+    return toRedirect(
+      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      sessionUpdate,
+    );
   }
 
   async function handleEmailLoginRequest(req: Request) {
@@ -259,17 +272,11 @@ export function createHandlers({
     const session = await sessions.createSession(user.id);
     const clientDomain =
       req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
-    const { headers } = await sessions.updateSession(session, {
+    const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
       clientDomain,
     });
-    return new Response(null, {
-      status: 302,
-      headers: {
-        ...headers,
-        location: params.returnTo ?? defaultReturnTo,
-      },
-    });
+    return toRedirect(params.returnTo ?? defaultReturnTo, sessionUpdate);
   }
 
   async function handleResetPasswordRequest(req: Request) {
@@ -322,17 +329,14 @@ export function createHandlers({
     const session = await sessions.createSession(user.id);
     const clientDomain =
       req.headers.get('origin') ?? req.headers.get('host') ?? undefined;
-    const { headers } = await sessions.updateSession(session, {
+    const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
       clientDomain,
     });
-    return new Response(null, {
-      status: 302,
-      headers: {
-        ...headers,
-        location: url.searchParams.get('returnTo') ?? defaultReturnTo,
-      },
-    });
+    return toRedirect(
+      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      sessionUpdate,
+    );
   }
 
   async function handleSessionRequest(req: Request) {
@@ -365,7 +369,7 @@ export function createHandlers({
       throw new AuthError('Invalid session', 401);
     }
 
-    const { headers } = await sessions.refreshSession(
+    const { headers, searchParams } = await sessions.refreshSession(
       accessToken,
       refreshToken,
     );
@@ -373,6 +377,7 @@ export function createHandlers({
     return new Response(
       JSON.stringify({
         ok: true,
+        refreshToken: searchParams.get('refreshToken'),
       }),
       {
         status: 200,

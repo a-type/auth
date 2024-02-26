@@ -21,7 +21,7 @@ describe('Session tools', () => {
   });
 
   it('should send a refresh token in a cookie for the client domain', async () => {
-    const { headers } = await sessions.updateSession(
+    const { headers, searchParams } = await sessions.updateSession(
       { userId: '123' },
       {
         sendRefreshToken: true,
@@ -31,7 +31,7 @@ describe('Session tools', () => {
 
     const cookies = parse(headers['Set-Cookie']);
     const authToken = cookies['session'];
-    const refreshToken = cookies['session-refresh'];
+    const refreshToken = searchParams.get('refreshToken');
 
     expect(authToken).toBeTruthy();
     expect(refreshToken).toBeTruthy();
@@ -55,7 +55,7 @@ describe('Session tools', () => {
   });
 
   it('should refresh an expired JWT', async () => {
-    const { headers } = await sessions.updateSession(
+    const { headers, searchParams } = await sessions.updateSession(
       { userId: '123' },
       {
         sendRefreshToken: true,
@@ -64,7 +64,7 @@ describe('Session tools', () => {
 
     const cookies = parse(headers['Set-Cookie']);
     const authToken = cookies['session'];
-    const refreshToken = cookies['session-refresh'];
+    const refreshToken = searchParams.get('refreshToken')!;
 
     // verify that the token is accepted
     let req = {
@@ -90,14 +90,12 @@ describe('Session tools', () => {
     expect(sessions.getSession(req)).rejects.toThrowError('Session expired');
 
     // verify that the refresh token is accepted
-    const { headers: newSessionHeaders } = await sessions.refreshSession(
-      authToken,
-      refreshToken,
-    );
+    const { headers: newSessionHeaders, searchParams: newSessionSearchParams } =
+      await sessions.refreshSession(authToken, refreshToken);
 
     const newCookies = parse(newSessionHeaders['Set-Cookie']);
     const newAuthToken = newCookies['session'];
-    const newRefreshToken = newCookies['session-refresh'];
+    const newRefreshToken = newSessionSearchParams.get('refreshToken')!;
 
     // verify that the new token is accepted
     req = {
@@ -115,7 +113,7 @@ describe('Session tools', () => {
   });
 
   it('should not allow refreshing any old token', async () => {
-    const { headers } = await sessions.updateSession(
+    const { headers, searchParams } = await sessions.updateSession(
       { userId: '123' },
       {
         sendRefreshToken: true,
@@ -136,7 +134,7 @@ describe('Session tools', () => {
       },
     );
     const jti = verifiedAuth.payload.jti!;
-    const refreshToken = cookies['session-refresh'];
+    const refreshToken = searchParams.get('refreshToken')!;
 
     // sign a JWT with some other signature
     const badToken = await new SignJWT({})

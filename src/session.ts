@@ -30,7 +30,7 @@ export class SessionManager {
     private options: {
       secret: string;
       cookieName: string;
-      refreshCookieName?: string;
+      refreshParam?: string;
       shortNames: ShortNames;
       mode?: 'production' | 'development';
       createSession: (userId: string) => Promise<Session>;
@@ -112,12 +112,7 @@ export class SessionManager {
    * Refresh the session by re-signing the JWT with a new expiration time.
    * Requires a valid refresh token.
    */
-  refreshSession = async (
-    accessToken: string,
-    refreshToken: string,
-  ): Promise<{
-    headers: Record<string, string>;
-  }> => {
+  refreshSession = async (accessToken: string, refreshToken: string) => {
     const refreshData = await jwtVerify(refreshToken, this.secret, {
       issuer: this.options.issuer,
       audience: this.options.audience,
@@ -146,9 +141,7 @@ export class SessionManager {
       sendRefreshToken?: boolean;
       clientDomain?: string;
     } = { sendRefreshToken: false },
-  ): Promise<{
-    headers: Record<string, string>;
-  }> => {
+  ) => {
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
@@ -161,31 +154,25 @@ export class SessionManager {
     const headers: Record<string, string> = {
       'Set-Cookie': authCookie,
     };
+    const searchParams = new URLSearchParams();
 
     if (sendRefreshToken) {
       const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
       const refreshToken = await refreshTokenBuilder.sign(this.secret);
-      // construct a short lived cookie for the client domain
-      // which is client accessible. this lets us pass the refresh token
-      // to the client so it can store it itself, even if the response
-      // is a document.
-      const refreshCookie = serialize(this.refreshCookieName, refreshToken, {
-        httpOnly: false,
-        sameSite: 'strict',
-        path: '/',
-        domain: clientDomain,
-      });
-      headers['Set-Cookie'] += '; ' + refreshCookie;
+      searchParams.set(this.refreshParam, refreshToken);
     }
 
     return {
       headers,
+      searchParams,
     };
   };
 
-  clearSession = (): Record<string, string> => {
+  clearSession = () => {
     return {
-      'Set-Cookie': `${this.options.cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
+      headers: {
+        'Set-Cookie': `${this.options.cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
+      },
     };
   };
 
@@ -244,9 +231,7 @@ export class SessionManager {
     ) as any;
   };
 
-  private get refreshCookieName() {
-    return (
-      this.options.refreshCookieName ?? `${this.options.cookieName}-refresh`
-    );
+  private get refreshParam() {
+    return this.options.refreshParam ?? `refreshToken`;
   }
 }
