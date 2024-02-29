@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.3
+
+### Patch Changes
+
+- fb96fac: Support path returnTo value
+
 ## 0.4.2
 
 ### Patch Changes
