@@ -5,12 +5,12 @@ import { AuthProvider } from './providers/types.js';
 import { RETURN_TO_COOKIE, getReturnTo } from './returnTo.js';
 import { Session, SessionManager } from './session.js';
 import * as z from 'zod';
-import { parse } from 'cookie';
 
 export function createHandlers({
   providers,
   db,
   defaultReturnTo = '/',
+  returnToOrigin,
   email: emailService,
   sessions,
   getPublicSession = (session) => session,
@@ -18,6 +18,7 @@ export function createHandlers({
   providers: Record<string, AuthProvider>;
   db: AuthDB;
   defaultReturnTo?: string;
+  returnToOrigin?: string;
   email?: Email;
   sessions: SessionManager;
   getPublicSession?: (session: Session) => Record<string, any>;
@@ -31,6 +32,16 @@ export function createHandlers({
     throw new Error(
       'Implement optional db fields "insertVerificationCode", "getUserByEmailAndPassword", "getVerificationCode", and "consumeVerificationCode" to support email',
     );
+  }
+
+  function resolveReturnTo(req: Request, path: string) {
+    // grab origin from req
+    const origin = req.headers.get('origin');
+
+    if (path.startsWith('http')) {
+      return path;
+    }
+    return new URL(path, origin || returnToOrigin).toString();
   }
 
   function toRedirect(
@@ -133,7 +144,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
 
-    return toRedirect(getReturnTo(req), sessionUpdate);
+    return toRedirect(resolveReturnTo(req, getReturnTo(req)), sessionUpdate);
   }
 
   async function handleLogoutRequest(req: Request) {
@@ -144,7 +155,7 @@ export function createHandlers({
       status: 302,
       headers: {
         ...headers,
-        location: returnTo,
+        location: resolveReturnTo(req, returnTo),
       },
     });
   }
@@ -154,7 +165,7 @@ export function createHandlers({
 
     const email = formData.get('email');
     const name = formData.get('name');
-    const returnTo = formData.get('returnTo');
+    const returnTo = resolveReturnTo(req, formData.get('returnTo') as string);
 
     const params = z
       .object({
@@ -235,7 +246,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
     return toRedirect(
-      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      resolveReturnTo(req, url.searchParams.get('returnTo') ?? defaultReturnTo),
       sessionUpdate,
     );
   }
@@ -266,7 +277,10 @@ export function createHandlers({
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
     });
-    return toRedirect(params.returnTo ?? defaultReturnTo, sessionUpdate);
+    return toRedirect(
+      resolveReturnTo(req, params.returnTo ?? defaultReturnTo),
+      sessionUpdate,
+    );
   }
 
   async function handleResetPasswordRequest(req: Request) {
@@ -294,7 +308,7 @@ export function createHandlers({
     await emailService?.sendPasswordReset({
       to: params.email,
       code,
-      returnTo: params.returnTo || defaultReturnTo,
+      returnTo: resolveReturnTo(req, params.returnTo || defaultReturnTo),
     });
   }
 
@@ -321,7 +335,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
     return toRedirect(
-      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      resolveReturnTo(req, url.searchParams.get('returnTo') ?? defaultReturnTo),
       sessionUpdate,
     );
   }
