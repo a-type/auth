@@ -2,9 +2,10 @@ import { AuthDB } from './db.js';
 import { Email } from './email.js';
 import { AuthError } from './error.js';
 import { AuthProvider } from './providers/types.js';
-import { RETURN_TO_COOKIE } from './returnTo.js';
+import { RETURN_TO_COOKIE, getReturnTo } from './returnTo.js';
 import { Session, SessionManager } from './session.js';
 import * as z from 'zod';
+import { parse } from 'cookie';
 
 export function createHandlers({
   providers,
@@ -131,10 +132,8 @@ export function createHandlers({
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
     });
-    return toRedirect(
-      url.searchParams.get('returnTo') ?? defaultReturnTo,
-      sessionUpdate,
-    );
+
+    return toRedirect(getReturnTo(req), sessionUpdate);
   }
 
   async function handleLogoutRequest(req: Request) {
