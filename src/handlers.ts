@@ -9,7 +9,7 @@ import * as z from 'zod';
 export function createHandlers({
   providers,
   db,
-  defaultReturnTo = '/',
+  defaultReturnToPath: defaultReturnTo = '/',
   returnToOrigin,
   email: emailService,
   sessions,
@@ -17,8 +17,18 @@ export function createHandlers({
 }: {
   providers: Record<string, AuthProvider>;
   db: AuthDB;
-  defaultReturnTo?: string;
-  returnToOrigin?: string;
+  /**
+   * A default path to land on after login if none
+   * was specified in the original request.
+   */
+  defaultReturnToPath?: string;
+  /**
+   * Which origin your login process returns the user to.
+   * In a 'real' auth system this would be a list of allowed origins
+   * which could be controlled by the app. But since this is just for
+   * me and my apps don't need that, I just set it manually. It's easier!
+   */
+  returnToOrigin: string;
   email?: Email;
   sessions: SessionManager;
   getPublicSession?: (session: Session) => Record<string, any>;
@@ -34,14 +44,8 @@ export function createHandlers({
     );
   }
 
-  function resolveReturnTo(req: Request, path: string) {
-    // grab origin from req
-    const origin = req.headers.get('origin');
-
-    if (path.startsWith('http')) {
-      return path;
-    }
-    return new URL(path, origin || returnToOrigin).toString();
+  function resolveReturnTo(path: string) {
+    return new URL(path, returnToOrigin).toString();
   }
 
   function toRedirect(
@@ -144,7 +148,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
 
-    return toRedirect(resolveReturnTo(req, getReturnTo(req)), sessionUpdate);
+    return toRedirect(resolveReturnTo(getReturnTo(req)), sessionUpdate);
   }
 
   async function handleLogoutRequest(req: Request) {
@@ -155,7 +159,7 @@ export function createHandlers({
       status: 302,
       headers: {
         ...headers,
-        location: resolveReturnTo(req, returnTo),
+        location: resolveReturnTo(returnTo),
       },
     });
   }
@@ -165,7 +169,7 @@ export function createHandlers({
 
     const email = formData.get('email');
     const name = formData.get('name');
-    const returnTo = resolveReturnTo(req, formData.get('returnTo') as string);
+    const returnTo = resolveReturnTo(formData.get('returnTo') as string);
 
     const params = z
       .object({
@@ -246,7 +250,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
     return toRedirect(
-      resolveReturnTo(req, url.searchParams.get('returnTo') ?? defaultReturnTo),
+      resolveReturnTo(url.searchParams.get('returnTo') ?? defaultReturnTo),
       sessionUpdate,
     );
   }
@@ -278,7 +282,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
     return toRedirect(
-      resolveReturnTo(req, params.returnTo ?? defaultReturnTo),
+      resolveReturnTo(params.returnTo ?? defaultReturnTo),
       sessionUpdate,
     );
   }
@@ -308,7 +312,7 @@ export function createHandlers({
     await emailService?.sendPasswordReset({
       to: params.email,
       code,
-      returnTo: resolveReturnTo(req, params.returnTo || defaultReturnTo),
+      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
     });
   }
 
@@ -335,7 +339,7 @@ export function createHandlers({
       sendRefreshToken: true,
     });
     return toRedirect(
-      resolveReturnTo(req, url.searchParams.get('returnTo') ?? defaultReturnTo),
+      resolveReturnTo(url.searchParams.get('returnTo') ?? defaultReturnTo),
       sessionUpdate,
     );
   }
