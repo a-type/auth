@@ -1,5 +1,12 @@
 # @a-type/auth
 
+## 0.4.4
+
+### Patch Changes
+
+- e4efb4d: More specific support for returnTo and close up some loopholes
+- 15a9ab5: Support arbitrary appState passing during login
+
 ## 0.4.3
 
 ### Patch Changes
