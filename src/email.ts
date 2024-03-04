@@ -57,23 +57,32 @@ export class Email extends EventEmitter {
     to,
     code,
     returnTo,
+    appState,
   }: {
     to: string;
     code: string;
     returnTo?: string;
+    appState?: string;
   }) {
+    const url = new URL('/verify', this.uiOrigin);
+    url.searchParams.set('code', code);
+    url.searchParams.set('email', to);
+    if (returnTo) {
+      url.searchParams.set('returnTo', returnTo);
+    }
+    if (appState) {
+      url.searchParams.set('appState', appState);
+    }
     return this.transporter.sendMail({
       from: this.user,
       to,
       subject: `Verify your email on ${this.appName}`,
-      text: `Your verification code is ${code}`,
+      text: `Your verification code is ${code}. Visit ${url} to verify your email.`,
       html: `
 			<div>
 				<h1>Thanks for signing up to ${this.appName}!</h1>
 				<p>Click the button below to finish signing up on this device.</p>
-				<a href="${this.uiOrigin}/verify?code=${code}&email=${to}${
-        returnTo ? `&returnTo=${returnTo}` : ''
-      }">Verify my email</a>
+				<a href="${url}">Verify my email</a>
 				<p>After that, you can sign in on any device you want!</p>
 				<p>If you didn't request this email, you can safely ignore it.</p>
 				<p>Thanks,</p>
@@ -86,23 +95,32 @@ export class Email extends EventEmitter {
     to,
     code,
     returnTo,
+    appState,
   }: {
     to: string;
     code: string;
     returnTo?: string;
+    appState?: string;
   }) {
+    const url = new URL('/reset-password', this.uiOrigin);
+    url.searchParams.set('code', code);
+    if (returnTo) {
+      url.searchParams.set('returnTo', returnTo);
+    }
+    if (appState) {
+      url.searchParams.set('appState', appState);
+    }
+
     return this.transporter.sendMail({
       from: this.user,
       to,
       subject: 'Reset your password on ${this.appName}',
-      text: `Your password reset code is ${code}`,
+      text: `Your password reset code is ${code}. Visit ${url} to reset your password.`,
       html: `
 			<div>
 				<h1>Reset your password on ${this.appName}</h1>
 				<p>Click the link below to reset your password.</p>
-				<a href="${this.uiOrigin}/reset-password?code=${code}${
-        returnTo ? `&returnTo=${returnTo}` : ''
-      }">Reset my password</a>
+				<a href="${url}">Reset my password</a>
 				<p>If you didn't request this email, you can safely ignore it.</p>
 				<p>Thanks,</p>
 				<p>${this.developerName}</p>

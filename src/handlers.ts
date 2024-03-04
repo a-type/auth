@@ -2,7 +2,13 @@ import { AuthDB } from './db.js';
 import { Email } from './email.js';
 import { AuthError } from './error.js';
 import { AuthProvider } from './providers/types.js';
-import { RETURN_TO_COOKIE, getReturnTo } from './returnTo.js';
+import {
+  RETURN_TO_COOKIE,
+  getAppState,
+  getReturnTo,
+  setAppState,
+  setReturnTo,
+} from './appState.js';
 import { Session, SessionManager } from './session.js';
 import * as z from 'zod';
 
@@ -48,15 +54,38 @@ export function createHandlers({
     return new URL(path, returnToOrigin).toString();
   }
 
+  /**
+   * Redirects the response back to wherever the user meant to return to.
+   * Reads from the returnTo cookie, or a query param on the request URL.
+   * Also appends appState if available, and session data.
+   */
   function toRedirect(
-    destination: string,
-    session: { headers: Record<string, string>; searchParams: URLSearchParams },
+    req: Request,
+    session: {
+      headers: Record<string, string>;
+      searchParams?: URLSearchParams;
+    },
+    overrides: {
+      returnTo?: string;
+      appState?: string;
+    } = {},
   ) {
-    // add search params to destination
-    const url = new URL(destination);
-    for (const [key, value] of session.searchParams) {
-      url.searchParams.append(key, value);
+    // get returnTo
+    const returnTo = resolveReturnTo(
+      overrides.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
+    );
+    // add search params to destination for appState and session
+    const url = new URL(returnTo);
+    if (session.searchParams) {
+      for (const [key, value] of session.searchParams) {
+        url.searchParams.append(key, value);
+      }
     }
+    const appState = overrides.appState ?? getAppState(req);
+    if (appState) {
+      url.searchParams.append('appState', appState);
+    }
+
     return new Response(null, {
       status: 302,
       headers: {
@@ -75,15 +104,17 @@ export function createHandlers({
     const provider = providers[providerName as keyof typeof providers];
     const loginUrl = provider.getLoginUrl();
 
-    return new Response(null, {
+    const res = new Response(null, {
       status: 302,
       headers: {
         location: loginUrl,
-        'set-cookie': `${RETURN_TO_COOKIE}=${
-          url.searchParams.get('returnTo') ?? defaultReturnTo
-        }; Path=/`,
       },
     });
+
+    setReturnTo(res, url.searchParams.get('returnTo') ?? defaultReturnTo);
+    setAppState(res, url.searchParams.get('appState'));
+
+    return res;
   }
 
   async function handleOAuthCallbackRequest(
@@ -148,20 +179,12 @@ export function createHandlers({
       sendRefreshToken: true,
     });
 
-    return toRedirect(resolveReturnTo(getReturnTo(req)), sessionUpdate);
+    return toRedirect(req, sessionUpdate);
   }
 
   async function handleLogoutRequest(req: Request) {
-    const url = new URL(req.url);
-    const returnTo = url.searchParams.get('returnTo') ?? defaultReturnTo;
-    const { headers } = sessions.clearSession();
-    return new Response(null, {
-      status: 302,
-      headers: {
-        ...headers,
-        location: resolveReturnTo(returnTo),
-      },
-    });
+    const session = sessions.clearSession();
+    return toRedirect(req, session);
   }
 
   async function handleSendEmailVerificationRequest(req: Request) {
@@ -170,6 +193,7 @@ export function createHandlers({
     const email = formData.get('email');
     const name = formData.get('name');
     const returnTo = resolveReturnTo(formData.get('returnTo') as string);
+    const appState = formData.get('appState') as string | undefined;
 
     const params = z
       .object({
@@ -192,6 +216,7 @@ export function createHandlers({
       to: params.email,
       code,
       returnTo: params.returnTo || defaultReturnTo,
+      appState,
     });
 
     return new Response(JSON.stringify({ ok: true }), {
@@ -249,10 +274,7 @@ export function createHandlers({
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
     });
-    return toRedirect(
-      resolveReturnTo(url.searchParams.get('returnTo') ?? defaultReturnTo),
-      sessionUpdate,
-    );
+    return toRedirect(req, sessionUpdate);
   }
 
   async function handleEmailLoginRequest(req: Request) {
@@ -261,14 +283,16 @@ export function createHandlers({
     const email = formData.get('email');
     const password = formData.get('password');
     const returnTo = formData.get('returnTo');
+    const appState = formData.get('appState');
 
     const params = z
       .object({
         email: z.string().email(),
         password: z.string().min(1),
         returnTo: z.string().url().optional(),
+        appState: z.string().optional(),
       })
-      .parse({ email, password, returnTo });
+      .parse({ email, password, returnTo, appState });
 
     const user = await db.getUserByEmailAndPassword?.(
       params.email,
@@ -281,10 +305,10 @@ export function createHandlers({
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
     });
-    return toRedirect(
-      resolveReturnTo(params.returnTo ?? defaultReturnTo),
-      sessionUpdate,
-    );
+    return toRedirect(req, sessionUpdate, {
+      returnTo: params.returnTo,
+      appState: params.appState,
+    });
   }
 
   async function handleResetPasswordRequest(req: Request) {
@@ -292,13 +316,15 @@ export function createHandlers({
 
     const email = formData.get('email');
     const returnTo = formData.get('returnTo');
+    const appState = formData.get('appState');
 
     const params = z
       .object({
         email: z.string().email(),
         returnTo: z.string().url().optional(),
+        appState: z.string().optional(),
       })
-      .parse({ email, returnTo });
+      .parse({ email, returnTo, appState });
 
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 36);
@@ -313,6 +339,14 @@ export function createHandlers({
       to: params.email,
       code,
       returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+      appState: params.appState,
+    });
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json',
+      },
     });
   }
 
@@ -338,10 +372,7 @@ export function createHandlers({
     const sessionUpdate = await sessions.updateSession(session, {
       sendRefreshToken: true,
     });
-    return toRedirect(
-      resolveReturnTo(url.searchParams.get('returnTo') ?? defaultReturnTo),
-      sessionUpdate,
-    );
+    return toRedirect(req, sessionUpdate);
   }
 
   async function handleSessionRequest(req: Request) {
