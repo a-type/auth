@@ -192,7 +192,21 @@ export function createHandlers({
 
     const email = formData.get('email');
     const name = formData.get('name');
-    const returnTo = resolveReturnTo(formData.get('returnTo') as string);
+    const returnToRaw = formData.get('returnTo') ?? '';
+    if (!email || !name) {
+      throw new Error('Missing email or name');
+    }
+    if (typeof email !== 'string') {
+      throw new Error('Invalid email');
+    }
+    if (typeof name !== 'string') {
+      throw new Error('Invalid name');
+    }
+    if (typeof returnToRaw !== 'string') {
+      throw new Error('Invalid returnTo');
+    }
+
+    const returnTo = resolveReturnTo(returnToRaw);
     const appState = formData.get('appState') as string | undefined;
 
     const params = z
@@ -228,16 +242,28 @@ export function createHandlers({
   }
 
   async function handleVerifyEmailRequest(req: Request) {
-    const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    const email = url.searchParams.get('email');
-    const password = url.searchParams.get('password');
+    const formData = await req.formData();
+
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const code = formData.get('code');
+
     if (!code || !email) {
       throw new Error('Missing code or email');
     }
     if (!password) {
       throw new Error('Missing password');
     }
+    if (typeof email !== 'string') {
+      throw new Error('Invalid email');
+    }
+    if (typeof code !== 'string') {
+      throw new Error('Invalid code');
+    }
+    if (typeof password !== 'string') {
+      throw new Error('Invalid password');
+    }
+
     const dbCode = await db.getVerificationCode?.(email, code);
     if (!dbCode) {
       throw new Error('Invalid code');
