@@ -325,14 +325,14 @@ export function createHandlers({
 
     const email = formData.get('email');
     const password = formData.get('password');
-    const returnTo = formData.get('returnTo');
-    const appState = formData.get('appState');
+    const returnTo = formData.get('returnTo') ?? undefined;
+    const appState = formData.get('appState') ?? undefined;
 
     const params = z
       .object({
         email: z.string().email(),
         password: z.string().min(1),
-        returnTo: z.string().url().optional(),
+        returnTo: z.string().optional(),
         appState: z.string().optional(),
       })
       .parse({ email, password, returnTo, appState });
