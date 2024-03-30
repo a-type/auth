@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.5
+
+### Patch Changes
+
+- b2e2a86: Fix email verification completion to accept formdata
+
 ## 0.4.4
 
 ### Patch Changes
