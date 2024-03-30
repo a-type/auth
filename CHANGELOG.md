@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.6
+
+### Patch Changes
+
+- 139d1c0: Support adding login providers to existing users better
+
 ## 0.4.5
 
 ### Patch Changes
