@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.8
+
+### Patch Changes
+
+- 719a146: fix upserting password on existing user
+
 ## 0.4.7
 
 ### Patch Changes
