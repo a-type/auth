@@ -20,6 +20,7 @@ export function createHandlers({
   email: emailService,
   sessions,
   getPublicSession = (session) => session,
+  addProvidersToExistingUsers = true,
 }: {
   providers: Record<string, AuthProvider>;
   db: AuthDB;
@@ -38,6 +39,12 @@ export function createHandlers({
   email?: Email;
   sessions: SessionManager;
   getPublicSession?: (session: Session) => Record<string, any>;
+  /**
+   * When a user logs in or signs up with the same email from a different provider,
+   * but already has an account, should we add the new provider to the existing account?
+   * If false, we'll throw an error.
+   */
+  addProvidersToExistingUsers?: boolean;
 }) {
   const supportsEmail =
     !!db.insertVerificationCode &&
@@ -148,6 +155,9 @@ export function createHandlers({
     } else {
       const user = await db.getUserByEmail(profile.email);
       if (user) {
+        if (!addProvidersToExistingUsers) {
+          throw new AuthError('User already exists', 409);
+        }
         userId = user.id;
       } else {
         const user = await db.insertUser({
@@ -272,17 +282,24 @@ export function createHandlers({
       throw new Error('Code expired');
     }
     const user = await db.getUserByEmail(email);
+    let userId: string;
     if (user) {
-      throw new AuthError('User already exists', 409);
+      if (!addProvidersToExistingUsers) {
+        throw new AuthError('User already exists', 409);
+      } else {
+        userId = user.id;
+      }
+    } else {
+      const user = await db.insertUser({
+        fullName: dbCode.name,
+        friendlyName: null,
+        email,
+        imageUrl: null,
+        plaintextPassword: password,
+        emailVerifiedAt: new Date().toISOString(),
+      });
+      userId = user.id;
     }
-    const { id: userId } = await db.insertUser({
-      fullName: dbCode.name,
-      friendlyName: null,
-      email,
-      imageUrl: null,
-      plaintextPassword: password,
-      emailVerifiedAt: new Date().toISOString(),
-    });
     await db.insertAccount({
       userId,
       type: 'email',
