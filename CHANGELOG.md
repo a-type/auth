@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.7
+
+### Patch Changes
+
+- 78fe217: Fix issues with email login
+
 ## 0.4.6
 
 ### Patch Changes
