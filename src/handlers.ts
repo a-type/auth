@@ -284,9 +284,13 @@ export function createHandlers({
     const user = await db.getUserByEmail(email);
     let userId: string;
     if (user) {
-      if (!addProvidersToExistingUsers) {
+      if (!addProvidersToExistingUsers || user.password) {
         throw new AuthError('User already exists', 409);
       } else {
+        await db.updateUser(user.id, {
+          emailVerifiedAt: new Date().toISOString(),
+          plaintextPassword: password,
+        });
         userId = user.id;
       }
     } else {
