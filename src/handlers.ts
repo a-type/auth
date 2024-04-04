@@ -11,6 +11,7 @@ import {
 } from './appState.js';
 import { Session, SessionManager } from './session.js';
 import * as z from 'zod';
+import { Auth } from 'googleapis';
 
 export function createHandlers({
   providers,
@@ -131,7 +132,7 @@ export function createHandlers({
     const url = new URL(req.url);
     const code = url.searchParams.get('code');
     if (!code) {
-      throw new Error('Missing code');
+      throw new AuthError(AuthError.Messages.MissingCode, 400);
     }
 
     const providerName = opts.provider;
@@ -203,17 +204,14 @@ export function createHandlers({
     const email = formData.get('email');
     const name = formData.get('name');
     const returnToRaw = formData.get('returnTo') ?? '';
-    if (!email || !name) {
-      throw new Error('Missing email or name');
+    if (!name || typeof name !== 'string') {
+      throw new AuthError('Invalid name', 400);
     }
-    if (typeof email !== 'string') {
-      throw new Error('Invalid email');
-    }
-    if (typeof name !== 'string') {
-      throw new Error('Invalid name');
+    if (!email || typeof email !== 'string') {
+      throw new AuthError(AuthError.Messages.MissingEmail, 400);
     }
     if (typeof returnToRaw !== 'string') {
-      throw new Error('Invalid returnTo');
+      throw new AuthError('Invalid returnTo', 400);
     }
 
     const returnTo = resolveReturnTo(returnToRaw);
@@ -258,34 +256,37 @@ export function createHandlers({
     const password = formData.get('password');
     const code = formData.get('code');
 
-    if (!code || !email) {
-      throw new Error('Missing code or email');
+    if (!code) {
+      throw new AuthError(AuthError.Messages.MissingCode, 400);
+    }
+    if (!email) {
+      throw new AuthError(AuthError.Messages.MissingEmail, 400);
     }
     if (!password) {
-      throw new Error('Missing password');
+      throw new AuthError(AuthError.Messages.MissingPassword, 400);
     }
     if (typeof email !== 'string') {
-      throw new Error('Invalid email');
+      throw new AuthError(AuthError.Messages.InvalidEmail, 400);
     }
     if (typeof code !== 'string') {
-      throw new Error('Invalid code');
+      throw new AuthError(AuthError.Messages.InvalidCode, 400);
     }
     if (typeof password !== 'string') {
-      throw new Error('Invalid password');
+      throw new AuthError(AuthError.Messages.InvalidPassword, 400);
     }
 
     const dbCode = await db.getVerificationCode?.(email, code);
     if (!dbCode) {
-      throw new Error('Invalid code');
+      throw new AuthError(AuthError.Messages.InvalidCode, 400);
     }
     if (dbCode.expiresAt < Date.now()) {
-      throw new Error('Code expired');
+      throw new AuthError(AuthError.Messages.CodeExpired, 400);
     }
     const user = await db.getUserByEmail(email);
     let userId: string;
     if (user) {
       if (!addProvidersToExistingUsers || user.password) {
-        throw new AuthError('User already exists', 409);
+        throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
       } else {
         await db.updateUser(user.id, {
           emailVerifiedAt: new Date().toISOString(),
@@ -346,7 +347,7 @@ export function createHandlers({
       params.password,
     );
     if (!user) {
-      throw new Error('Invalid email or password');
+      throw new AuthError(AuthError.Messages.InvalidPassword, 401);
     }
     const session = await sessions.createSession(user.id);
     const sessionUpdate = await sessions.updateSession(session, {
@@ -402,18 +403,18 @@ export function createHandlers({
     const code = url.searchParams.get('code');
     const email = url.searchParams.get('email');
     if (!code || !email) {
-      throw new Error('Missing code or email');
+      throw new AuthError('Missing code or email', 400);
     }
     const dbCode = await db.getVerificationCode?.(email, code);
     if (!dbCode) {
-      throw new Error('Invalid code');
+      throw new AuthError('Invalid code', 400);
     }
     if (dbCode.expiresAt < Date.now()) {
-      throw new Error('Code expired');
+      throw new AuthError('Code expired', 400);
     }
     const user = await db.getUserByEmail(email);
     if (!user) {
-      throw new Error('User not found');
+      throw new AuthError('User not found', 404);
     }
     const session = await sessions.createSession(user.id);
     const sessionUpdate = await sessions.updateSession(session, {
