@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.9
+
+### Patch Changes
+
+- 6d3baf0: Add a bunch of formatted errors
+
 ## 0.4.8
 
 ### Patch Changes
