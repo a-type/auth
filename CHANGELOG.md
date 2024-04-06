@@ -1,5 +1,60 @@
 # @a-type/auth
 
+## 0.4.9
+
+### Patch Changes
+
+- 6d3baf0: Add a bunch of formatted errors
+
+## 0.4.8
+
+### Patch Changes
+
+- 719a146: fix upserting password on existing user
+
+## 0.4.7
+
+### Patch Changes
+
+- 78fe217: Fix issues with email login
+
+## 0.4.6
+
+### Patch Changes
+
+- 139d1c0: Support adding login providers to existing users better
+
+## 0.4.5
+
+### Patch Changes
+
+- b2e2a86: Fix email verification completion to accept formdata
+
+## 0.4.4
+
+### Patch Changes
+
+- e4efb4d: More specific support for returnTo and close up some loopholes
+- 15a9ab5: Support arbitrary appState passing during login
+
+## 0.4.3
+
+### Patch Changes
+
+- fb96fac: Support path returnTo value
+
+## 0.4.2
+
+### Patch Changes
+
+- 8662467: Fix returnTo for Oauth flow
+
+## 0.4.1
+
+### Patch Changes
+
+- ada07bf: I give up - use get param for refresh token
+
 ## 0.4.0
 
 ### Minor Changes

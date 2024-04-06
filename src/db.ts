@@ -1,7 +1,17 @@
 export interface AuthDB {
   insertUser(
-    user: Omit<AuthUser, 'id'> & { plaintextPassword: string | null },
+    user: Omit<AuthUser, 'id' | 'password'> & {
+      plaintextPassword: string | null;
+    },
   ): Promise<Pick<AuthUser, 'id'>>;
+  updateUser(
+    userId: string,
+    user: Partial<
+      Omit<AuthUser, 'id' | 'email' | 'password'> & {
+        plaintextPassword: string | null;
+      }
+    >,
+  ): Promise<void>;
   insertAccount(
     account: Omit<AuthAccount, 'id'>,
   ): Promise<Pick<AuthAccount, 'id'>>;
@@ -29,6 +39,8 @@ export interface AuthUser {
   email: string;
   emailVerifiedAt: string | null;
   imageUrl: string | null;
+  /** the hashed password, please. */
+  password: string | null;
 }
 
 export interface AuthAccount {
