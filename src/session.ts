@@ -31,6 +31,8 @@ export class SessionManager {
       secret: string;
       cookieName: string;
       refreshParam?: string;
+      /** format like '7d' */
+      refreshTokenDuration?: string;
       shortNames: ShortNames;
       mode?: 'production' | 'development';
       createSession: (userId: string) => Promise<Session>;
@@ -143,11 +145,17 @@ export class SessionManager {
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
+    const parsed = decodeJwt(jwt);
 
     const authCookie = serialize(this.options.cookieName, jwt, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
+      secure: this.options.mode === 'production',
+      // add a bit of buffer.
+      expires: parsed.exp
+        ? new Date(parsed.exp * 1000 + 300 * 1000)
+        : undefined,
     });
     const headers: Record<string, string> = {
       'Set-Cookie': authCookie,
@@ -157,7 +165,11 @@ export class SessionManager {
     if (sendRefreshToken) {
       const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
       const refreshToken = await refreshTokenBuilder.sign(this.secret);
+      const parsed = decodeJwt(refreshToken);
       searchParams.set(this.refreshParam, refreshToken);
+      if (parsed.exp) {
+        searchParams.set('refreshTokenExpires', `${parsed.exp}`);
+      }
     }
 
     return {
@@ -204,7 +216,7 @@ export class SessionManager {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('7d');
+      .setExpirationTime(this.options.refreshTokenDuration ?? '14d');
 
     if (this.options.issuer) {
       refreshTokenBuilder.setIssuer(this.options.issuer);
