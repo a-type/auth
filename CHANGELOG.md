@@ -1,5 +1,12 @@
 # @a-type/auth
 
+## 0.4.10
+
+### Patch Changes
+
+- e59eefb: Improve refresh token failure cases
+- 303a947: Increase default token timeouts and make them configurable. Expire access token cookie at token expiration time.
+
 ## 0.4.9
 
 ### Patch Changes
