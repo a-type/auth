@@ -114,7 +114,7 @@ describe('Session tools', () => {
     // verify that the refresh token is rejected
     expect(
       sessions.refreshSession(badToken, refreshToken),
-    ).rejects.toThrowError('signature verification failed');
+    ).rejects.toThrowError('Invalid refresh token');
 
     // even a token signed with the right signature whose JTI doesn't
     // match is rejected
