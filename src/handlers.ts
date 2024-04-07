@@ -453,24 +453,41 @@ export function createHandlers({
       throw new AuthError('Invalid session', 401);
     }
 
-    const { headers, searchParams } = await sessions.refreshSession(
-      accessToken,
-      refreshToken,
-    );
+    try {
+      const { headers, searchParams } = await sessions.refreshSession(
+        accessToken,
+        refreshToken,
+      );
 
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        refreshToken: searchParams.get('refreshToken'),
-      }),
-      {
-        status: 200,
-        headers: {
-          ...headers,
-          'content-type': 'application/json',
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          refreshToken: searchParams.get('refreshToken'),
+        }),
+        {
+          status: 200,
+          headers: {
+            ...headers,
+            'content-type': 'application/json',
+          },
         },
-      },
-    );
+      );
+    } catch (err) {
+      if (err instanceof AuthError && err.statusCode === 401) {
+        return new Response(
+          JSON.stringify({
+            ok: false,
+          }),
+          {
+            status: 401,
+            headers: {
+              ...sessions.clearSession().headers,
+              'content-type': 'application/json',
+            },
+          },
+        );
+      }
+    }
   }
 
   return {

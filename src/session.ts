@@ -115,23 +115,33 @@ export class SessionManager {
    * Requires a valid refresh token.
    */
   refreshSession = async (accessToken: string, refreshToken: string) => {
-    const refreshData = await jwtVerify(refreshToken, this.secret, {
-      issuer: this.options.issuer,
-      audience: this.options.audience,
-    });
+    try {
+      const refreshData = await jwtVerify(refreshToken, this.secret, {
+        issuer: this.options.issuer,
+        audience: this.options.audience,
+      });
 
-    // verify the signature of the token
-    await compactVerify(accessToken, this.secret);
+      // verify the signature of the token
+      await compactVerify(accessToken, this.secret);
 
-    const accessData = decodeJwt(accessToken);
+      const accessData = decodeJwt(accessToken);
 
-    if (refreshData.payload.jti !== accessData.jti) {
+      if (refreshData.payload.jti !== accessData.jti) {
+        throw new AuthError('Invalid refresh token', 400);
+      }
+
+      const session = this.readSessionFromPayload(accessData);
+
+      return this.updateSession(session, { sendRefreshToken: true });
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        (err.message.includes('JWTExpired') || err.name === 'JWTExpired')
+      ) {
+        throw new AuthError('Refresh token expired', 401);
+      }
       throw new AuthError('Invalid refresh token', 400);
     }
-
-    const session = this.readSessionFromPayload(accessData);
-
-    return this.updateSession(session, { sendRefreshToken: true });
   };
 
   updateSession = async (
@@ -179,10 +189,13 @@ export class SessionManager {
   };
 
   clearSession = () => {
+    const searchParams = new URLSearchParams();
+    searchParams.set(this.refreshParam, 'clear');
     return {
       headers: {
         'Set-Cookie': `${this.options.cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
       },
+      searchParams,
     };
   };
 
