@@ -474,6 +474,7 @@ export function createHandlers({
         },
       );
     } catch (err) {
+      console.error('Refresh session error', err);
       if (err instanceof AuthError && err.statusCode === 401) {
         return new Response(
           JSON.stringify({
