@@ -463,6 +463,7 @@ export function createHandlers({
         JSON.stringify({
           ok: true,
           refreshToken: searchParams.get('refreshToken'),
+          refreshTokenExpiresAt: searchParams.get('refreshTokenExpiresAt'),
         }),
         {
           status: 200,
@@ -487,6 +488,17 @@ export function createHandlers({
           },
         );
       }
+      return new Response(
+        JSON.stringify({
+          ok: false,
+        }),
+        {
+          status: 400,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }
   }
 
