@@ -31,8 +31,7 @@ export class SessionManager {
       secret: string;
       cookieName: string;
       refreshParam?: string;
-      /** format like '7d' */
-      refreshTokenDuration?: string;
+      refreshTokenDurationMinutes?: number;
       shortNames: ShortNames;
       mode?: 'production' | 'development';
       createSession: (userId: string) => Promise<Session>;
@@ -162,9 +161,15 @@ export class SessionManager {
       sameSite: 'strict',
       path: '/',
       secure: this.options.mode === 'production',
-      // add a bit of buffer.
-      expires: parsed.exp
-        ? new Date(parsed.exp * 1000 + 300 * 1000)
+      // sync access token expiration to refresh token - an expired token
+      // will still be presented to the server, but the server will reject it
+      // as expired. the api can then tell the client the token is expired
+      // and the refresh should be used. once the access token cookie is expired
+      // and removed, it will instead trigger a fully logged out state.
+      expires: sendRefreshToken
+        ? this.getRefreshTokenExpirationTime()
+        : parsed.exp
+        ? new Date(parsed.exp * 1000)
         : undefined,
     });
     const headers: Record<string, string> = {
@@ -175,11 +180,11 @@ export class SessionManager {
     if (sendRefreshToken) {
       const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
       const refreshToken = await refreshTokenBuilder.sign(this.secret);
-      const parsed = decodeJwt(refreshToken);
       searchParams.set(this.refreshParam, refreshToken);
-      if (parsed.exp) {
-        searchParams.set('refreshTokenExpires', `${parsed.exp}`);
-      }
+      searchParams.set(
+        'refreshTokenExpires',
+        this.getRefreshTokenExpirationTime().toISOString(),
+      );
     }
 
     return {
@@ -229,7 +234,7 @@ export class SessionManager {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime(this.options.refreshTokenDuration ?? '14d');
+      .setExpirationTime(this.getRefreshTokenExpirationTime());
 
     if (this.options.issuer) {
       refreshTokenBuilder.setIssuer(this.options.issuer);
@@ -239,6 +244,12 @@ export class SessionManager {
     }
 
     return refreshTokenBuilder;
+  };
+
+  private getRefreshTokenExpirationTime = () => {
+    const msFromNow =
+      (this.options.refreshTokenDurationMinutes ?? 60 * 24 * 14) * 60 * 1000;
+    return new Date(Date.now() + msFromNow);
   };
 
   private getShortName = (key: string) => {
