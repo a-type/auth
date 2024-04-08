@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.12
+
+### Patch Changes
+
+- fd1b834: Return responses on all refresh session code paths
+
 ## 0.4.11
 
 ### Patch Changes
