@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.11
+
+### Patch Changes
+
+- e5b7287: tweak token expiration behavior
+
 ## 0.4.10
 
 ### Patch Changes
