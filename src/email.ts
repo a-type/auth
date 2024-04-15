@@ -114,7 +114,7 @@ export class Email extends EventEmitter {
     return this.transporter.sendMail({
       from: this.user,
       to,
-      subject: 'Reset your password on ${this.appName}',
+      subject: `Reset your password on ${this.appName}`,
       text: `Your password reset code is ${code}. Visit ${url} to reset your password.`,
       html: `
 			<div>
