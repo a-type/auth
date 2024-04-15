@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.4.13
+
+### Patch Changes
+
+- c1e376e: fix email interpolation
+
 ## 0.4.12
 
 ### Patch Changes
