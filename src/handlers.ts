@@ -186,9 +186,7 @@ export function createHandlers({
     }
 
     const session = await sessions.createSession(userId);
-    const sessionUpdate = await sessions.updateSession(session, {
-      sendRefreshToken: true,
-    });
+    const sessionUpdate = await sessions.updateSession(session);
 
     return toRedirect(req, sessionUpdate);
   }
@@ -319,9 +317,7 @@ export function createHandlers({
     });
     await db.consumeVerificationCode?.(email, code);
     const session = await sessions.createSession(userId);
-    const sessionUpdate = await sessions.updateSession(session, {
-      sendRefreshToken: true,
-    });
+    const sessionUpdate = await sessions.updateSession(session);
     return toRedirect(req, sessionUpdate);
   }
 
@@ -350,9 +346,7 @@ export function createHandlers({
       throw new AuthError(AuthError.Messages.InvalidPassword, 401);
     }
     const session = await sessions.createSession(user.id);
-    const sessionUpdate = await sessions.updateSession(session, {
-      sendRefreshToken: true,
-    });
+    const sessionUpdate = await sessions.updateSession(session);
     return toRedirect(req, sessionUpdate, {
       returnTo: params.returnTo,
       appState: params.appState,
@@ -417,9 +411,7 @@ export function createHandlers({
       throw new AuthError('User not found', 404);
     }
     const session = await sessions.createSession(user.id);
-    const sessionUpdate = await sessions.updateSession(session, {
-      sendRefreshToken: true,
-    });
+    const sessionUpdate = await sessions.updateSession(session);
     return toRedirect(req, sessionUpdate);
   }
 

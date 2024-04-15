@@ -131,7 +131,7 @@ export class SessionManager {
 
       const session = this.readSessionFromPayload(accessData);
 
-      return this.updateSession(session, { sendRefreshToken: true });
+      return this.updateSession(session);
     } catch (err) {
       if (
         err instanceof Error &&
@@ -143,14 +143,7 @@ export class SessionManager {
     }
   };
 
-  updateSession = async (
-    session: Session,
-    {
-      sendRefreshToken,
-    }: {
-      sendRefreshToken?: boolean;
-    } = { sendRefreshToken: false },
-  ) => {
+  updateSession = async (session: Session) => {
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
@@ -166,26 +159,20 @@ export class SessionManager {
       // as expired. the api can then tell the client the token is expired
       // and the refresh should be used. once the access token cookie is expired
       // and removed, it will instead trigger a fully logged out state.
-      expires: sendRefreshToken
-        ? this.getRefreshTokenExpirationTime()
-        : parsed.exp
-        ? new Date(parsed.exp * 1000)
-        : undefined,
+      expires: this.getRefreshTokenExpirationTime(),
     });
     const headers: Record<string, string> = {
       'Set-Cookie': authCookie,
     };
     const searchParams = new URLSearchParams();
 
-    if (sendRefreshToken) {
-      const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
-      const refreshToken = await refreshTokenBuilder.sign(this.secret);
-      searchParams.set(this.refreshParam, refreshToken);
-      searchParams.set(
-        'refreshTokenExpires',
-        this.getRefreshTokenExpirationTime().toISOString(),
-      );
-    }
+    const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
+    const refreshToken = await refreshTokenBuilder.sign(this.secret);
+    searchParams.set(this.refreshParam, refreshToken);
+    searchParams.set(
+      'refreshTokenExpires',
+      this.getRefreshTokenExpirationTime().toISOString(),
+    );
 
     return {
       headers,
