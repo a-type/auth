@@ -21,12 +21,9 @@ describe('Session tools', () => {
   });
 
   it('should refresh an expired JWT', async () => {
-    const { headers, searchParams } = await sessions.updateSession(
-      { userId: '123' },
-      {
-        sendRefreshToken: true,
-      },
-    );
+    const { headers, searchParams } = await sessions.updateSession({
+      userId: '123',
+    });
 
     const cookies = parse(headers['Set-Cookie']);
     const authToken = cookies['session'];
@@ -79,12 +76,9 @@ describe('Session tools', () => {
   });
 
   it('should not allow refreshing any old token', async () => {
-    const { headers, searchParams } = await sessions.updateSession(
-      { userId: '123' },
-      {
-        sendRefreshToken: true,
-      },
-    );
+    const { headers, searchParams } = await sessions.updateSession({
+      userId: '123',
+    });
 
     // the JWT is in the cookie, the refresh token is on X-Refresh-Token
     const cookies = parse(headers['Set-Cookie']);
