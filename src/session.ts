@@ -40,6 +40,7 @@ export class SessionManager {
       expiration?: string;
       /** Specify a client domain */
       clientDomain?: string;
+      sameSite?: 'strict' | 'lax' | 'none';
     },
   ) {
     this.secret = new TextEncoder().encode(options.secret);
@@ -147,11 +148,10 @@ export class SessionManager {
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
-    const parsed = decodeJwt(jwt);
 
     const authCookie = serialize(this.options.cookieName, jwt, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: this.options.sameSite ?? 'strict',
       path: '/',
       secure: this.options.mode === 'production',
       // sync access token expiration to refresh token - an expired token
@@ -183,9 +183,16 @@ export class SessionManager {
   clearSession = () => {
     const searchParams = new URLSearchParams();
     searchParams.set(this.refreshParam, 'clear');
+    const cookie = serialize(this.options.cookieName, '', {
+      httpOnly: true,
+      sameSite: this.options.sameSite ?? 'strict',
+      path: '/',
+      secure: this.options.mode === 'production',
+      expires: new Date(0),
+    });
     return {
       headers: {
-        'Set-Cookie': `${this.options.cookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
+        'Set-Cookie': cookie,
       },
       searchParams,
     };
