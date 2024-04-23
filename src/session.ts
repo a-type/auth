@@ -54,6 +54,10 @@ export class SessionManager {
     }
   }
 
+  public get sameSite() {
+    return this.options.sameSite ?? 'lax';
+  }
+
   createSession = async (userId: string): Promise<Session> => {
     return this.options.createSession(userId);
   };
@@ -151,7 +155,7 @@ export class SessionManager {
 
     const authCookie = serialize(this.options.cookieName, jwt, {
       httpOnly: true,
-      sameSite: this.options.sameSite ?? 'strict',
+      sameSite: this.sameSite,
       path: '/',
       secure: this.options.mode === 'production',
       // sync access token expiration to refresh token - an expired token
@@ -185,7 +189,7 @@ export class SessionManager {
     searchParams.set(this.refreshParam, 'clear');
     const cookie = serialize(this.options.cookieName, '', {
       httpOnly: true,
-      sameSite: this.options.sameSite ?? 'strict',
+      sameSite: this.sameSite,
       path: '/',
       secure: this.options.mode === 'production',
       expires: new Date(0),

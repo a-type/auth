@@ -119,8 +119,12 @@ export function createHandlers({
       },
     });
 
-    setReturnTo(res, url.searchParams.get('returnTo') ?? defaultReturnTo);
-    setAppState(res, url.searchParams.get('appState'));
+    setReturnTo(
+      res,
+      url.searchParams.get('returnTo') ?? defaultReturnTo,
+      sessions.sameSite,
+    );
+    setAppState(res, url.searchParams.get('appState'), sessions.sameSite);
 
     return res;
   }

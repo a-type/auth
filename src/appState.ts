@@ -13,13 +13,17 @@ export function getReturnTo(req: Request) {
   return url.searchParams.get('returnTo') ?? undefined;
 }
 
-export function setReturnTo(res: Response, returnTo: string) {
+export function setReturnTo(
+  res: Response,
+  returnTo: string,
+  sameSite: 'strict' | 'lax' | 'none' = 'lax',
+) {
   res.headers.append(
     'Set-Cookie',
     cookie.serialize(RETURN_TO_COOKIE, returnTo, {
       path: '/',
       httpOnly: true,
-      sameSite: 'none',
+      sameSite,
       expires: new Date(Date.now() + 1000 * 30),
     }),
   );
@@ -41,6 +45,7 @@ export function getAppState(req: Request): string | undefined {
 export function setAppState(
   res: Response,
   appState: string | undefined | null,
+  sameSite: 'strict' | 'lax' | 'none' = 'lax',
 ) {
   if (appState) {
     res.headers.append(
@@ -48,7 +53,7 @@ export function setAppState(
       cookie.serialize(APP_STATE_COOKIE, appState, {
         path: '/',
         httpOnly: true,
-        sameSite: 'none',
+        sameSite,
         expires: new Date(Date.now() + 1000 * 30),
       }),
     );
