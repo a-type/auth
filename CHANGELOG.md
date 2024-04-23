@@ -1,5 +1,12 @@
 # @a-type/auth
 
+## 0.4.14
+
+### Patch Changes
+
+- b57091d: remove option to not send refresh token on session update
+- 718cf62: allow setting samesite policy
+
 ## 0.4.13
 
 ### Patch Changes
