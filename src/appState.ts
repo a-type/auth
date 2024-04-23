@@ -19,7 +19,7 @@ export function setReturnTo(res: Response, returnTo: string) {
     cookie.serialize(RETURN_TO_COOKIE, returnTo, {
       path: '/',
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       expires: new Date(Date.now() + 1000 * 30),
     }),
   );
@@ -48,7 +48,7 @@ export function setAppState(
       cookie.serialize(APP_STATE_COOKIE, appState, {
         path: '/',
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         expires: new Date(Date.now() + 1000 * 30),
       }),
     );
