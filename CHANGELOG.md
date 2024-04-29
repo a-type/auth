@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.5.1
+
+### Patch Changes
+
+- 901cab1: fix multiple cookie setting
+
 ## 0.5.0
 
 ### Minor Changes
