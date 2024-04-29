@@ -14,6 +14,8 @@ describe('Session tools', () => {
     audience: 'example.com',
     expiration: '1h',
     issuer: 'example.com',
+    refreshPath: '/refresh',
+    refreshTokenCookieName: 'refreshToken',
   });
 
   beforeAll(() => {
@@ -21,13 +23,16 @@ describe('Session tools', () => {
   });
 
   it('should refresh an expired JWT', async () => {
-    const { headers, searchParams } = await sessions.updateSession({
+    const { headers } = await sessions.updateSession({
       userId: '123',
     });
 
     const cookies = parse(headers['Set-Cookie']);
     const authToken = cookies['session'];
-    const refreshToken = searchParams.get('refreshToken')!;
+    const refreshToken = cookies['refreshToken'];
+
+    // verify refresh token cookie is scoped to the right path
+    expect(headers['Set-Cookie']).toMatch(/Path=\/refresh/);
 
     // verify that the token is accepted
     let req = {
@@ -53,12 +58,14 @@ describe('Session tools', () => {
     expect(sessions.getSession(req)).rejects.toThrowError('Session expired');
 
     // verify that the refresh token is accepted
-    const { headers: newSessionHeaders, searchParams: newSessionSearchParams } =
-      await sessions.refreshSession(authToken, refreshToken);
+    const { headers: newSessionHeaders } = await sessions.refreshSession(
+      authToken,
+      refreshToken,
+    );
 
     const newCookies = parse(newSessionHeaders['Set-Cookie']);
     const newAuthToken = newCookies['session'];
-    const newRefreshToken = newSessionSearchParams.get('refreshToken')!;
+    const newRefreshToken = newCookies['refreshToken'];
 
     // verify that the new token is accepted
     req = {
@@ -76,7 +83,7 @@ describe('Session tools', () => {
   });
 
   it('should not allow refreshing any old token', async () => {
-    const { headers, searchParams } = await sessions.updateSession({
+    const { headers } = await sessions.updateSession({
       userId: '123',
     });
 
@@ -94,7 +101,7 @@ describe('Session tools', () => {
       },
     );
     const jti = verifiedAuth.payload.jti!;
-    const refreshToken = searchParams.get('refreshToken')!;
+    const refreshToken = cookies['refreshToken'];
 
     // sign a JWT with some other signature
     const badToken = await new SignJWT({})
@@ -124,12 +131,4 @@ describe('Session tools', () => {
       sessions.refreshSession(newToken, refreshToken),
     ).rejects.toThrowError('Invalid refresh token');
   });
-
-  // does this need to happen? do I need to keep
-  // extending/reupping the session? or can I just rely on regular
-  // refresh token usage to keep sessions alive?
-  it.todo(
-    'can refresh a session that has been updated since original refresh token was issued',
-    async () => {},
-  );
 });

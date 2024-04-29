@@ -30,8 +30,15 @@ export class SessionManager {
     private options: {
       secret: string;
       cookieName: string;
-      refreshParam?: string;
       refreshTokenDurationMinutes?: number;
+      /**
+       * The HTTP request path the client will make a request to
+       * when refreshing their session. The refresh token cookie
+       * is limited to this path to prevent sending it in every
+       * request.
+       */
+      refreshPath: string;
+      refreshTokenCookieName: string;
       shortNames: ShortNames;
       mode?: 'production' | 'development';
       createSession: (userId: string) => Promise<Session>;
@@ -73,7 +80,13 @@ export class SessionManager {
   };
 
   getRefreshToken = (req: { headers: Headers }) => {
-    return req.headers.get('x-refresh-token');
+    const cookieHeader = req.headers.get('cookie') ?? '';
+    const cookies = parse(cookieHeader);
+    const cookieValue = cookies[this.options.refreshTokenCookieName];
+    if (!cookieValue) {
+      return null;
+    }
+    return cookieValue;
   };
 
   getSession = async (req: { headers: Headers }) => {
@@ -165,28 +178,32 @@ export class SessionManager {
       // and removed, it will instead trigger a fully logged out state.
       expires: this.getRefreshTokenExpirationTime(),
     });
-    const headers: Record<string, string> = {
-      'Set-Cookie': authCookie,
-    };
-    const searchParams = new URLSearchParams();
 
     const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
     const refreshToken = await refreshTokenBuilder.sign(this.secret);
-    searchParams.set(this.refreshParam, refreshToken);
-    searchParams.set(
-      'refreshTokenExpires',
-      this.getRefreshTokenExpirationTime().toISOString(),
+    const refreshCookie = serialize(
+      this.options.refreshTokenCookieName,
+      refreshToken,
+      {
+        httpOnly: true,
+        sameSite: this.sameSite,
+        path: this.options.refreshPath,
+        secure: this.options.mode === 'production',
+        expires: this.getRefreshTokenExpirationTime(),
+      },
     );
+
+    const headers: Record<string, string> = {
+      'Set-Cookie': [authCookie, refreshCookie].join('; ') + ';',
+    };
 
     return {
       headers,
-      searchParams,
     };
   };
 
   clearSession = () => {
     const searchParams = new URLSearchParams();
-    searchParams.set(this.refreshParam, 'clear');
     const cookie = serialize(this.options.cookieName, '', {
       httpOnly: true,
       sameSite: this.sameSite,
@@ -194,9 +211,16 @@ export class SessionManager {
       secure: this.options.mode === 'production',
       expires: new Date(0),
     });
+    const refreshCookie = serialize(this.options.refreshTokenCookieName, '', {
+      httpOnly: true,
+      sameSite: this.sameSite,
+      path: this.options.refreshPath,
+      secure: this.options.mode === 'production',
+      expires: new Date(0),
+    });
     return {
       headers: {
-        'Set-Cookie': cookie,
+        'Set-Cookie': [cookie, refreshCookie].join('; ') + ';',
       },
       searchParams,
     };
@@ -262,8 +286,4 @@ export class SessionManager {
       Object.entries(jwt).map(([key, value]) => [this.getLongName(key), value]),
     ) as any;
   };
-
-  private get refreshParam() {
-    return this.options.refreshParam ?? `refreshToken`;
-  }
 }

@@ -450,7 +450,7 @@ export function createHandlers({
     }
 
     try {
-      const { headers, searchParams } = await sessions.refreshSession(
+      const { headers } = await sessions.refreshSession(
         accessToken,
         refreshToken,
       );
@@ -458,8 +458,6 @@ export function createHandlers({
       return new Response(
         JSON.stringify({
           ok: true,
-          refreshToken: searchParams.get('refreshToken'),
-          refreshTokenExpiresAt: searchParams.get('refreshTokenExpiresAt'),
         }),
         {
           status: 200,
