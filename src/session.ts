@@ -161,7 +161,11 @@ export class SessionManager {
     }
   };
 
-  updateSession = async (session: Session) => {
+  updateSession = async (
+    session: Session,
+  ): Promise<{ headers: HeadersInit }> => {
+    const headers = new Headers();
+
     const jti = randomUUID();
     const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
     const jwt = await accessTokenBuilder.sign(this.secret);
@@ -178,6 +182,7 @@ export class SessionManager {
       // and removed, it will instead trigger a fully logged out state.
       expires: this.getRefreshTokenExpirationTime(),
     });
+    headers.append('Set-Cookie', authCookie);
 
     const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
     const refreshToken = await refreshTokenBuilder.sign(this.secret);
@@ -192,18 +197,15 @@ export class SessionManager {
         expires: this.getRefreshTokenExpirationTime(),
       },
     );
-
-    const headers: Record<string, string> = {
-      'Set-Cookie': [authCookie, refreshCookie].join('; ') + ';',
-    };
+    headers.append('Set-Cookie', refreshCookie);
 
     return {
       headers,
     };
   };
 
-  clearSession = () => {
-    const searchParams = new URLSearchParams();
+  clearSession = (): { headers: HeadersInit } => {
+    const headers = new Headers();
     const cookie = serialize(this.options.cookieName, '', {
       httpOnly: true,
       sameSite: this.sameSite,
@@ -211,6 +213,7 @@ export class SessionManager {
       secure: this.options.mode === 'production',
       expires: new Date(0),
     });
+    headers.append('Set-Cookie', cookie);
     const refreshCookie = serialize(this.options.refreshTokenCookieName, '', {
       httpOnly: true,
       sameSite: this.sameSite,
@@ -218,11 +221,9 @@ export class SessionManager {
       secure: this.options.mode === 'production',
       expires: new Date(0),
     });
+    headers.append('Set-Cookie', refreshCookie);
     return {
-      headers: {
-        'Set-Cookie': [cookie, refreshCookie].join('; ') + ';',
-      },
-      searchParams,
+      headers,
     };
   };
 

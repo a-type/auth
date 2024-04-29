@@ -70,7 +70,7 @@ export function createHandlers({
   function toRedirect(
     req: Request,
     session: {
-      headers: Record<string, string>;
+      headers: HeadersInit;
       searchParams?: URLSearchParams;
     },
     overrides: {
