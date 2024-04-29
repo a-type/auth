@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.5.2
+
+### Patch Changes
+
+- 9f1baa1: Maybe fix how headers are set on responses
+
 ## 0.5.1
 
 ### Patch Changes
