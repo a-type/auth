@@ -1,5 +1,15 @@
 # @a-type/auth
 
+## 0.5.0
+
+### Minor Changes
+
+- 938aad4: Change how refresh token is stored and sent
+
+### Patch Changes
+
+- 0e12f7c: Make auxiliary cookies follow session samesite policy
+
 ## 0.4.14
 
 ### Patch Changes
