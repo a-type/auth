@@ -161,9 +161,7 @@ export class SessionManager {
     }
   };
 
-  updateSession = async (
-    session: Session,
-  ): Promise<{ headers: HeadersInit }> => {
+  updateSession = async (session: Session): Promise<{ headers: Headers }> => {
     const headers = new Headers();
 
     const jti = randomUUID();
@@ -204,7 +202,7 @@ export class SessionManager {
     };
   };
 
-  clearSession = (): { headers: HeadersInit } => {
+  clearSession = (): { headers: Headers } => {
     const headers = new Headers();
     const cookie = serialize(this.options.cookieName, '', {
       httpOnly: true,

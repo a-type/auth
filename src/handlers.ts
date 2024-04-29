@@ -70,7 +70,7 @@ export function createHandlers({
   function toRedirect(
     req: Request,
     session: {
-      headers: HeadersInit;
+      headers: Headers;
       searchParams?: URLSearchParams;
     },
     overrides: {
@@ -94,12 +94,11 @@ export function createHandlers({
       url.searchParams.append('appState', appState);
     }
 
+    session.headers.set('location', url.toString());
+
     return new Response(null, {
       status: 302,
-      headers: {
-        location: url.toString(),
-        ...session.headers,
-      },
+      headers: session.headers,
     });
   }
 
@@ -454,6 +453,7 @@ export function createHandlers({
         accessToken,
         refreshToken,
       );
+      headers.append('content-type', 'application/json');
 
       return new Response(
         JSON.stringify({
@@ -461,25 +461,22 @@ export function createHandlers({
         }),
         {
           status: 200,
-          headers: {
-            ...headers,
-            'content-type': 'application/json',
-          },
+          headers,
         },
       );
     } catch (err) {
       console.error('Refresh session error', err);
       if (err instanceof AuthError && err.statusCode === 401) {
+        const { headers } = sessions.clearSession();
+        headers.append('content-type', 'application/json');
+
         return new Response(
           JSON.stringify({
             ok: false,
           }),
           {
             status: 401,
-            headers: {
-              ...sessions.clearSession().headers,
-              'content-type': 'application/json',
-            },
+            headers,
           },
         );
       }
