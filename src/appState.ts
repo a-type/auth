@@ -25,6 +25,7 @@ export function setReturnTo(
       httpOnly: true,
       sameSite,
       expires: new Date(Date.now() + 1000 * 30),
+      secure: true,
     }),
   );
 }
@@ -55,6 +56,7 @@ export function setAppState(
         httpOnly: true,
         sameSite,
         expires: new Date(Date.now() + 1000 * 30),
+        secure: true,
       }),
     );
   }
