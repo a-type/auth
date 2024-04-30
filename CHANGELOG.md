@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.5.3
+
+### Patch Changes
+
+- 7562cf0: add secure to auxiliary cookies
+
 ## 0.5.2
 
 ### Patch Changes
