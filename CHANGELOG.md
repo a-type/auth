@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.5.4
+
+### Patch Changes
+
+- f1a8aa3: add partitioned cookie behavior
+
 ## 0.5.3
 
 ### Patch Changes
