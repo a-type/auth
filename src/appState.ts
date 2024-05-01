@@ -26,6 +26,7 @@ export function setReturnTo(
       sameSite,
       expires: new Date(Date.now() + 1000 * 30),
       secure: true,
+      partitioned: sameSite === 'none',
     }),
   );
 }
@@ -57,6 +58,7 @@ export function setAppState(
         sameSite,
         expires: new Date(Date.now() + 1000 * 30),
         secure: true,
+        partitioned: sameSite === 'none',
       }),
     );
   }

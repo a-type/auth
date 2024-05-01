@@ -47,7 +47,10 @@ export class SessionManager {
       expiration?: string;
       /** Specify a client domain */
       clientDomain?: string;
-      sameSite?: 'strict' | 'lax' | 'none';
+      cookieOptions?: {
+        partitioned?: boolean;
+        sameSite?: 'strict' | 'lax' | 'none';
+      };
     },
   ) {
     this.secret = new TextEncoder().encode(options.secret);
@@ -62,7 +65,10 @@ export class SessionManager {
   }
 
   public get sameSite() {
-    return this.options.sameSite ?? 'lax';
+    return this.options.cookieOptions?.sameSite ?? 'lax';
+  }
+  get partitioned() {
+    return this.options.cookieOptions?.partitioned ?? this.sameSite === 'none';
   }
 
   createSession = async (userId: string): Promise<Session> => {
@@ -193,6 +199,7 @@ export class SessionManager {
         path: this.options.refreshPath,
         secure: this.options.mode === 'production',
         expires: this.getRefreshTokenExpirationTime(),
+        partitioned: this.partitioned,
       },
     );
     headers.append('Set-Cookie', refreshCookie);
@@ -218,6 +225,7 @@ export class SessionManager {
       path: this.options.refreshPath,
       secure: this.options.mode === 'production',
       expires: new Date(0),
+      partitioned: this.partitioned,
     });
     headers.append('Set-Cookie', refreshCookie);
     return {
