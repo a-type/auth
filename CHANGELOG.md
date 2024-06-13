@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.0
+
+### Minor Changes
+
+- 2bdbccf: fix (actually implement lol) password reset (oops)
+
 ## 0.5.4
 
 ### Patch Changes
