@@ -1,3 +1,4 @@
+import { clsx } from '@a-type/ui';
 import {
   FormikForm,
   SubmitButton,
@@ -10,6 +11,7 @@ export interface EmailSignupFormProps {
   actionText?: string;
   disabled?: boolean;
   endpoint: string;
+  className?: string;
 }
 
 export function EmailSignupForm({
@@ -17,12 +19,14 @@ export function EmailSignupForm({
   actionText = 'Start signup',
   disabled,
   endpoint,
+  className,
+  ...rest
 }: EmailSignupFormProps) {
   const [success, setSuccess] = useState(false);
 
   if (success) {
     return (
-      <div className="flex flex-col gap-2">
+      <div className={clsx('flex flex-col gap-2', className)} {...rest}>
         <p className="text-lg">Check your email for a verification code.</p>
       </div>
     );
@@ -53,7 +57,8 @@ export function EmailSignupForm({
           console.error(e);
         }
       }}
-      className="flex flex-col gap-2"
+      className={clsx('flex flex-col gap-2', className)}
+      {...rest}
     >
       <TextField name="name" label="Name" autoComplete="given-name" required />
       <TextField

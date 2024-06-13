@@ -1,3 +1,4 @@
+import { clsx } from '@a-type/ui';
 import { Button } from '@a-type/ui/components/button';
 import {
   Dialog,
@@ -14,18 +15,22 @@ export interface EmailSigninFormProps {
   returnTo?: string;
   endpoint: string;
   resetPasswordEndpoint: string;
+  className?: string;
 }
 
 export function EmailSigninForm({
   returnTo = '',
   endpoint,
   resetPasswordEndpoint,
+  className,
+  ...rest
 }: EmailSigninFormProps) {
   return (
     <form
-      className="flex flex-col gap-2"
+      className={clsx('flex flex-col gap-2', className)}
       method="post"
       action={`${endpoint}?returnTo=${returnTo}`}
+      {...rest}
     >
       <label htmlFor="email" className="font-bold">
         Email
