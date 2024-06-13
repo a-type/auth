@@ -1,0 +1,20 @@
+// @unocss-include
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { PageRoot } from './PageRoot.js';
+import { PageContent } from './PageContent.js';
+import { PageNav } from './PageNav.js';
+import { NavBarItem, NavBarItemIcon, NavBarItemIconWrapper, NavBarItemPip, NavBarItemText, NavBarRoot, } from '../navBar.js';
+import { Icon } from '../icon.js';
+const meta = {
+    title: 'layouts',
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+        layout: 'fullscreen',
+    },
+};
+export default meta;
+export const Default = {
+    render: () => (_jsxs(PageRoot, Object.assign({ className: "w-full h-full" }, { children: [_jsx(PageContent, { children: _jsxs("div", Object.assign({ className: "text-center" }, { children: [_jsx("h1", Object.assign({ className: "text-3xl font-bold" }, { children: "Hello, World!" })), _jsx("p", Object.assign({ className: "text-lg" }, { children: "This is a simple page layout." }))] })) }), _jsx(PageNav, { children: _jsxs(NavBarRoot, { children: [_jsxs(NavBarItem, { children: [_jsx(NavBarItemIconWrapper, { children: _jsx(NavBarItemIcon, { name: "cart" }) }), _jsx(NavBarItemText, { children: "Item 1 long" })] }), _jsxs(NavBarItem, Object.assign({ active: true }, { children: [_jsx(NavBarItemIconWrapper, { children: _jsx(NavBarItemIcon, Object.assign({ asChild: true }, { children: _jsx(Icon, { name: "book" }) })) }), _jsx(NavBarItemText, { children: "Item 2" }), _jsx(NavBarItemPip, {})] }))] }) })] }))),
+};
+//# sourceMappingURL=layouts.stories.js.map

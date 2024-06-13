@@ -1,0 +1,14 @@
+/// <reference types="react" resolution-mode="require"/>
+import * as Tabs from '@radix-ui/react-tabs';
+export declare const TabsRoot: import("react").FunctionComponent<Omit<Tabs.TabsProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const TabsList: import("react").FunctionComponent<Omit<Tabs.TabsListProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const TabsTrigger: import("react").FunctionComponent<Omit<Tabs.TabsTriggerProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
+    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
+}>;
+export declare const TabsContent: import("react").FunctionComponent<Omit<Tabs.TabsContentProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;

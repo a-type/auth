@@ -1,0 +1,57 @@
+// @unocss-include
+"use strict";
+'use client';
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CollapsibleSimple = exports.CollapsibleTrigger = exports.CollapsibleContent = exports.CollapsibleRoot = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
+const withClassName_js_1 = require("../../hooks/withClassName.js");
+const CollapsiblePrimitive = __importStar(require("@radix-ui/react-collapsible"));
+exports.CollapsibleRoot = CollapsiblePrimitive.Root;
+const CollapsibleContentBase = (0, withClassName_js_1.withClassName)(CollapsiblePrimitive.Content, 'overflow-hidden', 'layer-components:[&[data-state=open]]:animate-radix-collapsible-open-vertical layer-components:[&[data-state=open]]:animate-duration-300 layer-components:[&[data-state=open]]:animate-ease-springy layer-components:[&[data-state=closed]]:animate-radix-collapsible-close-vertical layer-components:[&[data-state=closed]]:animate-duration-300 layer-components:[&[data-state=closed]]:animate-ease-springy', 'layer-variants:[&[data-horizontal][data-state=open]]:animate-radix-collapsible-open-horizontal layer-variants:[&[data-horizontal][data-state=open]]:animate-duration-300 layer-variants:[&[data-horizontal][data-state=open]]:animate-ease-springy layer-variants:[&[data-horizontal][data-state=closed]]:animate-radix-collapsible-close-horizontal layer-variants:[&[data-horizontal][data-state=closed]]:animate-duration-300 layer-variants:[&[data-horizontal][data-state=closed]]:animate-ease-springy', 'layer-variants:[&[data-both][data-state=open]]:animate-radix-collapsible-open-both layer-variants:[&[data-both][data-state=open]]:animate-duration-300 layer-variants:[&[data-both][data-state=open]]:animate-ease-springy layer-variants:[&[data-both][data-state=closed]]:animate-radix-collapsible-close-both layer-variants:[&[data-both][data-state=closed]]:animate-duration-300 layer-variants:[&[data-both][data-state=closed]]:animate-ease-springy');
+// specifically removing className... it's causing problems?
+exports.CollapsibleContent = (0, react_1.forwardRef)(function CollapsibleContent(_a, ref) {
+    var { horizontal, both } = _a, props = __rest(_a, ["horizontal", "both"]);
+    return ((0, jsx_runtime_1.jsx)(CollapsibleContentBase, Object.assign({ "data-horizontal": horizontal, "data-both": both }, props, { ref: ref })));
+});
+exports.CollapsibleTrigger = CollapsiblePrimitive.Trigger;
+const CollapsibleSimple = (_a) => {
+    var { horizontal, both, children } = _a, props = __rest(_a, ["horizontal", "both", "children"]);
+    return ((0, jsx_runtime_1.jsx)(exports.CollapsibleRoot, Object.assign({}, props, { children: (0, jsx_runtime_1.jsx)(exports.CollapsibleContent, Object.assign({ horizontal: horizontal, both: both }, { children: children })) })));
+};
+exports.CollapsibleSimple = CollapsibleSimple;
+//# sourceMappingURL=Collapsible.js.map

@@ -1,0 +1,5 @@
+import { ReactNode } from 'react';
+export declare const PageRoot: import("react").ForwardRefExoticComponent<{
+    children?: ReactNode;
+    className?: string | undefined;
+} & import("react").RefAttributes<HTMLDivElement>>;

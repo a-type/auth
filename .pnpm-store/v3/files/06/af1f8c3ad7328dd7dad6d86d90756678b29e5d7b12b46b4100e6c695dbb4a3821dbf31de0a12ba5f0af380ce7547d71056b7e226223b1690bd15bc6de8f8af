@@ -1,0 +1,33 @@
+import { RefObject } from 'react';
+interface ResizeObserverEntry {
+    target: Element;
+}
+type ResizeObserverCallback = (entries: ResizeObserverEntry[]) => void;
+export declare class ResizeObserver {
+    constructor(callback: ResizeObserverCallback);
+    observe(target: Element): void;
+    unobserve(target: Element): void;
+    disconnect(): void;
+}
+export declare function useSize<E extends HTMLElement>(callback: (payload: {
+    width: number;
+    height: number;
+}) => void): RefObject<E>;
+export declare function useSizeCssVars<E extends HTMLElement>(debounceMs?: number, applyToRef?: RefObject<HTMLElement>, propertyNames?: {
+    width: string;
+    height: string;
+}): RefObject<E>;
+export declare function useBounds<E extends HTMLElement>(callback: (payload: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+}) => void): RefObject<E>;
+export declare function useBoundsCssVars<E extends HTMLElement>(debounceMs?: number, applyToRef?: RefObject<HTMLElement>, propertyNames?: {
+    left: string;
+    top: string;
+    width: string;
+    height: string;
+    ready: string;
+}): RefObject<E>;
+export {};

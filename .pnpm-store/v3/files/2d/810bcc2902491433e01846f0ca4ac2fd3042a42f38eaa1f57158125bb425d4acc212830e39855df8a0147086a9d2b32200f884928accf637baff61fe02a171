@@ -1,0 +1,38 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useCallback, useState } from 'react';
+import { Dialog, DialogActions, DialogClose, DialogContent, DialogTitle, DialogTrigger, } from '../dialog.js';
+import { P } from '../typography.js';
+import { Button } from './Button.js';
+export function ConfirmedButton(_a) {
+    var { confirmText, confirmTitle = 'Are you sure?', confirmAction = 'OK', cancelAction = 'Nevermind', confirmColor = 'primary', onConfirm, skip } = _a, rest = __rest(_a, ["confirmText", "confirmTitle", "confirmAction", "cancelAction", "confirmColor", "onConfirm", "skip"]);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const confirm = useCallback(async () => {
+        setLoading(true);
+        try {
+            await onConfirm();
+            setOpen(false);
+        }
+        finally {
+            setLoading(false);
+        }
+    }, [onConfirm]);
+    if (skip) {
+        return _jsx(Button, Object.assign({}, rest));
+    }
+    return (_jsxs(Dialog, Object.assign({ open: open, onOpenChange: setOpen }, { children: [_jsx(DialogTrigger, Object.assign({ asChild: true }, { children: _jsx(Button, Object.assign({}, rest)) })), _jsxs(DialogContent, { children: [_jsx(DialogTitle, { children: confirmTitle }), _jsx(P, { children: confirmText }), _jsxs(DialogActions, { children: [_jsx(DialogClose, Object.assign({ asChild: true }, { children: _jsx(Button, { children: cancelAction }) })), _jsx(Button, Object.assign({ loading: loading, onClick: confirm, color: confirmColor }, { children: confirmAction }))] })] })] })));
+}
+//# sourceMappingURL=ConfirmedButton.js.map

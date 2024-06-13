@@ -1,0 +1,7 @@
+import { HTMLAttributes } from 'react';
+export interface SpinnerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+    size?: number;
+    thickness?: number;
+}
+export declare const Spinner: import("react").ForwardRefExoticComponent<SpinnerProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare const FullScreenSpinner: import("react").ForwardRefExoticComponent<SpinnerProps & import("react").RefAttributes<HTMLDivElement>>;

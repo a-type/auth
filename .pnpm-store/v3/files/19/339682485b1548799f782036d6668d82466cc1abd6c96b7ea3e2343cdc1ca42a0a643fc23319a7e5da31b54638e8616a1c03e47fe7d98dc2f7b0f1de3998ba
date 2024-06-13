@@ -1,0 +1,51 @@
+// @unocss-include
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { fractionToText } from '@a-type/utils';
+import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
+import classNames from 'clsx';
+import { Button } from '../button.js';
+export function NumberStepper(_a) {
+    var _b;
+    var { value, onChange, highlightChange, steps, increment: incrementAmount = 1, renderValue = fractionToText, className, disabled } = _a, rest = __rest(_a, ["value", "onChange", "highlightChange", "steps", "increment", "renderValue", "className", "disabled"]);
+    const index = (_b = steps === null || steps === void 0 ? void 0 : steps.indexOf(value)) !== null && _b !== void 0 ? _b : 0;
+    const increment = () => {
+        if (steps) {
+            if (index === steps.length - 1) {
+                return;
+            }
+            onChange(steps[index + 1]);
+        }
+        else {
+            onChange(value + incrementAmount);
+        }
+    };
+    const decrement = () => {
+        if (steps) {
+            if (index === 0) {
+                return;
+            }
+            onChange(steps[index - 1]);
+        }
+        else {
+            onChange(value - incrementAmount);
+        }
+    };
+    const canIncrement = !disabled && (steps ? index < steps.length - 1 : true);
+    const canDecrement = !disabled && (steps ? index > 0 : true);
+    return (_jsxs("div", Object.assign({ className: classNames('layer-components:flex layer-components:items-center layer-components:border-default layer-components:rounded-full layer-components:overflow-hidden layer-components:w-min-content layer-components:flex-shrink-0 layer-components:bg-white layer-components:shadow-sm', disabled &&
+            'layer-variants:border-gray-dark-blend layer-variants:bg-transparent layer-variants:shadow-none', {
+            'layer-variants:bg-accent-wash layer-variants:color-black': !!highlightChange && value !== 1,
+        }, className) }, rest, { children: [_jsx(Button, Object.assign({ color: "ghost", onClick: decrement, disabled: !canDecrement }, { children: _jsx(MinusIcon, {}) })), _jsx("div", Object.assign({ className: "w-80px text-center" }, { children: renderValue(value) })), _jsx(Button, Object.assign({ color: "ghost", onClick: increment, disabled: !canIncrement }, { children: _jsx(PlusIcon, {}) }))] })));
+}
+//# sourceMappingURL=NumberStepper.js.map

@@ -1,0 +1,23 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Default = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const PageRoot_js_1 = require("./PageRoot.js");
+const PageContent_js_1 = require("./PageContent.js");
+const PageNav_js_1 = require("./PageNav.js");
+const navBar_js_1 = require("../navBar.js");
+const icon_js_1 = require("../icon.js");
+const meta = {
+    title: 'layouts',
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+        layout: 'fullscreen',
+    },
+};
+exports.default = meta;
+exports.Default = {
+    render: () => ((0, jsx_runtime_1.jsxs)(PageRoot_js_1.PageRoot, Object.assign({ className: "w-full h-full" }, { children: [(0, jsx_runtime_1.jsx)(PageContent_js_1.PageContent, { children: (0, jsx_runtime_1.jsxs)("div", Object.assign({ className: "text-center" }, { children: [(0, jsx_runtime_1.jsx)("h1", Object.assign({ className: "text-3xl font-bold" }, { children: "Hello, World!" })), (0, jsx_runtime_1.jsx)("p", Object.assign({ className: "text-lg" }, { children: "This is a simple page layout." }))] })) }), (0, jsx_runtime_1.jsx)(PageNav_js_1.PageNav, { children: (0, jsx_runtime_1.jsxs)(navBar_js_1.NavBarRoot, { children: [(0, jsx_runtime_1.jsxs)(navBar_js_1.NavBarItem, { children: [(0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemIconWrapper, { children: (0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemIcon, { name: "cart" }) }), (0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemText, { children: "Item 1 long" })] }), (0, jsx_runtime_1.jsxs)(navBar_js_1.NavBarItem, Object.assign({ active: true }, { children: [(0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemIconWrapper, { children: (0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemIcon, Object.assign({ asChild: true }, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "book" }) })) }), (0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemText, { children: "Item 2" }), (0, jsx_runtime_1.jsx)(navBar_js_1.NavBarItemPip, {})] }))] }) })] }))),
+};
+//# sourceMappingURL=layouts.stories.js.map

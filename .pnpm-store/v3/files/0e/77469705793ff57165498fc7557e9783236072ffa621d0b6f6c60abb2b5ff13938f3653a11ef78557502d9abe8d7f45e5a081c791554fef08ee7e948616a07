@@ -1,0 +1,16 @@
+/// <reference types="react" resolution-mode="require"/>
+import type { StoryObj } from '@storybook/react';
+import { Input } from './Input.js';
+declare const meta: {
+    title: string;
+    component: import("react").ForwardRefExoticComponent<Omit<import("./Input.js").InputProps, "ref"> & import("react").RefAttributes<HTMLInputElement>>;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+};
+export default meta;
+type Story = StoryObj<typeof Input>;
+export declare const Default: Story;

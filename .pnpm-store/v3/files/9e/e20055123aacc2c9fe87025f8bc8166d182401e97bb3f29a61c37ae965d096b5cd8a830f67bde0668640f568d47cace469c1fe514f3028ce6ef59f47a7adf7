@@ -1,0 +1,16 @@
+/// <reference types="react" resolution-mode="require"/>
+import type { StoryObj } from '@storybook/react';
+import { RichEditor } from './RichEditor.js';
+declare const meta: {
+    title: string;
+    component: import("react").ForwardRefExoticComponent<import("./RichEditor.js").RichEditorProps & import("react").RefAttributes<any>>;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+};
+export default meta;
+type Story = StoryObj<typeof RichEditor>;
+export declare const Default: Story;

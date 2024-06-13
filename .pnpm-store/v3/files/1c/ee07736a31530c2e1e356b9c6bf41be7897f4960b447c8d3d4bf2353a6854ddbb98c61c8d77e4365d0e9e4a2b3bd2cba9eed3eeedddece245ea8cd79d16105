@@ -1,0 +1,16 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ParticleLayer = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
+const particlesState_js_1 = require("./particlesState.js");
+const react_dom_1 = require("react-dom");
+const ParticleContext_js_1 = require("./ParticleContext.js");
+function ParticleLayer({ children, noPortal, }) {
+    const [particles] = (0, react_1.useState)(() => new particlesState_js_1.Particles({ initialPoolSize: 100 }));
+    const canvas = ((0, jsx_runtime_1.jsx)("canvas", { ref: particles.setCanvas, className: "fixed inset-0 w-full h-full z-overdraw pointer-events-none" }));
+    return ((0, jsx_runtime_1.jsxs)(ParticleContext_js_1.ParticlesProvider, Object.assign({ value: particles }, { children: [noPortal ? canvas : (0, react_dom_1.createPortal)(canvas, document.body), children] })));
+}
+exports.ParticleLayer = ParticleLayer;
+//# sourceMappingURL=ParticleLayer.js.map

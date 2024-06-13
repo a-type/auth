@@ -1,0 +1,10 @@
+/// <reference types="react" resolution-mode="require"/>
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
+export declare const ToggleGroupRoot: import("react").FunctionComponent<(Omit<ToggleGroup.ToggleGroupSingleProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}) | (Omit<ToggleGroup.ToggleGroupMultipleProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+})>;
+export declare const ToggleGroupItem: import("react").FunctionComponent<Omit<ToggleGroup.ToggleGroupItemProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
+    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
+}>;

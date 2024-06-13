@@ -1,0 +1,5 @@
+import { FormikConfig, FormikValues } from 'formik';
+export interface FormikFormProps<T extends FormikValues = FormikValues> extends FormikConfig<T> {
+    className?: string;
+}
+export declare function FormikForm<Values extends FormikValues>({ className, children, onSubmit, ...props }: FormikFormProps<Values>): import("react/jsx-runtime").JSX.Element;

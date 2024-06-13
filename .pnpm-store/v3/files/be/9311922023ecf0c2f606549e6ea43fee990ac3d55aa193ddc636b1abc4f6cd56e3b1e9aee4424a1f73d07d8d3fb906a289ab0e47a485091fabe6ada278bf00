@@ -1,0 +1,13 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.P = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = void 0;
+const withClassName_js_1 = require("../../hooks/withClassName.js");
+const baseHeadingClass = 'my-0';
+exports.H1 = (0, withClassName_js_1.withClassName)('h1', baseHeadingClass, 'font-title text-2xl font-bold');
+exports.H2 = (0, withClassName_js_1.withClassName)('h2', baseHeadingClass, 'text-lg font-title font-bold color-gray9');
+exports.H3 = (0, withClassName_js_1.withClassName)('h3', baseHeadingClass, 'font-title text-md');
+exports.H4 = (0, withClassName_js_1.withClassName)('h4', baseHeadingClass);
+exports.H5 = (0, withClassName_js_1.withClassName)('h5', baseHeadingClass);
+exports.P = (0, withClassName_js_1.withClassName)('p', 'my-0 leading-normal');
+//# sourceMappingURL=typography.js.map

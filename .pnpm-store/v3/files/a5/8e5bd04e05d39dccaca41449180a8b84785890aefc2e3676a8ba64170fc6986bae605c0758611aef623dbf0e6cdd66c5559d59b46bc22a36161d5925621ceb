@@ -1,0 +1,61 @@
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { FunctionComponent, ReactNode } from 'react';
+import { ButtonProps } from '../button.js';
+export declare const SelectItem: import("react").ForwardRefExoticComponent<SelectPrimitive.SelectItemProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare const SelectItemRoot: FunctionComponent<Omit<SelectPrimitive.SelectItemProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const SelectItemIndicatorRoot: FunctionComponent<Omit<SelectPrimitive.SelectItemIndicatorProps & import("react").RefAttributes<HTMLSpanElement>, "ref"> & {
+    ref?: ((instance: HTMLSpanElement | null) => void) | import("react").RefObject<HTMLSpanElement> | null | undefined;
+}>;
+export declare const SelectItemIndicator: FunctionComponent<SelectPrimitive.SelectItemIndicatorProps>;
+export declare const SelectItemText: FunctionComponent<Omit<SelectPrimitive.SelectItemTextProps & import("react").RefAttributes<HTMLSpanElement>, "ref"> & {
+    ref?: ((instance: HTMLSpanElement | null) => void) | import("react").RefObject<HTMLSpanElement> | null | undefined;
+}>;
+export declare const SelectGroup: (props: SelectPrimitive.SelectGroupProps) => import("react/jsx-runtime").JSX.Element;
+export declare const SelectRoot: import("react").FC<SelectPrimitive.SelectProps>;
+export declare const selectTriggerClassName: string;
+export declare const SelectTriggerBase: FunctionComponent<Omit<SelectPrimitive.SelectTriggerProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
+    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
+}>;
+export declare const UnstyledSelectTrigger: FunctionComponent<Omit<SelectPrimitive.SelectTriggerProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
+    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
+}>;
+export interface SelectTriggerProps extends ButtonProps {
+}
+export declare const SelectTrigger: import("react").ForwardRefExoticComponent<SelectTriggerProps & import("react").RefAttributes<HTMLButtonElement>>;
+export declare const SelectValue: FunctionComponent<Omit<SelectPrimitive.SelectValueProps & import("react").RefAttributes<HTMLSpanElement>, "ref"> & {
+    ref?: ((instance: HTMLSpanElement | null) => void) | import("react").RefObject<HTMLSpanElement> | null | undefined;
+}>;
+export declare const SelectLabel: FunctionComponent<Omit<SelectPrimitive.SelectLabelProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const SelectSeparator: FunctionComponent<Omit<SelectPrimitive.SelectSeparatorProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const SelectIcon: FunctionComponent<Omit<SelectPrimitive.SelectIconProps & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const SelectContent: FunctionComponent<Omit<SelectPrimitive.SelectContentProps & {
+    inDialog?: boolean | undefined;
+} & import("react").RefAttributes<HTMLDivElement>, "ref"> & {
+    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+}>;
+export declare const NativeSelect: import("react").ForwardRefExoticComponent<import("react").SelectHTMLAttributes<HTMLSelectElement> & import("react").RefAttributes<HTMLSelectElement>>;
+export type SelectProps<T extends string = string> = {
+    children?: ReactNode;
+    value: T;
+    onValueChange?: (value: T) => void;
+    className?: string;
+    id?: string;
+    /** Native on mobile; otherwise use custom select impl */
+    mobileNative?: boolean;
+    /** won't work on mobile and mobileNative=true */
+    open?: boolean;
+    /** won't work on mobile and mobileNative=true */
+    onOpenChange?: (open: boolean) => void;
+};
+/**
+ * A high-level Select which converts to native on mobile. Use with SelectItem.
+ */
+export declare const Select: <T extends string = string>({ children, value, onValueChange, mobileNative, ...rest }: SelectProps<T>) => import("react/jsx-runtime").JSX.Element;

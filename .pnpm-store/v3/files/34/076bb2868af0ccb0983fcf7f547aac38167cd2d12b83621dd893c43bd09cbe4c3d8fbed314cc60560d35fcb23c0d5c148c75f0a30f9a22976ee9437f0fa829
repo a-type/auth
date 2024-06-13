@@ -1,0 +1,102 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, } from '@radix-ui/react-icons';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { createContext, forwardRef, useContext, } from 'react';
+import classNames from 'clsx';
+import { withClassName } from '../../hooks/withClassName.js';
+import { Button, getButtonClassName } from '../button.js';
+import { Icon } from '../icon.js';
+export const SelectItem = forwardRef((_a, forwardedRef) => {
+    var { children, className } = _a, props = __rest(_a, ["children", "className"]);
+    const isNative = useContext(IsNativeContext);
+    if (isNative) {
+        return _jsx("option", Object.assign({ value: props.value }, { children: children }));
+    }
+    return (_jsxs(SelectItemRoot, Object.assign({ className: className }, props, { ref: forwardedRef }, { children: [_jsx(SelectPrimitive.ItemText, { children: children }), _jsx(SelectItemIndicator, {})] })));
+});
+export const SelectItemRoot = withClassName(SelectPrimitive.Item, 'text-md leading-4 color-black rounded-sm flex items-center flex-row h-36px pr-4 pl-35px relative select-none', '[&[data-disabled]]:color-gray5 [&[data-disabled]]:pointer-events-none [&[data-highlighted]]:outline-none [&[data-highlighted]]:bg-primary-wash [&[data-highlighted]]:color-black');
+export const SelectItemIndicatorRoot = withClassName(SelectPrimitive.ItemIndicator, 'absolute left-0 w-25px inline-flex items-center justify-center');
+export const SelectItemIndicator = withNoNativeRender((props) => (_jsx(SelectItemIndicatorRoot, Object.assign({}, props, { children: _jsx(CheckIcon, {}) }))));
+export const SelectItemText = withClassName(SelectPrimitive.ItemText, '');
+export const SelectGroup = (props) => {
+    const isNative = useContext(IsNativeContext);
+    if (isNative) {
+        return (_jsx("optgroup", Object.assign({ id: props.id, className: props.className }, { children: props.children })));
+    }
+    return _jsx(SelectPrimitive.Group, Object.assign({}, props));
+};
+export const SelectRoot = SelectPrimitive.Root;
+export const selectTriggerClassName = classNames(getButtonClassName({ color: 'default' }), 'layer-components:[all:unset] layer-components:inline-flex layer-components:[&[data-placeholder]]:color-gray8');
+export const SelectTriggerBase = withNoNativeRender(withClassName(SelectPrimitive.Trigger, selectTriggerClassName));
+export const UnstyledSelectTrigger = withNoNativeRender(SelectPrimitive.Trigger);
+export const SelectTrigger = forwardRef(function SelectTrigger(_a, ref) {
+    var { children } = _a, props = __rest(_a, ["children"]);
+    return (_jsx(UnstyledSelectTrigger, Object.assign({ asChild: true }, props, { ref: ref }, { children: _jsx(Button, Object.assign({ className: "gap-2 font-normal" }, { children: children || (_jsxs(_Fragment, { children: [_jsx(SelectValue, {}), _jsx(SelectIcon, {})] })) })) })));
+});
+export const SelectValue = withNoNativeRender(withClassName(SelectPrimitive.Value, 'flex flex-row'));
+export const SelectLabel = withNoNativeRender(withClassName(SelectPrimitive.Label, 'px-25px text-xs leading-6 color-black select-none'));
+export const SelectSeparator = withNoNativeRender(withClassName(SelectPrimitive.Separator, 'h-1px bg-gray50 m-1'));
+export const SelectIcon = withNoNativeRender(forwardRef((_a, forwardedRef) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (_jsx(SelectPrimitive.Icon, Object.assign({ className: classNames('color-inherit', className) }, props, { ref: forwardedRef }, { children: _jsx(Icon, { name: "chevron", className: "w-[12px] h-[12px] relative top-1px" }) })));
+}));
+const zIndex = { zIndex: 1001 };
+export const SelectContent = withPassthroughNativeRender(forwardRef((_a, forwardedRef) => {
+    var { children, inDialog, className } = _a, props = __rest(_a, ["children", "inDialog", "className"]);
+    return (_jsx(SelectPrimitive.Portal, { children: _jsxs(SelectPrimitive.Content, Object.assign({ className: classNames('layer-components:overflow-hidden layer-components:bg-white layer-components:rounded-lg layer-components:border layer-components:border-solid layer-components:border-1 layer-components:border-black layer-components:z-menu layer-components:shadow-lg', 'layer-components:transform-origin-[var(--radix-select-content-transform-origin)]', 'layer-components:[&[data-state=open]]:animate-popover-in', 'layer-components:[&[data-state=closed]]:animate-popover-out', 'layer-components:min-w-[var(--radix-select-trigger-width)] layer-components:max-h-[var(--radix-select-content-available-height)]', inDialog && 'z-[calc(var(--z-dialog)+1)]', className), style: zIndex }, props, { ref: forwardedRef }, { children: [_jsx(SelectPrimitive.ScrollUpButton, Object.assign({ className: "flex items-center justify-center h-25px bg-white color-primary-dark cursor-default" }, { children: _jsx(ChevronUpIcon, {}) })), _jsx(SelectPrimitive.Viewport, Object.assign({ className: "p-1" }, { children: children })), _jsx(SelectPrimitive.ScrollDownButton, Object.assign({ className: "flex items-center justify-center h-25px bg-white color-primary-dark cursor-default" }, { children: _jsx(ChevronDownIcon, {}) }))] })) }));
+}));
+export const NativeSelect = forwardRef((_a, forwardedRef) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (_jsxs("div", Object.assign({ className: classNames('relative', className) }, { children: [_jsx("select", Object.assign({ className: classNames('appearance-none font-inherit bg-white inline-flex items-center justify-center rounded-full px-3 py-1 pr-8 text-sm gap-2 color-black border-solid border border-gray5 hover:border-gray7 focus:outline-none focus-visible:shadow-focus [&[data-placeholder]]:color-gray8') }, props, { ref: forwardedRef })), _jsx("div", Object.assign({ className: "absolute right-1 top-50% translate-y-[-50%] pointer-events-none" }, { children: _jsx(ChevronDownIcon, { className: "w-4 h-4 m-2" }) }))] })));
+});
+/**
+ * A high-level Select which converts to native on mobile. Use with SelectItem.
+ */
+export const Select = (_a) => {
+    var { children, value, onValueChange, mobileNative } = _a, rest = __rest(_a, ["children", "value", "onValueChange", "mobileNative"]);
+    const mobile = isMobile();
+    if (mobile && mobileNative) {
+        return (_jsx(IsNativeContext.Provider, Object.assign({ value: true }, { children: _jsx(NativeSelect, Object.assign({ onChange: (ev) => {
+                    onValueChange === null || onValueChange === void 0 ? void 0 : onValueChange(ev.target.value);
+                }, value: value }, rest, { children: children })) })));
+    }
+    return (_jsx(SelectRoot, Object.assign({ value: value, onValueChange: onValueChange }, { children: children })));
+};
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+// facilitate the auto native switching
+const IsNativeContext = createContext(false);
+function withNoNativeRender(Component) {
+    const WithNoNativeRender = forwardRef((props, ref) => {
+        const isNative = useContext(IsNativeContext);
+        if (isNative)
+            return null;
+        return _jsx(Component, Object.assign({ ref: ref }, props));
+    });
+    return WithNoNativeRender;
+}
+function withPassthroughNativeRender(Component) {
+    const WithPassthroughNativeRender = forwardRef((props, ref) => {
+        const isNative = useContext(IsNativeContext);
+        if (isNative) {
+            return _jsx(_Fragment, { children: props.children });
+        }
+        return _jsx(Component, Object.assign({ ref: ref }, props));
+    });
+    return WithPassthroughNativeRender;
+}
+//# sourceMappingURL=Select.js.map

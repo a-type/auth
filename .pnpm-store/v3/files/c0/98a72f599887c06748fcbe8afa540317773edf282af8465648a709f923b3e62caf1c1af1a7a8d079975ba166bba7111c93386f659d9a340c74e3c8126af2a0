@@ -1,0 +1,17 @@
+import React, { Component, ReactElement, ReactNode } from 'react';
+export declare class ErrorBoundary extends Component<{
+    children: ReactNode;
+    fallback?: ReactNode | ((props: {
+        clearError: () => void;
+    }) => ReactElement);
+}, {
+    error: Error | null;
+}> {
+    state: {
+        error: null;
+    };
+    static getDerivedStateFromError(error: Error): {
+        error: Error;
+    };
+    render(): string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined;
+}

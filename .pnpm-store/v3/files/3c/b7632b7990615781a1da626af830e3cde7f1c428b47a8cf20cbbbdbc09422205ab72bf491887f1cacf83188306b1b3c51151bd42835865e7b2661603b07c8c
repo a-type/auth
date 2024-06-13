@@ -1,0 +1,17 @@
+/// <reference types="react" resolution-mode="require"/>
+import type { StoryObj } from '@storybook/react';
+import { TextArea } from './TextArea.js';
+declare const meta: {
+    title: string;
+    component: import("react").ForwardRefExoticComponent<import("./TextArea.js").TextAreaProps & import("react").RefAttributes<HTMLTextAreaElement>>;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+};
+export default meta;
+type Story = StoryObj<typeof TextArea>;
+export declare const Default: Story;
+export declare const Tall: Story;

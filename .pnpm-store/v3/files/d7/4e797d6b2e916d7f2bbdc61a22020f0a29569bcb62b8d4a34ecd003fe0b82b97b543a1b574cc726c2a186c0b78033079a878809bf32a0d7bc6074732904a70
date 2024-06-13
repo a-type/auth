@@ -1,0 +1,366 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+import { styled } from '@stitches/react';
+import React, { useCallback, useState } from 'react';
+import { CalendarDays } from '.';
+import { Calendar } from './Calendar';
+import { CalendarDay } from './CalendarDay';
+import { WeekDay } from './constants';
+export default {
+    title: 'Calendar',
+    component: Calendar,
+};
+var now = new Date();
+/** Custom styling of primitive components */
+var StyledDay = styled(CalendarDay, {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    '&[data-selected]': {
+        backgroundColor: 'black',
+        color: '#fff',
+    },
+    '&[data-in-range]': {
+        backgroundColor: '#fff',
+    },
+    '&[data-range-start]': {
+        backgroundColor: 'black',
+        color: '#fff',
+    },
+    '&[data-range-end]': {
+        backgroundColor: 'black',
+        color: '#fff',
+    },
+    '&:disabled': {
+        opacity: 0.5,
+        cursor: 'default',
+    },
+    '&[data-different-month]': {
+        visibility: 'hidden',
+    },
+});
+var StyledGrid = styled(Calendar, {
+    display: 'grid',
+    gridGap: '4px',
+    gridTemplateColumns: 'repeat(7, 32px)',
+    gridAutoRows: '32px',
+});
+export var simple = function () {
+    var _a;
+    var _b = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _c = _b[0], month = _c.month, year = _c.year, setViewInfo = _b[1];
+    var _d = useState(null), value = _d[0], setValue = _d[1];
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement("div", { style: { display: 'flex', flexDirection: 'column', alignItems: 'start' } },
+        React.createElement("p", null, "A Calendar is a logical input primitive which allows selecting a single day or range of days from a particular month"),
+        React.createElement("div", null,
+            React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month - 1 })); }); } }, "<"),
+                React.createElement("span", { style: { margin: '0 4px' } }, monthLabel),
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month + 1 })); }); } }, ">")),
+            React.createElement(StyledGrid, { displayMonth: month, displayYear: year, value: value, onChange: setValue, onDisplayChange: setViewInfo },
+                React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); }))),
+        React.createElement("p", null,
+            "Selected date: ", (_a = value === null || value === void 0 ? void 0 : value.toLocaleDateString()) !== null && _a !== void 0 ? _a : 'none')));
+};
+export var range = function () {
+    var _a, _b;
+    var _c = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _d = _c[0], month = _d.month, year = _d.year, setViewInfo = _c[1];
+    var _e = useState({ start: null, end: null }), rangeValue = _e[0], setRangeValue = _e[1];
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement("div", { style: { display: 'flex', flexDirection: 'column', alignItems: 'start' } },
+        React.createElement("p", null, "A Calendar can select a range of dates as well"),
+        React.createElement("div", null,
+            React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month - 1 })); }); } }, "<"),
+                React.createElement("span", { style: { margin: '0 4px' } }, monthLabel),
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month + 1 })); }); } }, ">")),
+            React.createElement(StyledGrid, { displayMonth: month, displayYear: year, onDisplayChange: setViewInfo, rangeValue: rangeValue, onRangeChange: setRangeValue },
+                React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); }))),
+        React.createElement("p", null,
+            "Selected dates: ", (_a = rangeValue.start) === null || _a === void 0 ? void 0 :
+            _a.toLocaleDateString(),
+            " -",
+            ' ', (_b = rangeValue.end) === null || _b === void 0 ? void 0 :
+            _b.toLocaleDateString())));
+};
+export var dayLabels = function () {
+    var _a;
+    var _b = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _c = _b[0], month = _c.month, year = _c.year, setViewInfo = _b[1];
+    var _d = useState(null), value = _d[0], setValue = _d[1];
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement("div", { style: { display: 'flex', flexDirection: 'column', alignItems: 'start' } },
+        React.createElement("p", null, "Rendering is completely within your control - once you have a basic grid, you're free to add additional rendered stuff, like traditional day labels."),
+        React.createElement("div", null,
+            React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month - 1 })); }); } }, "<"),
+                React.createElement("span", { style: { margin: '0 4px' } }, monthLabel),
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month + 1 })); }); } }, ">")),
+            React.createElement(StyledGrid, { displayMonth: month, displayYear: year, value: value, onChange: setValue, onDisplayChange: setViewInfo },
+                ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function (day, idx) { return (React.createElement("div", { style: {
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }, key: idx }, day)); }),
+                React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); }))),
+        React.createElement("p", null,
+            "Selected date: ", (_a = value === null || value === void 0 ? void 0 : value.toLocaleDateString()) !== null && _a !== void 0 ? _a : 'none')));
+};
+export var weekStartsOnMonday = function () {
+    var _a;
+    var _b = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _c = _b[0], month = _c.month, year = _c.year, setViewInfo = _b[1];
+    var _d = useState(null), value = _d[0], setValue = _d[1];
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement("div", { style: { display: 'flex', flexDirection: 'column', alignItems: 'start' } },
+        React.createElement("p", null, "You can supply a custom week start day index according to your locale"),
+        React.createElement("div", null,
+            React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month - 1 })); }); } }, "<"),
+                React.createElement("span", { style: { margin: '0 4px' } }, monthLabel),
+                React.createElement("button", { onClick: function () { return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month + 1 })); }); } }, ">")),
+            React.createElement(StyledGrid, { displayMonth: month, displayYear: year, value: value, onChange: setValue, onDisplayChange: setViewInfo, weekStartsOn: WeekDay.Monday },
+                ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(function (day, idx) { return (React.createElement("div", { style: {
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }, key: idx }, day)); }),
+                React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); }))),
+        React.createElement("p", null,
+            "Selected date: ", (_a = value === null || value === void 0 ? void 0 : value.toLocaleDateString()) !== null && _a !== void 0 ? _a : 'none')));
+};
+var SimpleGrid = styled('div', {
+    display: 'grid',
+    gridGap: '4px',
+    gridTemplateColumns: 'repeat(7, 32px)',
+    gridAutoRows: '32px',
+});
+export var wideRange = function () {
+    var _a = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _b = _a[0], month = _b.month, year = _b.year, setViewInfo = _a[1];
+    var _c = useState({ start: null, end: null }), rangeValue = _c[0], setRangeValue = _c[1];
+    var onMonthChange = useCallback(function (_a) {
+        var newMonth = _a.month, newYear = _a.year;
+        /**
+         * Important UX consideration:
+         *
+         * since we are displaying 2 months at once, we don't
+         * always want to change our view if the user's cursor
+         * date moves from one month to another. Specifically,
+         * if they move from the first visible month to the
+         * second visible month, we don't need to change the view,
+         * since they are still within the visible range.
+         * So, we write logic to ignore that case!
+         */
+        if (newMonth === month + 1 && newYear === year) {
+            return; // ignore movement from the first to the second frame
+        }
+        setViewInfo({
+            month: newMonth,
+            year: newYear,
+        });
+    }, [setViewInfo, month, year]);
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    // used for the two-calendar demo
+    var nextMonth = new Date(year, month + 1);
+    var nextMonthLabel = nextMonth.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement(React.Fragment, null,
+        React.createElement("p", null, "It's relatively trivial to synchronize two calendars to display a larger selection range by utilizing a render prop to change how the calendar state is displayed"),
+        React.createElement(Calendar, { displayMonth: month, displayYear: year, onDisplayChange: onMonthChange, rangeValue: rangeValue, onRangeChange: setRangeValue },
+            React.createElement("div", { style: { display: 'flex' } },
+                React.createElement("div", { style: { marginRight: '8px' } },
+                    React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                        React.createElement("button", { onClick: function () {
+                                return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month - 1 })); });
+                            } }, "<"),
+                        React.createElement("span", { style: { margin: '0 auto 0 auto' } }, monthLabel)),
+                    React.createElement(SimpleGrid, null,
+                        React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); }))),
+                React.createElement("div", null,
+                    React.createElement("div", { style: { display: 'flex', justifyContent: 'center' } },
+                        React.createElement("span", { style: { margin: '0 auto 0 auto' } }, nextMonthLabel),
+                        React.createElement("button", { onClick: function () {
+                                return setViewInfo(function (v) { return (__assign(__assign({}, v), { month: v.month + 1 })); });
+                            } }, ">")),
+                    React.createElement(SimpleGrid, null,
+                        React.createElement(CalendarDays, { monthOffset: 1 }, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); })))))));
+};
+export var disabledDays = function () {
+    var _a = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _b = _a[0], month = _b.month, year = _b.year, setViewInfo = _a[1];
+    var _c = useState(null), value = _c[0], setValue = _c[1];
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    // example: disable next week
+    var nextWeekEnds = new Date(year, month, now.getDate() + 14);
+    var getDateEnabled = useCallback(function (date) {
+        return !(date.getTime() >= now.getTime() && date.getTime() < nextWeekEnds.getTime());
+    }, []);
+    return (React.createElement(React.Fragment, null,
+        React.createElement("p", null, "Days or ranges of days can be disabled using the \"getDateEnabled\" prop"),
+        React.createElement("div", null,
+            React.createElement("span", null, monthLabel),
+            React.createElement(StyledGrid, { displayMonth: month, displayYear: year, value: value, onChange: setValue, onDisplayChange: setViewInfo, getDateEnabled: getDateEnabled },
+                React.createElement(CalendarDays, null, function (value) { return React.createElement(StyledDay, { value: value, key: value.key }); })))));
+};
+/**
+ * Stylized examples
+ */
+var StylizedGrid = styled(SimpleGrid, {
+    gridGap: 0,
+});
+var StylizedDay = styled(StyledDay, {
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    // border collapse
+    marginRight: -1,
+    marginBottom: -1,
+    // keep above blank days
+    position: 'relative',
+    transition: '0.2s ease all',
+    '&[data-weekend]': {
+        backgroundColor: '#fafaff',
+    },
+    '&[data-highlighted]': {
+        backgroundColor: '#e5efee',
+    },
+    '&[data-selected]': {
+        backgroundColor: '#20b0ae',
+        color: '#fff',
+    },
+    '&[data-in-range]': {
+        backgroundColor: '#e0ffff',
+    },
+    '&[data-range-start]': {
+        backgroundColor: '#20b0ae',
+        borderTopLeftRadius: '6px',
+        borderBottomLeftRadius: '6px',
+    },
+    '&[data-range-end]': {
+        backgroundColor: '#20b0ae',
+        borderTopRightRadius: '6px',
+        borderBottomRightRadius: '6px',
+    },
+    '&:disabled': {
+        opacity: 0.5,
+        cursor: 'default',
+    },
+    '&[data-today]': {
+        boxShadow: '0 0 0 2px #ecce1f',
+        zIndex: 1,
+    },
+    '&[data-top-edge]': {
+        borderTop: '1px solid #000',
+    },
+    '&[data-bottom-edge]': {
+        borderBottom: '1px solid #000',
+    },
+    '&[data-first-column]': {
+        borderLeft: '1px solid #000',
+    },
+    '&[data-last-column]': {
+        borderRight: '1px solid #000',
+    },
+    '&[data-day-first]': {
+        borderLeft: '1px solid #000',
+    },
+    '&[data-day-last]': {
+        borderRight: '1px solid #000',
+    },
+});
+export var stylized = function () {
+    var _a = useState({
+        month: now.getMonth(),
+        year: now.getFullYear(),
+    }), _b = _a[0], month = _b.month, year = _b.year, setViewInfo = _a[1];
+    var _c = useState({ start: null, end: null }), rangeValue = _c[0], setRangeValue = _c[1];
+    var onMonthChange = useCallback(function (_a) {
+        var newMonth = _a.month, newYear = _a.year;
+        /**
+         * Important UX consideration:
+         *
+         * since we are displaying 2 months at once, we don't
+         * always want to change our view if the user's cursor
+         * date moves from one month to another. Specifically,
+         * if they move from the first visible month to the
+         * second visible month, we don't need to change the view,
+         * since they are still within the visible range.
+         * So, we write logic to ignore that case!
+         */
+        if (newMonth === month + 1 && newYear === year) {
+            return; // ignore movement from the first to the second frame
+        }
+        setViewInfo({
+            month: newMonth,
+            year: newYear,
+        });
+    }, [setViewInfo, month, year]);
+    var monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    // used for the two-calendar demo
+    var nextMonth = new Date(year, month + 1);
+    var nextMonthLabel = nextMonth.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return (React.createElement(React.Fragment, null,
+        React.createElement("p", null, "Calendar day elements receive plenty of data attributes which let you implement advanced styling based on their visual or temporal position."),
+        React.createElement(Calendar, { displayMonth: month, displayYear: year, onDisplayChange: onMonthChange, rangeValue: rangeValue, onRangeChange: setRangeValue },
+            React.createElement("div", { style: { display: 'flex' } },
+                React.createElement("div", { style: { marginRight: '8px' } },
+                    React.createElement("span", null, monthLabel),
+                    React.createElement(StylizedGrid, null,
+                        React.createElement(CalendarDays, null, function (value) { return React.createElement(StylizedDay, { value: value, key: value.key }); }))),
+                React.createElement("div", null,
+                    React.createElement("span", null, nextMonthLabel),
+                    React.createElement(StylizedGrid, null,
+                        React.createElement(CalendarDays, { monthOffset: 1 }, function (value) { return React.createElement(StylizedDay, { value: value, key: value.key }); })))))));
+};
+//# sourceMappingURL=Calendar.stories.js.map

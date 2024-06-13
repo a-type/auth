@@ -1,0 +1,13 @@
+// @unocss-include
+import { RichEditor } from './RichEditor.js';
+const meta = {
+    title: 'RichEditor',
+    component: RichEditor,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+export default meta;
+export const Default = {};
+//# sourceMappingURL=RichEditor.stories.js.map

@@ -1,0 +1,17 @@
+// @unocss-include
+import { NumberStepper } from './NumberStepper.js';
+const meta = {
+    title: 'NumberStepper',
+    component: NumberStepper,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+export default meta;
+export const Default = {
+    args: {
+        value: 0,
+    },
+};
+//# sourceMappingURL=NumberStepper.stories.js.map

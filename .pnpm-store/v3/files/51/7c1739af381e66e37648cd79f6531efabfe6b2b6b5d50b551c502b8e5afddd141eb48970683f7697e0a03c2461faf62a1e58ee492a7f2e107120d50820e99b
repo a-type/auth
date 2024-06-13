@@ -1,0 +1,29 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Range = exports.Default = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const DatePicker_js_1 = require("./DatePicker.js");
+const react_1 = require("react");
+const meta = {
+    title: 'DatePicker',
+    component: DatePicker_js_1.DatePicker,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+exports.default = meta;
+exports.Default = {
+    render() {
+        const [value, setValue] = (0, react_1.useState)(null);
+        return (0, jsx_runtime_1.jsx)(DatePicker_js_1.DatePicker, { value: value, onChange: setValue });
+    },
+};
+exports.Range = {
+    render() {
+        const [value, setValue] = (0, react_1.useState)({ start: null, end: null });
+        return (0, jsx_runtime_1.jsx)(DatePicker_js_1.DateRangePicker, { value: value, onChange: setValue });
+    },
+};
+//# sourceMappingURL=DatePicker.stories.js.map

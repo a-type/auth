@@ -1,0 +1,9 @@
+import React from 'react';
+import { CalendarDayValue } from './CalendarDay';
+export interface CalendarDaysProps {
+    monthOffset?: number;
+    children: (day: CalendarDayValue & {
+        key: string;
+    }) => React.ReactNode;
+}
+export declare function CalendarDays({ monthOffset, children }: CalendarDaysProps): JSX.Element;

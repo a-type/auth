@@ -1,0 +1,174 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.rangeIncludesInvalidDate = exports.getIsWeekend = exports.getIsLastWeek = exports.getIsFirstWeek = exports.getIsLastRow = exports.getIsFirstRow = exports.getGridDayCount = exports.getGridRowCount = exports.getMonthWeekdayOffset = exports.today = exports.addMonths = exports.getDaysInMonth = exports.isBetweenDays = exports.isBefore = exports.isSameMonth = exports.isSameDay = void 0;
+/**
+ * Determines if two dates are on the same calendar day
+ */
+var isSameDay = function (a, b) {
+    return !b
+        ? false
+        : a.getDate() === b.getDate() &&
+            a.getMonth() === b.getMonth() &&
+            a.getFullYear() === b.getFullYear();
+};
+exports.isSameDay = isSameDay;
+/**
+ * Determines if two dates are on the same calendar month in
+ * the same calendar year
+ */
+function isSameMonth(a, b) {
+    if (!b) {
+        return false;
+    }
+    return a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
+}
+exports.isSameMonth = isSameMonth;
+/**
+ * Determines if a given date `a` is before the second date `b` (exclusive)
+ */
+var isBefore = function (a, b) {
+    if (!a || !b)
+        return false;
+    return a.getTime() < b.getTime();
+};
+exports.isBefore = isBefore;
+/**
+ * Determines if a given date is between two other dates (exclusive)
+ */
+var isBetweenDays = function (day, a, b) {
+    if (!a || !b) {
+        return false;
+    }
+    var aIsBeforeB = (0, exports.isBefore)(a, b);
+    var start = aIsBeforeB ? a : b;
+    var end = aIsBeforeB ? b : a;
+    return day.getTime() > start.getTime() && day.getTime() < end.getTime();
+};
+exports.isBetweenDays = isBetweenDays;
+/**
+ * Get the number of days in a month
+ */
+var getDaysInMonth = function (month, year) {
+    if (month === 1 && year % 4 === 0) {
+        return 29; // Leap year
+    }
+    return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+exports.getDaysInMonth = getDaysInMonth;
+/**
+ * Add months to a date, adjusting the date if necessary.
+ */
+var addMonths = function (date, count) {
+    var newDate = new Date(date);
+    var nextMonth = new Date(date.getFullYear(), date.getMonth() + count);
+    var daysInNextMonth = (0, exports.getDaysInMonth)(nextMonth.getMonth(), nextMonth.getFullYear());
+    newDate.setMonth(newDate.getMonth() + count, Math.min(daysInNextMonth, newDate.getDate()));
+    return newDate;
+};
+exports.addMonths = addMonths;
+/** Today, at midnight */
+exports.today = new Date();
+exports.today.setHours(0);
+exports.today.setMinutes(0);
+exports.today.setSeconds(0);
+exports.today.setMilliseconds(0);
+/**
+ * In a calendar grid, the first day of the month may be offset
+ * from the first column if it falls on a day which isn't the first
+ * of the week. This computes that offset for a given calendar month.
+ */
+function getMonthWeekdayOffset(month, year, weekStartsOn) {
+    var firstDay = new Date(year, month, 1);
+    // must be positive
+    var offset = firstDay.getDay() - weekStartsOn;
+    if (offset < 0)
+        return offset + 7;
+    return offset;
+}
+exports.getMonthWeekdayOffset = getMonthWeekdayOffset;
+/**
+ * Computes the total number of grid rows required to display all
+ * the days in a calendar month.
+ */
+function getGridRowCount(month, year, weekStartsOn) {
+    return Math.ceil((getMonthWeekdayOffset(month, year, weekStartsOn) +
+        (0, exports.getDaysInMonth)(month, year)) /
+        7);
+}
+exports.getGridRowCount = getGridRowCount;
+/**
+ * Computes the total number of grid cells in a grid which is
+ * large enough to render a calendar month. Includes cells
+ * for days which fall outside the current month but are visible
+ * because of weekday offsets.
+ */
+function getGridDayCount(month, year, weekStartsOn) {
+    return getGridRowCount(month, year, weekStartsOn) * 7;
+}
+exports.getGridDayCount = getGridDayCount;
+/**
+ * Determines if a given date is on the first row of its respective
+ * calendar grid as it would be rendered.
+ */
+function getIsFirstRow(date, weekStartsOn) {
+    return (date.getDate() +
+        getMonthWeekdayOffset(date.getMonth(), date.getFullYear(), weekStartsOn) <=
+        7);
+}
+exports.getIsFirstRow = getIsFirstRow;
+/**
+ * Determines if a given date is on the last row of its respective
+ * calendar grid as it would be rendered.
+ */
+function getIsLastRow(date, weekStartsOn) {
+    // this is surprisingly hard to get right lol
+    var daysInMonth = (0, exports.getDaysInMonth)(date.getMonth(), date.getFullYear());
+    var firstDayOffset = getMonthWeekdayOffset(date.getMonth(), date.getFullYear(), weekStartsOn);
+    var totalGridCells = Math.ceil((daysInMonth + firstDayOffset) / 7) * 7;
+    var emptyDaysTotal = totalGridCells - daysInMonth;
+    var emptyDaysOnLastRow = emptyDaysTotal - firstDayOffset;
+    var numberOfDaysOnLastRow = 7 - emptyDaysOnLastRow;
+    return daysInMonth - date.getDate() < numberOfDaysOnLastRow;
+}
+exports.getIsLastRow = getIsLastRow;
+/**
+ * Determines if a given date is in the first week of its month
+ */
+function getIsFirstWeek(date) {
+    return date.getDate() <= 7;
+}
+exports.getIsFirstWeek = getIsFirstWeek;
+/**
+ * Determines if a given date is in the last week of its month
+ */
+function getIsLastWeek(date) {
+    return ((0, exports.getDaysInMonth)(date.getMonth(), date.getFullYear()) - date.getDate() < 7);
+}
+exports.getIsLastWeek = getIsLastWeek;
+/**
+ * Determines if a given date is a weekend
+ */
+function getIsWeekend(date) {
+    return date.getDay() === 0 || date.getDay() === 6;
+}
+exports.getIsWeekend = getIsWeekend;
+/**
+ * Computes whether a given range of dates would include
+ * a disabled date according to the given getDateEnabled
+ * function. This is O(n) in the number of days in the range.
+ */
+function rangeIncludesInvalidDate(start, end, getDateEnabled) {
+    var isRangeReversed = (0, exports.isBefore)(end, start);
+    var startDate = new Date(isRangeReversed ? end : start);
+    var endDate = new Date(isRangeReversed ? start : end);
+    var date = new Date(startDate);
+    while (date <= endDate) {
+        if (!getDateEnabled(date)) {
+            return true;
+        }
+        date.setDate(date.getDate() + 1);
+    }
+    return false;
+}
+exports.rangeIncludesInvalidDate = rangeIncludesInvalidDate;
+//# sourceMappingURL=dateUtils.js.map

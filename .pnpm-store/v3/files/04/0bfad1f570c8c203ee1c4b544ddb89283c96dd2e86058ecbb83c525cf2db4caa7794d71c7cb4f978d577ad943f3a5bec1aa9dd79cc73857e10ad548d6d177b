@@ -1,0 +1,2 @@
+export declare function debounce<Fn extends (...args: any[]) => void>(callback: Fn, delay: number): Fn;
+export declare function throttle<Fn extends (...args: any[]) => void>(callback: Fn, delay: number): Fn;

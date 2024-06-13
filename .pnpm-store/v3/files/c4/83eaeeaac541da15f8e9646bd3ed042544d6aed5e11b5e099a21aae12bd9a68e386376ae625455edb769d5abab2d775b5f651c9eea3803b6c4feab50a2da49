@@ -1,0 +1,27 @@
+// @unocss-include
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Select, SelectContent, SelectItem, SelectTrigger } from './Select.js';
+import { Button } from '../button.js';
+const meta = {
+    title: 'Select',
+    component: Select,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+    args: {
+        value: 'One',
+    },
+};
+export default meta;
+export const Default = {
+    render(args) {
+        return (_jsxs(Select, Object.assign({}, args, { children: [_jsx(SelectTrigger, {}), _jsx(SelectContent, { children: ['One', 'Two', 'Three'].map((item) => (_jsx(SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })));
+    },
+};
+export const CompareSelectAndButton = {
+    render(args) {
+        return (_jsxs("div", Object.assign({ className: "row" }, { children: [_jsxs(Select, Object.assign({}, args, { children: [_jsx(SelectTrigger, {}), _jsx(SelectContent, { children: ['One', 'Two', 'Three'].map((item) => (_jsx(SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })), _jsx(Button, { children: "Button" }), _jsxs(Select, Object.assign({}, args, { children: [_jsx(SelectTrigger, { size: "small" }), _jsx(SelectContent, { children: ['One', 'Two', 'Three'].map((item) => (_jsx(SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })), _jsx(Button, Object.assign({ size: "small" }, { children: "Button" }))] })));
+    },
+};
+//# sourceMappingURL=Select.stories.js.map

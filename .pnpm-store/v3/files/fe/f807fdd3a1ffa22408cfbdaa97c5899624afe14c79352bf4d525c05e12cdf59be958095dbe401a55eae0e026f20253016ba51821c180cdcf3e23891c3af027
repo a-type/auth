@@ -1,0 +1,27 @@
+import { ComponentProps, InputHTMLAttributes, Ref } from 'react';
+import { Input } from '../input/Input.js';
+import { TextAreaProps } from '../textArea/TextArea.js';
+export type TextFieldProps = {
+    name: string;
+    label?: string;
+    required?: boolean;
+    type?: InputHTMLAttributes<HTMLInputElement>['type'];
+    className?: string;
+    placeholder?: string;
+    autoComplete?: InputHTMLAttributes<HTMLInputElement>['autoComplete'];
+    autoFocus?: InputHTMLAttributes<HTMLInputElement>['autoFocus'];
+    autoFocusDelay?: number;
+    inputRef?: Ref<HTMLInputElement>;
+} & ComponentProps<typeof Input>;
+export declare const TextField: import("react").ForwardRefExoticComponent<Omit<TextFieldProps, "ref"> & import("react").RefAttributes<HTMLDivElement>>;
+export type TextAreaFieldProps = {
+    name: string;
+    label?: string;
+    required?: boolean;
+    rows?: number;
+    disabled?: boolean;
+    className?: string;
+    inputRef?: Ref<HTMLTextAreaElement>;
+    submitOnEnter?: boolean;
+} & TextAreaProps;
+export declare function TextAreaField({ name, label, className, inputRef, onKeyDown, submitOnEnter, ...rest }: TextAreaFieldProps): import("react/jsx-runtime").JSX.Element;
