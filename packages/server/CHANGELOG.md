@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.4
+
+### Patch Changes
+
+- 623e85b: Fix missing param
+
 ## 0.6.3
 
 ### Patch Changes
