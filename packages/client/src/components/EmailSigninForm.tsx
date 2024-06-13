@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@a-type/ui/components/dialog';
-import { FormikForm } from '@a-type/ui/components/forms';
+import { FormikForm, TextField } from '@a-type/ui/components/forms';
 import { Input } from '@a-type/ui/components/input';
 import { useState } from 'react';
 
@@ -71,7 +71,7 @@ function ForgotPassword({
       </DialogTrigger>
       <DialogContent>
         <FormikForm
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-2 w-full"
           initialValues={{
             email: '',
           }}
@@ -99,11 +99,7 @@ function ForgotPassword({
             }
           }}
         >
-          <label htmlFor="email" className="font-bold">
-            Email
-          </label>
-          <input type="hidden" name="returnTo" value={window.location.href} />
-          <Input name="email" type="email" required />
+          <TextField label="Email" name="email" type="email" required />
           {errorMessage && (
             <p className="text-attention-dark py-3">{errorMessage}</p>
           )}
@@ -111,7 +107,7 @@ function ForgotPassword({
             <DialogClose asChild>
               <Button>Cancel</Button>
             </DialogClose>
-            <Button type="submit" className="self-end">
+            <Button color="primary" type="submit" className="self-end">
               Send reset email
             </Button>
           </DialogActions>
