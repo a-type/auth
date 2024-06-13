@@ -1,0 +1,5 @@
+import { ReactNode } from 'react';
+export declare function ParticleLayer({ children, noPortal, }: {
+    children: ReactNode;
+    noPortal?: boolean;
+}): import("react/jsx-runtime").JSX.Element;

@@ -1,0 +1,18 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useValues = exports.useSubmit = exports.useField = void 0;
+const formik_1 = require("formik");
+var formik_2 = require("formik");
+Object.defineProperty(exports, "useField", { enumerable: true, get: function () { return formik_2.useField; } });
+function useSubmit() {
+    const { submitForm, isSubmitting } = (0, formik_1.useFormikContext)();
+    return [submitForm, isSubmitting];
+}
+exports.useSubmit = useSubmit;
+function useValues() {
+    const { values } = (0, formik_1.useFormikContext)();
+    return values;
+}
+exports.useValues = useValues;
+//# sourceMappingURL=hooks.js.map

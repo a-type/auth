@@ -1,0 +1,4 @@
+/// <reference types="react" resolution-mode="require"/>
+import { Particles } from './particlesState.js';
+export declare function useParticles(): Particles | null;
+export declare const ParticlesProvider: import("react").Provider<Particles | null>;

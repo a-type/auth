@@ -1,0 +1,7 @@
+import { ComponentPropsWithoutRef } from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+export declare const TooltipProvider: import("react").FC<TooltipPrimitive.TooltipProviderProps>;
+export declare function Tooltip({ content, children, open, disabled, ...rest }: {
+    content: React.ReactNode;
+    open?: boolean;
+} & ComponentPropsWithoutRef<typeof TooltipPrimitive.TooltipTrigger>): import("react/jsx-runtime").JSX.Element;

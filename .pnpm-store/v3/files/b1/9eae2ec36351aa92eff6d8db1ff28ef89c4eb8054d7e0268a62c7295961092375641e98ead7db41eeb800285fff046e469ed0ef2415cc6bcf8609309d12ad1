@@ -1,0 +1,4 @@
+/**
+ * Applies bottom offset px as a CSS custom property to the document root.
+ */
+export declare function useVisualViewportOffset(): void;

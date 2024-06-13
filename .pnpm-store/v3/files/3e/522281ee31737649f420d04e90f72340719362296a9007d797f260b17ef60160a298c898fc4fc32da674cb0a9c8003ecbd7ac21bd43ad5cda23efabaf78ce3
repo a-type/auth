@@ -1,0 +1,44 @@
+// @unocss-include
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import classNames from 'clsx';
+import { forwardRef, memo } from 'react';
+import { Spinner } from '../spinner.js';
+import { getButtonClassName } from './classes.js';
+import { Slot } from '@radix-ui/react-slot';
+import { Icon } from '../icon.js';
+export const Button = forwardRef(function Button(_a, ref) {
+    var { className, color, size, toggled, align, visuallyDisabled, loading, children, disabled, asChild } = _a, props = __rest(_a, ["className", "color", "size", "toggled", "align", "visuallyDisabled", "loading", "children", "disabled", "asChild"]);
+    const Comp = asChild ? Slot : 'button';
+    const buttonProps = Object.assign(Object.assign({ ref: ref }, props), { disabled: disabled || loading, 'data-disabled': visuallyDisabled, tabIndex: visuallyDisabled ? -1 : undefined, className: classNames(getButtonClassName({
+            color,
+            size,
+            toggleable: toggled !== undefined,
+            align,
+        }), className) });
+    // set state when toggleable
+    if (toggled !== undefined) {
+        buttonProps['aria-pressed'] = toggled;
+    }
+    if (asChild) {
+        // avoid rendering loading spinner with asChild
+        return _jsx(Comp, Object.assign({}, buttonProps, { children: children }));
+    }
+    return (_jsxs(Comp, Object.assign({}, buttonProps, { children: [loading && _jsx(Spinner, { size: 16, className: "inline-block w-1em h-1em" }), toggled !== undefined && _jsx(ToggleIndicator, { value: toggled }), children] })));
+});
+const ToggleIndicator = memo(function ToggleIndicator({ value, }) {
+    return (_jsx(Icon, { "aria-hidden": true, name: "check", className: "transition-width w-0 ml--1", style: {
+            width: value ? '15px' : 0,
+        } }));
+});
+//# sourceMappingURL=Button.js.map

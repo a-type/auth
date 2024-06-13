@@ -1,0 +1,7 @@
+/// <reference types="react" resolution-mode="require"/>
+export interface RichEditorProps {
+    editor: any;
+    className?: string;
+    readOnly?: boolean;
+}
+export declare const RichEditor: import("react").ForwardRefExoticComponent<RichEditorProps & import("react").RefAttributes<any>>;

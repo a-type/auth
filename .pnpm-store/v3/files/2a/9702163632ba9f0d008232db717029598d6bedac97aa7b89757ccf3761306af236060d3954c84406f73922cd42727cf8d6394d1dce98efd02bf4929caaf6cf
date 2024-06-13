@@ -1,0 +1,4 @@
+export declare const TextSkeleton: ({ maxLength, className, }: {
+    maxLength: number;
+    className?: string | undefined;
+}) => import("react/jsx-runtime").JSX.Element;

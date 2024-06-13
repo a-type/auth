@@ -1,0 +1,98 @@
+// @unocss-include
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DateRangePicker = exports.DatePicker = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const calendar_blocks_1 = require("calendar-blocks");
+const button_js_1 = require("../button.js");
+const icon_js_1 = require("../icon.js");
+const react_1 = require("react");
+const hooks_js_1 = require("../../hooks.js");
+const clsx_1 = __importDefault(require("clsx"));
+function DatePicker(_a) {
+    var { value, onChange, className } = _a, rest = __rest(_a, ["value", "onChange", "className"]);
+    const [{ month, year }, setDisplay] = (0, react_1.useState)(() => ({
+        month: new Date().getMonth(),
+        year: new Date().getFullYear(),
+    }));
+    const monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    return ((0, jsx_runtime_1.jsxs)("div", Object.assign({ className: (0, clsx_1.default)('flex flex-col items-center justify-center w-[calc(var(--day-size,32px)*7)]', className) }, rest, { children: [(0, jsx_runtime_1.jsxs)(MonthRow, { children: [(0, jsx_runtime_1.jsx)(MonthButton, Object.assign({ size: "icon", color: "ghost", onClick: () => setDisplay((cur) => ({
+                            month: cur.month - 1,
+                            year: cur.year,
+                        })) }, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "arrowLeft" }) })), (0, jsx_runtime_1.jsx)(MonthLabel, { children: monthLabel }), (0, jsx_runtime_1.jsx)(MonthButton, Object.assign({ size: "icon", color: "ghost", onClick: () => setDisplay((cur) => ({
+                            month: cur.month + 1,
+                            year: cur.year,
+                        })) }, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "arrowRight" }) }))] }), (0, jsx_runtime_1.jsx)(calendar_blocks_1.Calendar, Object.assign({ displayMonth: month, displayYear: year, value: value, onChange: onChange, onDisplayChange: setDisplay }, { children: (0, jsx_runtime_1.jsxs)(CalendarGrid, { children: [(0, jsx_runtime_1.jsx)(DayLabels, {}), (0, jsx_runtime_1.jsx)(calendar_blocks_1.CalendarDays, { children: (value) => (0, jsx_runtime_1.jsx)(CalendarDay, { value: value }, value.key) })] }) }))] })));
+}
+exports.DatePicker = DatePicker;
+function DateRangePicker({ value, onChange, className, }) {
+    const [{ month, year }, setDisplay] = (0, react_1.useState)(() => ({
+        month: new Date().getMonth(),
+        year: new Date().getFullYear(),
+    }));
+    const monthLabel = new Date(year, month).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    const nextMonth = new Date(year, month + 1);
+    const nextMonthLabel = nextMonth.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+    });
+    const onDisplayChange = (0, react_1.useCallback)(({ month: newMonth, year: newYear }) => {
+        /**
+         * Important UX consideration:
+         *
+         * since we are displaying 2 months at once, we don't
+         * always want to change our view if the user's cursor
+         * date moves from one month to another. Specifically,
+         * if they move from the first visible month to the
+         * second visible month, we don't need to change the view,
+         * since they are still within the visible range.
+         * So, we write logic to ignore that case!
+         */
+        if (newMonth === month + 1 && newYear === year) {
+            return; // ignore movement from the first to the second frame
+        }
+        setDisplay({
+            month: newMonth,
+            year: newYear,
+        });
+    }, [month, year]);
+    return ((0, jsx_runtime_1.jsx)(calendar_blocks_1.Calendar, Object.assign({ displayMonth: month, displayYear: year, rangeValue: value, onRangeChange: (range) => onChange(range), onDisplayChange: onDisplayChange, className: (0, clsx_1.default)('flex justify-center', className) }, { children: (0, jsx_runtime_1.jsxs)(RangeLayout, { children: [(0, jsx_runtime_1.jsx)(MonthButton, Object.assign({ size: "icon", color: "ghost", className: "[grid-area:prevMonth]", onClick: () => setDisplay((cur) => ({
+                        month: cur.month - 1,
+                        year: cur.year,
+                    })) }, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "arrowLeft" }) })), (0, jsx_runtime_1.jsx)(MonthLabel, Object.assign({ className: "[grid-area:leftMonth]" }, { children: monthLabel })), (0, jsx_runtime_1.jsx)(MonthLabel, Object.assign({ className: "[grid-area:rightMonth] !hidden !sm:block" }, { children: nextMonthLabel })), (0, jsx_runtime_1.jsx)(MonthButton, Object.assign({ size: "icon", color: "ghost", className: "[grid-area:nextMonth]", onClick: () => setDisplay((cur) => ({
+                        month: cur.month + 1,
+                        year: cur.year,
+                    })) }, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "arrowRight" }) })), (0, jsx_runtime_1.jsxs)(CalendarGrid, Object.assign({ className: "[grid-area:leftGrid]" }, { children: [(0, jsx_runtime_1.jsx)(DayLabels, {}), (0, jsx_runtime_1.jsx)(calendar_blocks_1.CalendarDays, { children: (value) => (0, jsx_runtime_1.jsx)(CalendarDay, { value: value }, value.key) })] })), (0, jsx_runtime_1.jsxs)(CalendarGrid, Object.assign({ className: "[grid-area:rightGrid] !hidden !sm:grid" }, { children: [(0, jsx_runtime_1.jsx)(DayLabels, {}), (0, jsx_runtime_1.jsx)(calendar_blocks_1.CalendarDays, Object.assign({ monthOffset: 1 }, { children: (value) => (0, jsx_runtime_1.jsx)(CalendarDay, { value: value }, value.key) }))] }))] }) })));
+}
+exports.DateRangePicker = DateRangePicker;
+const MonthRow = (0, hooks_js_1.withClassName)('div', 'flex flex-row justify-between items-center w-full');
+const MonthLabel = (0, hooks_js_1.withClassName)('span', 'text-sm font-bold min-w-0 overflow-hidden text-center text-ellipsis', 'self-center');
+const MonthButton = (0, hooks_js_1.withClassName)(button_js_1.Button, 'self-center');
+const CalendarGrid = (0, hooks_js_1.withClassName)('div', 'grid grid-cols-[repeat(7,var(--day-size,32px))] [grid-auto-rows:var(--day-size,32px)]', 'height-[calc(var(--day-size,32px)*7)] rounded overflow-hidden p-2');
+const CalendarDay = (0, hooks_js_1.withClassName)(calendar_blocks_1.CalendarDay, 'border border-solid border-transparent bg-white mr--1px mb--1px relative text-black', 'flex items-center justify-center transition cursor-pointer', '[&[data-highlighted]]:z-1 [&[data-highlighted]]:outline-accent', 'hover:z-1 hover:outline-accent', 'active:bg-accent-wash active:rounded', '[&[data-selected]]:bg-accent-light [&[data-selected]]:z-2 [&[data-selected]]:rounded', '[&[data-in-range]]:bg-accent-wash [&[data-in-range]]:rounded-none [&[data-in-range]]:z-1', '[&[data-range-start]]:bg-accent-light [&[data-range-start]]:rounded-l [&[data-range-start]]:rounded-r-none [&[data-range-start]]:z-1', '[&[data-range-end]]:bg-accent-light [&[data-range-end]]:rounded-r [&[data-range-end]]:rounded-l-none [&[data-range-end]]:z-1', 'disabled:opacity-50 disabled:cursor-default', 
+// today dot
+"[&[data-today]]:before:content-[''] [&[data-today]]:before:absolute [&[data-today]]:before:left-[2px] [&[data-today]]:before:top-[2px] [&[data-today]]:before:w-[6px] [&[data-today]]:before:h-[6px] [&[data-today]]:before:rounded-full [&[data-today]]:before:bg-primary", '[&[data-top-edge]]:border-t-gray-5', '[&[data-bottom-edge]]:border-b-gray-5', '[&[data-first-column]]:border-l-gray-5', '[&[data-last-column]]:border-r-gray-5', '[&[data-day-first]]:border-l-gray-5 [&[data-day-first]]:rounded-tl', '[&[data-day-last]]:border-r-gray-5 [&[data-day-last]]:rounded-br', '[&[data-first-column][data-bottom-edge]]:rounded-bl', '[&[data-last-column][data-bottom-edge]]:rounded-br', '[&[data-first-column][data-top-edge]]:rounded-tl', '[&[data-last-column][data-top-edge]]:rounded-tr', '[&[data-different-month]]:[visibility:hidden]');
+const DayLabel = (0, hooks_js_1.withClassName)('div', 'flex items-center justify-center text-sm text-gray-6');
+const DayLabels = () => ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(DayLabel, { children: "S" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "M" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "T" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "W" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "T" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "F" }), (0, jsx_runtime_1.jsx)(DayLabel, { children: "S" })] }));
+const RangeLayout = (0, hooks_js_1.withClassName)('div', 'grid [grid-template-areas:"prevMonth_leftMonth_nextMonth""leftGrid_leftGrid_leftGrid"] [grid-template-columns:auto_1fr_auto]', '[grid-template-rows:auto_1fr] gap-2', 'sm:[grid-template-areas:"prevMonth_leftMonth_rightMonth_nextMonth""leftGrid_leftGrid_rightGrid_rightGrid"] sm:[grid-template-columns:auto_1fr_1fr_auto]');
+//# sourceMappingURL=DatePicker.js.map

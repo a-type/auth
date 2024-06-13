@@ -1,0 +1,31 @@
+// @unocss-include
+"use strict";
+'use client';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorSwatch = exports.ColorPicker = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const Select_js_1 = require("../select/Select.js");
+const clsx_1 = __importDefault(require("clsx"));
+const withClassName_js_1 = require("../../hooks/withClassName.js");
+function ColorPicker({ value, onChange }) {
+    const resolvedValue = [
+        'lemon',
+        'tomato',
+        'leek',
+        'blueberry',
+        'eggplant',
+    ].includes(value || '')
+        ? value
+        : 'lemon';
+    return ((0, jsx_runtime_1.jsxs)(Select_js_1.Select, Object.assign({ value: resolvedValue, onValueChange: onChange }, { children: [(0, jsx_runtime_1.jsx)(Select_js_1.SelectTrigger, { children: (0, jsx_runtime_1.jsx)(Select_js_1.SelectValue, {}) }), (0, jsx_runtime_1.jsxs)(Select_js_1.SelectContent, Object.assign({ className: "z-[calc(var(--z-dialog)+1)]" }, { children: [(0, jsx_runtime_1.jsxs)(Select_js_1.SelectItem, Object.assign({ value: "lemon" }, { children: [(0, jsx_runtime_1.jsx)(ColorSwatch, { value: "lemon" }), (0, jsx_runtime_1.jsx)(ItemLabel, { children: "Lemon" })] })), (0, jsx_runtime_1.jsxs)(Select_js_1.SelectItem, Object.assign({ value: "tomato" }, { children: [(0, jsx_runtime_1.jsx)(ColorSwatch, { value: "tomato" }), (0, jsx_runtime_1.jsx)(ItemLabel, { children: "Tomato" })] })), (0, jsx_runtime_1.jsxs)(Select_js_1.SelectItem, Object.assign({ value: "leek" }, { children: [(0, jsx_runtime_1.jsx)(ColorSwatch, { value: "leek" }), (0, jsx_runtime_1.jsx)(ItemLabel, { children: "Leek" })] })), (0, jsx_runtime_1.jsxs)(Select_js_1.SelectItem, Object.assign({ value: "blueberry" }, { children: [(0, jsx_runtime_1.jsx)(ColorSwatch, { value: "blueberry" }), (0, jsx_runtime_1.jsx)(ItemLabel, { children: "Blueberry" })] })), (0, jsx_runtime_1.jsxs)(Select_js_1.SelectItem, Object.assign({ value: "eggplant" }, { children: [(0, jsx_runtime_1.jsx)(ColorSwatch, { value: "eggplant" }), (0, jsx_runtime_1.jsx)(ItemLabel, { children: "Eggplant" })] }))] }))] })));
+}
+exports.ColorPicker = ColorPicker;
+const ItemLabel = (0, withClassName_js_1.withClassName)('span', 'sr-only');
+function ColorSwatch({ value, children, }) {
+    return ((0, jsx_runtime_1.jsx)("div", Object.assign({ className: (0, clsx_1.default)('bg-primary w-16px h-16px rounded-sm', `theme-${value !== null && value !== void 0 ? value : 'lemon'}`) }, { children: children })));
+}
+exports.ColorSwatch = ColorSwatch;
+//# sourceMappingURL=ColorPicker.js.map

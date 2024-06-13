@@ -1,0 +1,25 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useAnimationFrame = void 0;
+const useStableCallback_js_1 = require("./useStableCallback.js");
+const react_1 = require("react");
+function useAnimationFrame(callback, initialContext) {
+    const requestRef = (0, react_1.useRef)();
+    const previousTimeRef = (0, react_1.useRef)();
+    const contextRef = (0, react_1.useRef)(initialContext);
+    const animate = (0, useStableCallback_js_1.useStableCallback)((time) => {
+        if (previousTimeRef.current !== undefined) {
+            const deltaTime = time - previousTimeRef.current;
+            callback(deltaTime, contextRef.current);
+        }
+        previousTimeRef.current = time;
+        requestRef.current = requestAnimationFrame(animate);
+    });
+    (0, react_1.useEffect)(() => {
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [animate]);
+}
+exports.useAnimationFrame = useAnimationFrame;
+//# sourceMappingURL=useAnimationFrame.js.map

@@ -1,0 +1,19 @@
+export declare class EventSubscriber<Events extends {
+    [key: string]: (...args: any[]) => void;
+}> {
+    private _onAllUnsubscribed?;
+    protected subscribers: Record<string, Record<string, (...args: any[]) => void>>;
+    protected counts: Record<string, number>;
+    private _disabled;
+    protected disposed: boolean;
+    __debug: boolean;
+    constructor(_onAllUnsubscribed?: ((event: keyof Events) => void) | undefined);
+    get disabled(): boolean;
+    subscriberCount: (event: Extract<keyof Events, string>) => number;
+    totalSubscriberCount: () => number;
+    subscribe: <K extends Extract<keyof Events, string>>(event: K, callback: Events[K]) => () => void;
+    emit: <K extends Extract<keyof Events, string>>(event: K, ...args: Parameters<Events[K]>) => void;
+    dispose: () => void;
+    disable: () => void;
+}
+export declare type EventsOf<T extends EventSubscriber<any>> = T extends EventSubscriber<infer E> ? keyof E : never;

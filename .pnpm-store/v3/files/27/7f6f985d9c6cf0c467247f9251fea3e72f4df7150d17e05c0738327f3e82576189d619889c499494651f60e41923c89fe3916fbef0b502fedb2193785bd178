@@ -1,0 +1,15 @@
+// @unocss-include
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { ParticleLayer } from '../particles.js';
+import { IconSpritesheet } from '../icon.js';
+import { Toaster } from 'react-hot-toast';
+/**
+ * Provides all the stuff for all global junk.
+ */
+export function Provider({ children, disableParticles, toastPosition = 'bottom-center', toastContainerClassName, }) {
+    const otherStuff = (_jsxs(_Fragment, { children: [_jsx(IconSpritesheet, {}), _jsx(Toaster, { position: toastPosition, containerClassName: toastContainerClassName })] }));
+    if (disableParticles)
+        return (_jsxs(_Fragment, { children: [children, otherStuff] }));
+    return (_jsxs(ParticleLayer, { children: [children, otherStuff] }));
+}
+//# sourceMappingURL=Provider.js.map

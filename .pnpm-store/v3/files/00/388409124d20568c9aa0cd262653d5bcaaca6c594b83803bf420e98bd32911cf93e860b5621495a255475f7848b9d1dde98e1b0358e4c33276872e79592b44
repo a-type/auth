@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isEventTargetDay = void 0;
+var constants_1 = require("./constants");
+function isEventTargetDay(event) {
+    return (event.target instanceof HTMLElement &&
+        !!event.target.getAttribute(constants_1.VALUE_DATA_ATTRIBUTE));
+}
+exports.isEventTargetDay = isEventTargetDay;
+//# sourceMappingURL=eventUtils.js.map

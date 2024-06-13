@@ -1,0 +1,6 @@
+import { HTMLAttributes } from 'react';
+export interface ChipProps extends HTMLAttributes<HTMLElement> {
+    color?: 'neutral' | 'primary' | 'accent';
+    asChild?: boolean;
+}
+export declare const Chip: import("react").ForwardRefExoticComponent<ChipProps & import("react").RefAttributes<any>>;

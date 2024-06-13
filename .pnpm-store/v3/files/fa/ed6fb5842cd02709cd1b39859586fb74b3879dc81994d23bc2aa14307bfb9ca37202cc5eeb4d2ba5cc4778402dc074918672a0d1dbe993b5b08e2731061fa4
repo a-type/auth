@@ -1,0 +1,9 @@
+// @unocss-include
+"use strict";
+'use client';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Form = void 0;
+const formik_1 = require("formik");
+const withClassName_js_1 = require("../../hooks/withClassName.js");
+exports.Form = (0, withClassName_js_1.withClassName)(formik_1.Form, 'flex flex-col gap-2 items-start');
+//# sourceMappingURL=Form.js.map

@@ -1,0 +1,20 @@
+// @unocss-include
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemRightSlot, DropdownMenuTrigger, } from './DropdownMenu.js';
+import { Icon } from '../icon.js';
+import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
+const meta = {
+    title: 'DropdownMenu',
+    component: DropdownMenu,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+export default meta;
+export const Default = {
+    args: {
+        children: (_jsxs(_Fragment, { children: [_jsx(DropdownMenuTrigger, { children: "Open" }), _jsxs(DropdownMenuContent, { children: [_jsxs(DropdownMenuItem, Object.assign({ color: "destructive" }, { children: [_jsx(DropdownMenuLabel, { children: "Item 1" }), _jsx(DropdownMenuItemRightSlot, { children: _jsx(Icon, { name: "flag" }) })] })), _jsxs(DropdownMenuItem, { children: [_jsx(DropdownMenuLabel, { children: "Item 2" }), _jsx(DropdownMenuItemRightSlot, { children: _jsx(Icon, { name: "add_person" }) })] })] })] })),
+    },
+};
+//# sourceMappingURL=DropdownMenu.stories.js.map

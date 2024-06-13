@@ -1,0 +1,19 @@
+import type { StoryObj } from '@storybook/react';
+import { Select } from './Select.js';
+declare const meta: {
+    title: string;
+    component: <T extends string = string>({ children, value, onValueChange, mobileNative, ...rest }: import("./Select.js").SelectProps<T>) => import("react/jsx-runtime").JSX.Element;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+    args: {
+        value: string;
+    };
+};
+export default meta;
+type Story = StoryObj<typeof Select>;
+export declare const Default: Story;
+export declare const CompareSelectAndButton: Story;

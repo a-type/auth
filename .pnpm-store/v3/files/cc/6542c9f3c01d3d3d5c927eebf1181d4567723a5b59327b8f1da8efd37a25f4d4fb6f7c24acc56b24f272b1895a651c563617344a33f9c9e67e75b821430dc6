@@ -1,0 +1,2 @@
+/** serializes a date into a data- attribute value */
+export declare const serializeDateValue: (date: Date) => string;

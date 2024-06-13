@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useCalendarDayList = void 0;
+var react_1 = require("react");
+var constants_1 = require("./constants");
+var getMonthDayList_1 = require("./getMonthDayList");
+/**
+ * A helper hook which computes a list of 'days' and 'blanks' which will render
+ * into a calendar grid. The 'blanks' are null values and represent grid cells
+ * which don't have a day in them (like if a month starts on Tuesday, Sunday and
+ * Monday will be blank). Other values will be Dates.
+ */
+function useCalendarDayList(month, year, dayStartsOn) {
+    if (dayStartsOn === void 0) { dayStartsOn = constants_1.WeekDay.Sunday; }
+    // this is memoized to provide consistent references
+    var dayGrid = (0, react_1.useMemo)(function () { return (0, getMonthDayList_1.getMonthDayList)(month, year, dayStartsOn); }, [month, year]);
+    return dayGrid;
+}
+exports.useCalendarDayList = useCalendarDayList;
+//# sourceMappingURL=useCalendarDayList.js.map

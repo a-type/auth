@@ -1,0 +1,10 @@
+// @unocss-include
+import { useCallback, useMemo, useRef } from 'react';
+export function useStableCallback(callback) {
+    const ref = useRef(callback);
+    useMemo(() => {
+        ref.current = callback;
+    }, [callback]);
+    return useCallback((...args) => { var _a; return (_a = ref.current) === null || _a === void 0 ? void 0 : _a.call(ref, ...args); }, []);
+}
+//# sourceMappingURL=useStableCallback.js.map

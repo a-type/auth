@@ -1,0 +1,25 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useCalendarContext = exports.CalendarContextProvider = exports.CalendarContext = void 0;
+var react_1 = require("react");
+var constants_1 = require("./constants");
+exports.CalendarContext = (0, react_1.createContext)({
+    setDay: function () { },
+    setDayHovered: function () { return true; },
+    highlightedDate: null,
+    month: 0,
+    year: 0,
+    getDateEnabled: function () { return true; },
+    isFocusWithin: false,
+    weekStartsOn: constants_1.WeekDay.Sunday,
+});
+exports.CalendarContextProvider = exports.CalendarContext.Provider;
+function useCalendarContext() {
+    var context = (0, react_1.useContext)(exports.CalendarContext);
+    if (!context) {
+        throw new Error('useCalendarContext must be used within a CalendarContextProvider');
+    }
+    return context;
+}
+exports.useCalendarContext = useCalendarContext;
+//# sourceMappingURL=CalendarContext.js.map

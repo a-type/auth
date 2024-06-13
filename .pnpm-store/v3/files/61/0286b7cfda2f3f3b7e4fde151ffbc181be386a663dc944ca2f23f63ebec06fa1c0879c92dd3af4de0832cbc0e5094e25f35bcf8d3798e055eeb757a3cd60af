@@ -1,0 +1,7 @@
+import { HTMLAttributes } from 'react';
+export declare function PageContent({ children, fullHeight, noPadding, innerProps, className, scrollable, ...rest }: HTMLAttributes<HTMLDivElement> & {
+    fullHeight?: boolean;
+    noPadding?: boolean;
+    innerProps?: HTMLAttributes<HTMLDivElement>;
+    scrollable?: boolean;
+}): import("react/jsx-runtime").JSX.Element;

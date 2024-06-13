@@ -1,0 +1,22 @@
+import type { StoryObj } from '@storybook/react';
+import { ImageUploader } from './ImageUploader.js';
+declare const meta: {
+    title: string;
+    component: typeof ImageUploader;
+    argTypes: {
+        onChange: {
+            action: string;
+        };
+    };
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+    args: {
+        className: string;
+    };
+};
+export default meta;
+type Story = StoryObj<typeof ImageUploader>;
+export declare const Default: Story;

@@ -1,0 +1,12 @@
+import { ReactNode } from 'react';
+import { ToastPosition } from 'react-hot-toast';
+export interface ProviderProps {
+    children?: ReactNode;
+    disableParticles?: boolean;
+    toastPosition?: ToastPosition;
+    toastContainerClassName?: string;
+}
+/**
+ * Provides all the stuff for all global junk.
+ */
+export declare function Provider({ children, disableParticles, toastPosition, toastContainerClassName, }: ProviderProps): import("react/jsx-runtime").JSX.Element;

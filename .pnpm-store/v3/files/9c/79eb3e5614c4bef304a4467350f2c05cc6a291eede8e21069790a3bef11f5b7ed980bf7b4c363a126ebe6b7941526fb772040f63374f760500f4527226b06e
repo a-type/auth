@@ -1,0 +1,11 @@
+import { ButtonProps } from './Button.js';
+export interface ConfirmedButtonProps extends Omit<ButtonProps, 'onClick'> {
+    confirmText: string;
+    confirmTitle?: string;
+    confirmAction?: string;
+    cancelAction?: string;
+    onConfirm: () => void | Promise<any>;
+    skip?: boolean;
+    confirmColor?: ButtonProps['color'];
+}
+export declare function ConfirmedButton({ confirmText, confirmTitle, confirmAction, cancelAction, confirmColor, onConfirm, skip, ...rest }: ConfirmedButtonProps): import("react/jsx-runtime").JSX.Element;

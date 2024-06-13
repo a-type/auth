@@ -1,0 +1,31 @@
+// @unocss-include
+"use strict";
+'use client';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorBoundary = void 0;
+const react_1 = require("react");
+class ErrorBoundary extends react_1.Component {
+    constructor() {
+        super(...arguments);
+        this.state = {
+            error: null,
+        };
+    }
+    static getDerivedStateFromError(error) {
+        // Update state so the next render will show the fallback UI.
+        return { error };
+    }
+    render() {
+        if (this.state.error) {
+            if (typeof this.props.fallback === 'function') {
+                return this.props.fallback({
+                    clearError: () => this.setState({ error: null }),
+                });
+            }
+            return this.props.fallback || null;
+        }
+        return this.props.children;
+    }
+}
+exports.ErrorBoundary = ErrorBoundary;
+//# sourceMappingURL=ErrorBoundary.js.map

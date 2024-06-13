@@ -1,0 +1,15 @@
+// @unocss-include
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { TabsRoot, TabsList, TabsContent, TabsTrigger } from './tabs.js';
+const meta = {
+    title: 'Tabs',
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+export default meta;
+export const Default = {
+    render: () => (_jsxs(TabsRoot, { children: [_jsxs(TabsList, { children: [_jsx(TabsTrigger, Object.assign({ value: "tab1" }, { children: "Tab 1" })), _jsx(TabsTrigger, Object.assign({ value: "tab2" }, { children: "Tab 2" })), _jsx(TabsTrigger, Object.assign({ value: "tab3" }, { children: "Tab 3" }))] }), _jsx(TabsContent, Object.assign({ value: "tab1" }, { children: _jsx("div", { children: "Tab 1 content" }) })), _jsx(TabsContent, Object.assign({ value: "tab2" }, { children: _jsx("div", { children: "Tab 2 content" }) })), _jsx(TabsContent, Object.assign({ value: "tab3" }, { children: _jsx("div", { children: "Tab 3 content" }) }))] })),
+};
+//# sourceMappingURL=tabs.stories.js.map

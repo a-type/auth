@@ -1,0 +1,33 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Default = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const ParticleLayer_js_1 = require("./ParticleLayer.js");
+const button_js_1 = require("../button.js");
+const ParticleContext_js_1 = require("./ParticleContext.js");
+const meta = {
+    title: 'ParticleLayer',
+    component: ParticleLayer_js_1.ParticleLayer,
+    argTypes: {},
+    parameters: {},
+};
+exports.default = meta;
+exports.Default = {
+    render() {
+        return ((0, jsx_runtime_1.jsx)("div", Object.assign({ className: "w-full h-[100vh] relative flex flex-col items-center justify-center" }, { children: (0, jsx_runtime_1.jsx)(ParticleLayer_js_1.ParticleLayer, Object.assign({ noPortal: true }, { children: (0, jsx_runtime_1.jsx)(DemoButton, {}) })) })));
+    },
+};
+function DemoButton() {
+    const particles = (0, ParticleContext_js_1.useParticles)();
+    if (!particles)
+        throw new Error('Must be used inside ParticleLayer');
+    const burst = (ev) => {
+        particles.addParticles(particles.elementExplosion({
+            element: ev.currentTarget,
+            count: 10,
+        }));
+    };
+    return ((0, jsx_runtime_1.jsx)(button_js_1.Button, Object.assign({ size: "icon", onClick: burst }, { children: "\uD83D\uDCA5" })));
+}
+//# sourceMappingURL=ParticleLayer.stories.js.map

@@ -1,0 +1,25 @@
+// @unocss-include
+import { jsx as _jsx } from "react/jsx-runtime";
+import { Button } from './Button.js';
+import { useState } from 'react';
+const meta = {
+    title: 'Button',
+    component: Button,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+    args: {
+        children: 'Button',
+    },
+};
+export default meta;
+export const Default = {};
+export const Toggled = {
+    render: (args) => {
+        const [on, setOn] = useState(false);
+        const toggle = () => setOn((v) => !v);
+        return _jsx(Button, Object.assign({}, args, { toggled: on, onClick: toggle }));
+    },
+};
+//# sourceMappingURL=Button.stories.js.map

@@ -1,0 +1,26 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tall = exports.Default = void 0;
+const TextArea_js_1 = require("./TextArea.js");
+const meta = {
+    title: 'TextArea',
+    component: TextArea_js_1.TextArea,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+exports.default = meta;
+exports.Default = {
+    args: {
+        autoSize: true,
+    },
+};
+exports.Tall = {
+    args: {
+        value: 'This is a tall text area\nit has a lot\n of content!\nas in, quite a bit\nI think',
+        autoSize: true,
+    },
+};
+//# sourceMappingURL=TextArea.stories.js.map

@@ -1,0 +1,51 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { withClassName } from '../../hooks/withClassName.js';
+import classNames, { clsx } from 'clsx';
+import { forwardRef } from 'react';
+const StyledContent = withClassName(DropdownMenuPrimitive.Content, 'min-w-220px bg-white z-menu shadow-lg rounded-xl border-default', 'layer-components:transform-origin-[var(--radix-dropdown-menu-transform-origin)]', 'layer-components:[&[data-state=open]]:animate-popover-in', 'layer-components:[&[data-state=closed]]:animate-popover-out', 'layer-components:max-h-[var(--radix-dropdown-menu-content-available-height)]', 'important:motion-reduce:animate-none', 'will-change-transform');
+const itemClassName = classNames('layer-components:text-md layer-components:leading-4 layer-components:color-black layer-components:rounded-sm layer-components:flex layer-components:items-center layer-components:pr-4 layer-components:pl-8 layer-components:py-3 layer-components:relative layer-components:text-left layer-components:select-none layer-components:cursor-pointer', 'layer-components:[&[data-disabled]]:color-gray9 layer-components:[&[data-disabled]]:pointer-events-none', 'layer-components:focus-visible:bg-gray2 layer-components:focus-visible:color-gray9', 'layer-components:focus:outline-none');
+const StyledItemBase = withClassName(DropdownMenuPrimitive.Item, itemClassName);
+const StyledItem = forwardRef((_a, forwardedRef) => {
+    var { className, color } = _a, props = __rest(_a, ["className", "color"]);
+    return (_jsx(StyledItemBase, Object.assign({}, props, { className: clsx(color === 'destructive' &&
+            'layer-variants:text-attention-dark layer-variants:hover:bg-attention-wash layer-variants:focus-visible:bg-attention-wash', className), ref: forwardedRef })));
+});
+const StyledCheckboxItem = withClassName(DropdownMenuPrimitive.CheckboxItem, itemClassName);
+const StyledRadioItem = withClassName(DropdownMenuPrimitive.RadioItem, itemClassName);
+const StyledLabel = withClassName(DropdownMenuPrimitive.Label, 'pl-25px text-12px leading-6 color-gray7');
+const StyledSeparator = withClassName(DropdownMenuPrimitive.Separator, 'h-1px bg-gray5 m-5px');
+const StyledItemIndicator = withClassName(DropdownMenuPrimitive.ItemIndicator, 'absolute left-0 w-25px inline-flex items-center justify-center');
+const StyledArrow = withClassName(DropdownMenuPrimitive.Arrow, 'fill-white stroke-black stroke-1');
+const StyledTrigger = withClassName(DropdownMenuPrimitive.Trigger, 'select-none');
+const StyledPortal = DropdownMenuPrimitive.Portal;
+// Exports
+export const DropdownMenu = DropdownMenuPrimitive.Root;
+export const DropdownMenuTrigger = StyledTrigger;
+export const DropdownMenuItem = StyledItem;
+export const DropdownMenuCheckboxItem = StyledCheckboxItem;
+export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+export const DropdownMenuRadioItem = StyledRadioItem;
+export const DropdownMenuItemIndicator = StyledItemIndicator;
+export const DropdownMenuLabel = StyledLabel;
+export const DropdownMenuSeparator = StyledSeparator;
+export const DropdownMenuArrow = StyledArrow;
+export const DropdownMenuContent = (_a) => {
+    var { children, forceMount } = _a, props = __rest(_a, ["children", "forceMount"]);
+    return (_jsx(StyledPortal, Object.assign({ forceMount: forceMount }, { children: _jsxs(StyledContent, Object.assign({}, props, { children: [_jsx("div", Object.assign({ className: "overflow-hidden rounded-xl" }, { children: children })), _jsx(StyledArrow, {})] })) })));
+};
+export const DropdownMenuItemRightSlot = withClassName('div', 'ml-auto');
+//# sourceMappingURL=DropdownMenu.js.map

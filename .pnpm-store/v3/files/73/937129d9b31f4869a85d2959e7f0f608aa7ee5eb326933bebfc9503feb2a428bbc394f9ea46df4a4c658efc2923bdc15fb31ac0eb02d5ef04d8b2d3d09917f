@@ -1,0 +1,8 @@
+import { Ref } from 'react';
+export declare const assignRef: <T>(ref: Ref<T>, el: T) => void;
+/**
+ * Combines multiple React Refs into a single Ref that can be
+ * passed to an element, which will update all provided Refs.
+ */
+declare const useCombinedRef: <T>(...refs: (Ref<T> | undefined)[]) => (el: T) => void;
+export default useCombinedRef;
