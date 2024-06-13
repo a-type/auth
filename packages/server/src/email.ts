@@ -77,7 +77,7 @@ export class Email extends EventEmitter {
       from: this.user,
       to,
       subject: `Verify your email on ${this.appName}`,
-      text: `Your verification code is ${code}. Visit ${url} to verify your email.`,
+      text: `Visit ${url} to verify your email.`,
       html: `
 			<div>
 				<h1>Thanks for signing up to ${this.appName}!</h1>
@@ -104,6 +104,7 @@ export class Email extends EventEmitter {
   }) {
     const url = new URL('/reset-password', this.uiOrigin);
     url.searchParams.set('code', code);
+    url.searchParams.set('email', to);
     if (returnTo) {
       url.searchParams.set('returnTo', returnTo);
     }
@@ -115,7 +116,7 @@ export class Email extends EventEmitter {
       from: this.user,
       to,
       subject: `Reset your password on ${this.appName}`,
-      text: `Your password reset code is ${code}. Visit ${url} to reset your password.`,
+      text: `Visit ${url} to reset your password.`,
       html: `
 			<div>
 				<h1>Reset your password on ${this.appName}</h1>
