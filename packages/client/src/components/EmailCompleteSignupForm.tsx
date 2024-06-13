@@ -4,20 +4,16 @@ import { Button } from '@a-type/ui/components/button';
 export interface EmailCompleteSignUpFormProps {
   code: string;
   email: string;
-  emailSignupEndpoint: string;
+  endpoint: string;
 }
 
 export function EmailCompleteSignupForm({
   code,
   email,
-  emailSignupEndpoint,
+  endpoint,
 }: EmailCompleteSignUpFormProps) {
   return (
-    <form
-      action={emailSignupEndpoint}
-      method="post"
-      className="flex flex-col gap-2"
-    >
+    <form action={endpoint} method="post" className="flex flex-col gap-2">
       <input type="hidden" name="code" value={code} />
       <input type="hidden" name="email" value={email} />
       <label htmlFor="password">Password</label>

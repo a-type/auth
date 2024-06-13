@@ -6,15 +6,15 @@ export function OAuthSigninButton({
   children,
   className,
   inviteId,
-  oAuthSignInEndpoint,
+  endpoint,
   ...rest
 }: {
   returnTo?: string | null;
   children?: ReactNode;
   inviteId?: string | null;
-  oAuthSignInEndpoint: string;
+  endpoint: string;
 } & ButtonProps) {
-  const url = new URL(oAuthSignInEndpoint ?? window.location.origin);
+  const url = new URL(endpoint ?? window.location.origin);
   if (returnTo) {
     url.searchParams.set('returnTo', returnTo);
   }

@@ -9,14 +9,14 @@ export interface EmailSignupFormProps {
   returnTo?: string | null;
   actionText?: string;
   disabled?: boolean;
-  emailSignupEndpoint: string;
+  endpoint: string;
 }
 
 export function EmailSignupForm({
   returnTo,
   actionText = 'Start signup',
   disabled,
-  emailSignupEndpoint,
+  endpoint,
 }: EmailSignupFormProps) {
   const [success, setSuccess] = useState(false);
 
@@ -42,7 +42,7 @@ export function EmailSignupForm({
           formData.append('name', values.name);
           formData.append('email', values.email);
           formData.append('returnTo', returnTo ?? '');
-          const response = await fetch(emailSignupEndpoint, {
+          const response = await fetch(endpoint, {
             method: 'post',
             body: formData,
           });

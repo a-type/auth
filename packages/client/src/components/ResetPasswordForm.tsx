@@ -4,20 +4,16 @@ import { Button } from '@a-type/ui/components/button';
 export interface ResetPasswordFormProps {
   code: string;
   email: string;
-  resetPasswordEndpoint: string;
+  endpoint: string;
 }
 
 export function ResetPasswordForm({
   code,
   email,
-  resetPasswordEndpoint,
+  endpoint,
 }: ResetPasswordFormProps) {
   return (
-    <form
-      action={resetPasswordEndpoint}
-      method="post"
-      className="flex flex-col gap-2"
-    >
+    <form action={endpoint} method="post" className="flex flex-col gap-2">
       <input type="hidden" name="code" value={code} />
       <input type="hidden" name="email" value={email} />
       <label htmlFor="newPassword">New Password</label>

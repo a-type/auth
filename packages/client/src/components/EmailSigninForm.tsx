@@ -12,20 +12,20 @@ import { useState } from 'react';
 
 export interface EmailSigninFormProps {
   returnTo?: string;
-  emailSignInEndpoint: string;
+  endpoint: string;
   resetPasswordEndpoint: string;
 }
 
 export function EmailSigninForm({
   returnTo = '',
-  emailSignInEndpoint,
+  endpoint,
   resetPasswordEndpoint,
 }: EmailSigninFormProps) {
   return (
     <form
       className="flex flex-col gap-2"
       method="post"
-      action={`${emailSignInEndpoint}?returnTo=${returnTo}`}
+      action={`${endpoint}?returnTo=${returnTo}`}
     >
       <label htmlFor="email" className="font-bold">
         Email
