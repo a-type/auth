@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.1
+
+### Patch Changes
+
+- 66120bb: fix validation
+
 ## 0.6.0
 
 ### Minor Changes
