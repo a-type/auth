@@ -35,3 +35,5 @@ pnpm-store/
 .pnpm-debug.log
 
 *storybook.log
+
+.turbo/
