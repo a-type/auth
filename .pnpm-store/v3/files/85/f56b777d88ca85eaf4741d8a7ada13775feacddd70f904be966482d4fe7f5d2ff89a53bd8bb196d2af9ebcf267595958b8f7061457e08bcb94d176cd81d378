@@ -1,0 +1,20 @@
+/// <reference types="react" />
+import { WeekDay } from './constants';
+export interface CalendarContextData {
+    setDay: (value: Date) => void;
+    setDayHovered: (value: Date) => boolean;
+    highlightedDate: Date | null;
+    month: number;
+    year: number;
+    value?: Date | null;
+    rangeValue?: {
+        start: Date | null;
+        end: Date | null;
+    };
+    getDateEnabled: (value: Date) => boolean;
+    isFocusWithin: boolean;
+    weekStartsOn: WeekDay;
+}
+export declare const CalendarContext: import("react").Context<CalendarContextData>;
+export declare const CalendarContextProvider: import("react").Provider<CalendarContextData>;
+export declare function useCalendarContext(): CalendarContextData;

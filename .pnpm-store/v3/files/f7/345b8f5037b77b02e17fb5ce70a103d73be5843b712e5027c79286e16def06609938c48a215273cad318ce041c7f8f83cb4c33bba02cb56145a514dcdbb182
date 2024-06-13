@@ -1,0 +1,26 @@
+// @unocss-include
+import { jsx as _jsx } from "react/jsx-runtime";
+import { DatePicker, DateRangePicker } from './DatePicker.js';
+import { useState } from 'react';
+const meta = {
+    title: 'DatePicker',
+    component: DatePicker,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+export default meta;
+export const Default = {
+    render() {
+        const [value, setValue] = useState(null);
+        return _jsx(DatePicker, { value: value, onChange: setValue });
+    },
+};
+export const Range = {
+    render() {
+        const [value, setValue] = useState({ start: null, end: null });
+        return _jsx(DateRangePicker, { value: value, onChange: setValue });
+    },
+};
+//# sourceMappingURL=DatePicker.stories.js.map

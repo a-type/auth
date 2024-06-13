@@ -1,0 +1,72 @@
+function generateId() {
+    return Math.random().toString(36).substr(2, 9);
+}
+export class EventSubscriber {
+    constructor(_onAllUnsubscribed) {
+        this._onAllUnsubscribed = _onAllUnsubscribed;
+        this.subscribers = {};
+        this.counts = {};
+        this._disabled = false;
+        this.disposed = false;
+        this.__debug = false;
+        this.subscriberCount = (event) => {
+            var _a;
+            return (_a = this.counts[event]) !== null && _a !== void 0 ? _a : 0;
+        };
+        this.totalSubscriberCount = () => {
+            return Object.values(this.counts).reduce((acc, count) => acc + count, 0);
+        };
+        this.subscribe = (event, callback) => {
+            const key = generateId();
+            let subscribers = this.subscribers[event];
+            if (!subscribers) {
+                subscribers = this.subscribers[event] = {};
+            }
+            subscribers[key] = callback;
+            this.counts[event] = (this.counts[event] || 0) + 1;
+            return () => {
+                // already removed
+                if (!this.subscribers[event])
+                    return;
+                delete this.subscribers[event][key];
+                this.counts[event]--;
+                if (this.counts[event] === 0) {
+                    delete this.subscribers[event];
+                    delete this.counts[event];
+                    if (this._onAllUnsubscribed) {
+                        this._onAllUnsubscribed(event);
+                    }
+                }
+            };
+        };
+        this.emit = (event, ...args) => {
+            if (this._disabled)
+                return;
+            if (this.subscribers[event]) {
+                Object.values(this.subscribers[event]).forEach((c) => c(...args));
+            }
+            if (this.__debug) {
+                console.trace('[EVENT]', event, ...args);
+            }
+        };
+        this.dispose = () => {
+            this._disabled = true;
+            this.disposed = true;
+            const events = Object.keys(this.subscribers);
+            this.subscribers = {};
+            this.counts = {};
+            events.forEach((event) => {
+                if (this._onAllUnsubscribed) {
+                    this._onAllUnsubscribed(event);
+                }
+            });
+        };
+        this.disable = () => {
+            this._disabled = true;
+        };
+    }
+    get disabled() {
+        return this._disabled;
+    }
+}
+//# sourceMappingURL=events.js.map

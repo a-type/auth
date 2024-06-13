@@ -1,0 +1,28 @@
+// @unocss-include
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import classNames from 'clsx';
+import { Icon } from '../icon.js';
+export function Avatar(_a) {
+    var { className, popIn = true, imageSrc, name } = _a, rest = __rest(_a, ["className", "popIn", "imageSrc", "name"]);
+    const empty = !name && !imageSrc;
+    return (_jsxs("div", Object.assign({ "data-pop": popIn, className: classNames('layer-components:flex layer-components:items-center layer-components:justify-center layer-components:rounded-full layer-components:border-default layer-components:overflow-hidden layer-components:w-24px layer-components:h-24px layer-components:select-none layer-components:relative layer-components:bg-white layer-components:flex-shrink-0', popIn &&
+            'layer-variants:animate-pop-in-from-half layer-variants:animate-ease-springy layer-variants:animate-duration-200', empty && 'layer-components(border-dashed bg-gray2)', className) }, rest, { children: [!empty && _jsx(AvatarContent, { name: name, imageSrc: imageSrc }), empty && _jsx(Icon, { name: "profile" })] })));
+}
+function AvatarContent({ name, imageSrc, }) {
+    if (imageSrc) {
+        return (_jsx("img", { className: "w-full h-full object-cover rounded-full", referrerPolicy: "no-referrer", crossOrigin: "anonymous", src: imageSrc, alt: `${name !== null && name !== void 0 ? name : 'user'}'s profile picture` }));
+    }
+    return (_jsx("div", Object.assign({ className: "color-black items-center justify-center flex text-sm font-bold rounded-full" }, { children: (name === null || name === void 0 ? void 0 : name.charAt(0)) || '?' })));
+}
+//# sourceMappingURL=Avatar.js.map

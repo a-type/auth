@@ -1,0 +1,5 @@
+export interface RelativeTimeProps {
+    value: number;
+    abbreviate?: boolean;
+}
+export declare function RelativeTime({ value, abbreviate }: RelativeTimeProps): import("react/jsx-runtime").JSX.Element;

@@ -1,0 +1,19 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Provider = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const particles_js_1 = require("../particles.js");
+const icon_js_1 = require("../icon.js");
+const react_hot_toast_1 = require("react-hot-toast");
+/**
+ * Provides all the stuff for all global junk.
+ */
+function Provider({ children, disableParticles, toastPosition = 'bottom-center', toastContainerClassName, }) {
+    const otherStuff = ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(icon_js_1.IconSpritesheet, {}), (0, jsx_runtime_1.jsx)(react_hot_toast_1.Toaster, { position: toastPosition, containerClassName: toastContainerClassName })] }));
+    if (disableParticles)
+        return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [children, otherStuff] }));
+    return ((0, jsx_runtime_1.jsxs)(particles_js_1.ParticleLayer, { children: [children, otherStuff] }));
+}
+exports.Provider = Provider;
+//# sourceMappingURL=Provider.js.map

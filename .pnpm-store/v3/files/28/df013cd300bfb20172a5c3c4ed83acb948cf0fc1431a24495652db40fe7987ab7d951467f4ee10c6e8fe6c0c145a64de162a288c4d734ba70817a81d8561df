@@ -1,0 +1,64 @@
+// @unocss-include
+"use strict";
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TextArea = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const clsx_1 = __importDefault(require("clsx"));
+const useMergedRef_js_1 = __importDefault(require("../../hooks/useMergedRef.js"));
+const react_1 = require("react");
+const input_js_1 = require("../input.js");
+exports.TextArea = (0, react_1.forwardRef)(function TextArea(_a, ref) {
+    var _b;
+    var { autoSize, autoSelect, onFocus, className, rows, padBottomPixels = 0, onChange } = _a, rest = __rest(_a, ["autoSize", "autoSelect", "onFocus", "className", "rows", "padBottomPixels", "onChange"]);
+    const innerRef = (0, react_1.useRef)(null);
+    const finalRef = (0, useMergedRef_js_1.default)(innerRef, ref);
+    const [innerValue, setInnerValue] = (0, react_1.useState)('');
+    const finalValue = (_b = rest.value) !== null && _b !== void 0 ? _b : innerValue;
+    // TODO: can layout effect be avoided? useEffect shows a flash of the wrong size
+    (0, react_1.useLayoutEffect)(() => {
+        if (!autoSize)
+            return;
+        const element = innerRef.current;
+        if (element) {
+            if (element.value !== '' || padBottomPixels) {
+                element.style.height = 'auto';
+                const baseHeight = element.scrollHeight;
+                element.style.height = baseHeight + padBottomPixels + 'px';
+            }
+        }
+    }, [autoSize, padBottomPixels, finalValue]);
+    const handleChange = (0, react_1.useCallback)((e) => {
+        setInnerValue(e.target.value);
+        if (onChange) {
+            onChange(e);
+        }
+    }, [onChange]);
+    const handleFocus = (0, react_1.useCallback)((e) => {
+        if (autoSelect) {
+            e.target.select();
+        }
+        if (onFocus) {
+            onFocus(e);
+        }
+    }, [autoSelect, onFocus]);
+    return ((0, jsx_runtime_1.jsx)("textarea", Object.assign({ ref: finalRef, className: (0, clsx_1.default)(input_js_1.inputClassName, 'layer-components:[font-family:inherit] layer-components:text-inherit layer-components:overflow-hidden', {
+            'layer-components:[resize:vertical]': !autoSize,
+            'layer-components:[resize:none]': autoSize,
+        }, className), rows: autoSize ? 1 : rows, onChange: handleChange, onFocus: handleFocus }, rest)));
+});
+//# sourceMappingURL=TextArea.js.map

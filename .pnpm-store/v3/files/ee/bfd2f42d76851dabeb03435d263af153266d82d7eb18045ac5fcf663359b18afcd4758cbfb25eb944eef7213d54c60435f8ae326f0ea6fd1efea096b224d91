@@ -1,0 +1,31 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.throttle = exports.debounce = void 0;
+function debounce(callback, delay) {
+    let timeout;
+    return ((...args) => {
+        if (timeout !== undefined) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            timeout = undefined;
+            callback(...args);
+        }, delay);
+    });
+}
+exports.debounce = debounce;
+function throttle(callback, delay) {
+    let lastTime = 0;
+    return ((...args) => {
+        const now = Date.now();
+        // makes sure the latest value is always sent after throttling ends
+        const finalizer = debounce(callback, delay);
+        if (now - lastTime >= delay) {
+            lastTime = now;
+            callback(...args);
+        }
+        finalizer(...args);
+    });
+}
+exports.throttle = throttle;
+//# sourceMappingURL=timing.js.map

@@ -1,0 +1,108 @@
+export declare class Particles {
+    private canvas;
+    private ctx;
+    private state;
+    private lastFrameTimestamp;
+    private disabled;
+    private particles;
+    private freeParticles;
+    private resizeObserver;
+    constructor({ initialPoolSize }: {
+        initialPoolSize: number;
+    });
+    setCanvas: (canvas: HTMLCanvasElement | null) => void;
+    private resume;
+    private pause;
+    private draw;
+    private renderParticles;
+    addParticles: (spawn: ParticleSpawn) => void;
+    private extendPool;
+    elementExplosion: ({ element, color, borders, lifespan, force, drag, forceFuzz, angleFuzz, margin, ...rest }: {
+        element: HTMLElement;
+        color?: Color | [Color, Color] | undefined;
+        count: number;
+        startRadius?: number | undefined;
+        endRadius?: number | undefined;
+        borders?: BorderName[] | undefined;
+        lifespan?: number | undefined;
+        force?: number | undefined;
+        drag?: number | undefined;
+        forceFuzz?: number | undefined;
+        angleFuzz?: number | undefined;
+        margin?: number | undefined;
+    }) => ParticleSpawn;
+    windowBorderExplosion: ({ color, border, lifespan, ...rest }: {
+        color?: Color | [Color, Color] | undefined;
+        count: number;
+        startRadius?: number | undefined;
+        endRadius?: number | undefined;
+        border?: BorderName | undefined;
+        lifespan?: number | undefined;
+    }) => ParticleSpawn;
+}
+type ParticleBehavior = (ctx: CanvasRenderingContext2D, x: number, y: number, lifetime: number, lifespan: number) => void;
+type ParticleSpawn = {
+    count: number;
+    behavior: ParticleBehavior;
+    initializer: ParticleInitializer;
+};
+type ParticleInitializer = (index: number) => {
+    x: number;
+    y: number;
+    lifespan: number;
+    velocityX: number;
+    velocityY: number;
+    drag: number;
+};
+export declare function createCircleParticles({ count, startRadius, endRadius, initializer, color, }: {
+    count: number;
+    startRadius?: number;
+    endRadius?: number;
+    initializer: ParticleInitializer;
+    color?: Color | [Color, Color];
+}): ParticleSpawn;
+type BorderName = 'top' | 'right' | 'bottom' | 'left';
+export declare const createElementBorderInitializer: ({ element, borders, force, drag, lifespan, forceFuzz, angleFuzz, margin, }: {
+    element: HTMLElement;
+    borders?: BorderName[] | undefined;
+    force?: number | undefined;
+    drag?: number | undefined;
+    lifespan?: number | undefined;
+    forceFuzz?: number | undefined;
+    angleFuzz?: number | undefined;
+    margin?: number | undefined;
+}) => ParticleInitializer;
+export type Color = {
+    space: 'rgb';
+    values: [number, number, number];
+    opacity: number;
+};
+export declare const elementExplosion: ({ element, color, borders, lifespan, force, drag, forceFuzz, angleFuzz, margin, ...rest }: {
+    element: HTMLElement;
+    color?: Color | [Color, Color] | undefined;
+    count: number;
+    startRadius?: number | undefined;
+    endRadius?: number | undefined;
+    borders?: BorderName[] | undefined;
+    lifespan?: number | undefined;
+    force?: number | undefined;
+    drag?: number | undefined;
+    forceFuzz?: number | undefined;
+    angleFuzz?: number | undefined;
+    margin?: number | undefined;
+}) => ParticleSpawn;
+export declare const createWindowBorderInitializer: ({ force, drag, border, lifespan, }: {
+    force?: number | undefined;
+    drag?: number | undefined;
+    border?: BorderName | undefined;
+    lifespan?: number | undefined;
+}) => ParticleInitializer;
+export declare const windowBorderExplosion: ({ color, border, lifespan, ...rest }: {
+    color?: Color | [Color, Color] | undefined;
+    count: number;
+    startRadius?: number | undefined;
+    endRadius?: number | undefined;
+    border?: BorderName | undefined;
+    lifespan?: number | undefined;
+}) => ParticleSpawn;
+export {};

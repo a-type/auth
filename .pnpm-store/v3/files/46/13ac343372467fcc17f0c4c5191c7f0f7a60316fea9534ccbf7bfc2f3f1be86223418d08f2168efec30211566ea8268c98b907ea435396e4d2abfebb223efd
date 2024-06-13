@@ -1,0 +1,29 @@
+// @unocss-include
+"use strict";
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PageNowPlaying = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const clsx_1 = __importDefault(require("clsx"));
+function PageNowPlaying(_a) {
+    var { className, unstyled } = _a, props = __rest(_a, ["className", "unstyled"]);
+    return ((0, jsx_runtime_1.jsx)("div", Object.assign({}, props, { className: (0, clsx_1.default)('layer-components:fixed layer-components:bottom-[calc(env(safe-area-inset-bottom,0px)+var(--now-playing-bottom,60px))] layer-components:left-0 layer-components:right-0 layer-components:z-now-playing layer-components:flex layer-components:flex-col layer-components:gap-2 layer-components:items-end', 'layer-components:sm:fixed layer-components:sm:bottom-3 layer-components:sm:left-[var(--content-left,20%)] layer-components:sm:transition-opacity layer-components:sm:top-auto layer-components:sm:items-end layer-components:sm:w-[var(--content-width,100%)] layer-components:sm:max-w-80vw layer-components:sm:p-0 layer-components:sm:opacity-[var(--content-ready,0)]', unstyled
+            ? 'layer-variants:p-2'
+            : 'layer-components:bg-wash layer-components:p-2px layer-components:rounded-xl layer-components:border-light layer-components:shadow-md layer-components:min-w-32px layer-components:items-center layer-components:justify-center layer-components:m-2 layer-components:w-auto', className) })));
+}
+exports.PageNowPlaying = PageNowPlaying;
+//# sourceMappingURL=PageNowPlaying.js.map

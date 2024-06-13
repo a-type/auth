@@ -1,0 +1,58 @@
+// @unocss-include
+"use strict";
+'use client';
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Checkbox = exports.CheckboxIndicator = exports.CheckboxRoot = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const CheckboxPrimitive = __importStar(require("@radix-ui/react-checkbox"));
+const react_1 = require("react");
+const react_icons_1 = require("@radix-ui/react-icons");
+const clsx_1 = __importDefault(require("clsx"));
+const withClassName_js_1 = require("../../hooks/withClassName.js");
+exports.CheckboxRoot = (0, withClassName_js_1.withClassName)(CheckboxPrimitive.Root, (0, clsx_1.default)('layer-components:w-28px layer-components:h-28px layer-components:flex-shrink-0 layer-components:relative layer-components:bg-white layer-components:border-default layer-components:transition layer-components:rounded-full layer-components:shadow-sm', 'layer-components:focus-visible:outline-off layer-components:focus-visible:shadow-focus', 'layer-components:[&[data-state=checked]]:bg-primary-light layer-components:[&[data-state=checked]]:border-primary-dark', 'layer-components:[&:hover:not(:disabled)]:shadow-[0_0_0_1px_var(--color-black)]', 'layer-components:[&:disabled]:bg-transparent layer-components:[&:disabled]:border-gray-3 layer-components:[&:disabled]:shadow-none'));
+function CheckboxIndicator(_a) {
+    var { children, className } = _a, props = __rest(_a, ["children", "className"]);
+    return ((0, jsx_runtime_1.jsx)(CheckboxPrimitive.Indicator, Object.assign({ className: (0, clsx_1.default)('absolute center translate-[-50%] color-black', className) }, props, { children: children !== null && children !== void 0 ? children : (0, jsx_runtime_1.jsx)(react_icons_1.CheckIcon, { width: 18, height: 18 }) })));
+}
+exports.CheckboxIndicator = CheckboxIndicator;
+exports.Checkbox = (0, react_1.forwardRef)(function Checkbox(props, ref) {
+    return ((0, jsx_runtime_1.jsx)(exports.CheckboxRoot, Object.assign({ ref: ref }, props, { children: (0, jsx_runtime_1.jsx)(CheckboxIndicator, {}) })));
+});
+//# sourceMappingURL=Checkbox.js.map

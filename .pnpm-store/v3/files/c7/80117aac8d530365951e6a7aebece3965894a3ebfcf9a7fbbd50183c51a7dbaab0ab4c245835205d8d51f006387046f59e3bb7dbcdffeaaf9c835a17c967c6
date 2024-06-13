@@ -1,0 +1,9 @@
+import { CSSProperties } from 'react';
+export interface AvatarProps {
+    className?: string;
+    popIn?: boolean;
+    style?: CSSProperties;
+    imageSrc?: string;
+    name?: string;
+}
+export declare function Avatar({ className, popIn, imageSrc, name, ...rest }: AvatarProps): import("react/jsx-runtime").JSX.Element;

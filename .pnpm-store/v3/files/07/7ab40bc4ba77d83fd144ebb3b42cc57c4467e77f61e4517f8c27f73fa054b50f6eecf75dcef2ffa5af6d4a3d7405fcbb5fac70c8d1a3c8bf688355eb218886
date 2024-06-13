@@ -1,0 +1,19 @@
+/// <reference types="react" resolution-mode="require"/>
+/// <reference types="node" resolution-mode="require"/>
+import { preventDefault } from '@a-type/utils';
+export declare function useLongPress({ onActivate, onDurationReached, duration, delay, }: {
+    onActivate: () => void;
+    onDurationReached: () => void;
+    duration?: number;
+    delay?: number;
+}): {
+    ref: import("react").MutableRefObject<any>;
+    timeoutRef: import("react").MutableRefObject<NodeJS.Timeout | null>;
+    state: "holding" | "candidate" | "idle" | "failed" | "pending";
+    props: {
+        onContextMenu: typeof preventDefault;
+        style: {
+            touchAction: string;
+        };
+    };
+};

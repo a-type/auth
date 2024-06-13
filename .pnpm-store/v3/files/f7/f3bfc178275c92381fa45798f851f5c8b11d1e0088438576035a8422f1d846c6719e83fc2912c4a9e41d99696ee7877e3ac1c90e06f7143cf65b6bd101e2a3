@@ -1,0 +1,20 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx } from "react/jsx-runtime";
+import classNames from 'clsx';
+export function PageNav(_a) {
+    var { className, children } = _a, props = __rest(_a, ["className", "children"]);
+    return (_jsx("div", Object.assign({}, props, { className: classNames('layer-components:[grid-area:nav] layer-components:relative layer-components:z-nav layer-components:pb-[calc(0.25rem+env(safe-area-inset-bottom,0px))]', 'layer-components:sm:[grid-area:nav] layer-components:sm:sticky layer-components:sm:top-0 layer-components:sm:h-auto layer-components:sm:bottom-auto layer-components:sm:left-auto layer-components:sm:right-auto', className) }, { children: children })));
+}
+//# sourceMappingURL=PageNav.js.map

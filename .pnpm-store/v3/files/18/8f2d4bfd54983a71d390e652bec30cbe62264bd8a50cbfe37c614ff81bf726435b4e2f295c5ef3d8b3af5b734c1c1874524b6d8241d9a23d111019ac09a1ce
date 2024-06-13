@@ -1,0 +1,16 @@
+import type { StoryObj } from '@storybook/react';
+import { DatePicker } from './DatePicker.js';
+declare const meta: {
+    title: string;
+    component: typeof DatePicker;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+};
+export default meta;
+type Story = StoryObj<typeof DatePicker>;
+export declare const Default: Story;
+export declare const Range: Story;

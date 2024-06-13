@@ -1,0 +1,73 @@
+/**
+ * Determines if two dates are on the same calendar day
+ */
+export declare const isSameDay: (a: Date, b: Date | null) => boolean;
+/**
+ * Determines if two dates are on the same calendar month in
+ * the same calendar year
+ */
+export declare function isSameMonth(a: Date, b: Date | null): boolean;
+/**
+ * Determines if a given date `a` is before the second date `b` (exclusive)
+ */
+export declare const isBefore: (a: Date | null, b: Date | null) => boolean;
+/**
+ * Determines if a given date is between two other dates (exclusive)
+ */
+export declare const isBetweenDays: (day: Date, a: Date | null, b: Date | null) => boolean;
+/**
+ * Get the number of days in a month
+ */
+export declare const getDaysInMonth: (month: number, year: number) => number;
+/**
+ * Add months to a date, adjusting the date if necessary.
+ */
+export declare const addMonths: (date: Date, count: number) => Date;
+/** Today, at midnight */
+export declare const today: Date;
+/**
+ * In a calendar grid, the first day of the month may be offset
+ * from the first column if it falls on a day which isn't the first
+ * of the week. This computes that offset for a given calendar month.
+ */
+export declare function getMonthWeekdayOffset(month: number, year: number, weekStartsOn: number): number;
+/**
+ * Computes the total number of grid rows required to display all
+ * the days in a calendar month.
+ */
+export declare function getGridRowCount(month: number, year: number, weekStartsOn: number): number;
+/**
+ * Computes the total number of grid cells in a grid which is
+ * large enough to render a calendar month. Includes cells
+ * for days which fall outside the current month but are visible
+ * because of weekday offsets.
+ */
+export declare function getGridDayCount(month: number, year: number, weekStartsOn: number): number;
+/**
+ * Determines if a given date is on the first row of its respective
+ * calendar grid as it would be rendered.
+ */
+export declare function getIsFirstRow(date: Date, weekStartsOn: number): boolean;
+/**
+ * Determines if a given date is on the last row of its respective
+ * calendar grid as it would be rendered.
+ */
+export declare function getIsLastRow(date: Date, weekStartsOn: number): boolean;
+/**
+ * Determines if a given date is in the first week of its month
+ */
+export declare function getIsFirstWeek(date: Date): boolean;
+/**
+ * Determines if a given date is in the last week of its month
+ */
+export declare function getIsLastWeek(date: Date): boolean;
+/**
+ * Determines if a given date is a weekend
+ */
+export declare function getIsWeekend(date: Date): boolean;
+/**
+ * Computes whether a given range of dates would include
+ * a disabled date according to the given getDateEnabled
+ * function. This is O(n) in the number of days in the range.
+ */
+export declare function rangeIncludesInvalidDate(start: Date, end: Date, getDateEnabled: (date: Date) => boolean): boolean;

@@ -1,0 +1,43 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import classNames from 'clsx';
+import { forwardRef, useEffect, useState } from 'react';
+import { Button } from '../button/Button.js';
+import { CollapsibleContent, CollapsibleRoot } from '../collapsible.js';
+export const ActionButton = forwardRef(function ActionButton(_a, ref) {
+    var { icon, children, className, visible = true } = _a, rest = __rest(_a, ["icon", "children", "className", "visible"]);
+    // this rather convoluted logic is meant to do:
+    // - when button goes invisible, wait for collapse and then
+    //   stop rendering
+    // - when button goes visible, render immediately and
+    //   set collapsible open next frame.
+    const [render, setRender] = useState(visible);
+    useEffect(() => {
+        if (!visible) {
+            const timeout = setTimeout(() => {
+                setRender(visible);
+            }, 300);
+            return () => clearTimeout(timeout);
+        }
+        else {
+            setRender(visible);
+        }
+    }, [visible]);
+    if (!render && !visible) {
+        return null;
+    }
+    return (_jsx(CollapsibleRoot, Object.assign({ open: !visible ? false : render }, { children: _jsx(CollapsibleContent, Object.assign({ "data-horizontal": true }, { children: _jsxs(Button, Object.assign({ ref: ref, size: "small", className: classNames('important:border-gray7 important:font-normal important:whitespace-nowrap important:m-2 important:flex important:flex-row important:gap-2 important:items-center important:h-30px important:rounded-15px important:mx-1', 'hover:bg-gray2', className) }, rest, { children: [icon, children] })) })) })));
+});
+//# sourceMappingURL=ActionButton.js.map

@@ -1,0 +1,20 @@
+/// <reference types="react" resolution-mode="require"/>
+import type { StoryObj } from '@storybook/react';
+import { Button } from './Button.js';
+declare const meta: {
+    title: string;
+    component: import("react").ForwardRefExoticComponent<import("./Button.js").ButtonProps & import("react").RefAttributes<HTMLButtonElement>>;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+    args: {
+        children: string;
+    };
+};
+export default meta;
+type Story = StoryObj<typeof Button>;
+export declare const Default: Story;
+export declare const Toggled: Story;

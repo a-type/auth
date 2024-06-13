@@ -1,0 +1,108 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useBoundsCssVars = exports.useBounds = exports.useSizeCssVars = exports.useSize = void 0;
+const utils_1 = require("@a-type/utils");
+const react_1 = require("react");
+const useStableCallback_js_1 = require("./useStableCallback.js");
+function useSize(callback) {
+    const ref = (0, react_1.useRef)(null);
+    const cb = (0, useStableCallback_js_1.useStableCallback)(callback);
+    (0, react_1.useEffect)(() => {
+        const target = ref.current;
+        if (!target) {
+            return () => {
+                //
+            };
+        }
+        const resizeObserver = new ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+                cb({
+                    width: entry.target.clientWidth,
+                    height: entry.target.clientHeight,
+                });
+            });
+        });
+        resizeObserver.observe(target);
+        return () => {
+            resizeObserver.unobserve(target);
+            resizeObserver.disconnect();
+        };
+    }, [ref, cb]);
+    return ref;
+}
+exports.useSize = useSize;
+function useSizeCssVars(debounceMs, applyToRef, propertyNames) {
+    const update = (0, react_1.useMemo)(() => {
+        const doupdate = ({ width, height }) => {
+            var _a, _b, _c, _d;
+            const usedRef = applyToRef || ref;
+            (_a = usedRef.current) === null || _a === void 0 ? void 0 : _a.style.setProperty((_b = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.width) !== null && _b !== void 0 ? _b : '--width', width + 'px');
+            (_c = usedRef.current) === null || _c === void 0 ? void 0 : _c.style.setProperty((_d = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.height) !== null && _d !== void 0 ? _d : '--height', height + 'px');
+        };
+        if (debounceMs) {
+            return (0, utils_1.debounce)(doupdate, debounceMs);
+        }
+        else {
+            return doupdate;
+        }
+    }, [debounceMs, applyToRef, propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.width, propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.height]);
+    const ref = useSize(update);
+    return ref;
+}
+exports.useSizeCssVars = useSizeCssVars;
+function useBounds(callback) {
+    const ref = (0, react_1.useRef)(null);
+    const cb = (0, useStableCallback_js_1.useStableCallback)(callback);
+    (0, react_1.useEffect)(() => {
+        const target = ref.current;
+        if (!target) {
+            return () => {
+                //
+            };
+        }
+        const resizeObserver = new ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+                const { left, top, width, height } = entry.target.getBoundingClientRect();
+                cb({ left, top, width, height });
+            });
+        });
+        resizeObserver.observe(target);
+        return () => {
+            resizeObserver.unobserve(target);
+            resizeObserver.disconnect();
+        };
+    }, [ref, cb]);
+    return ref;
+}
+exports.useBounds = useBounds;
+function useBoundsCssVars(debounceMs, applyToRef, propertyNames) {
+    const update = (0, react_1.useMemo)(() => {
+        const doupdate = ({ left, top, width, height, }) => {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+            const usedRef = applyToRef || ref;
+            (_a = usedRef.current) === null || _a === void 0 ? void 0 : _a.style.setProperty((_b = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.left) !== null && _b !== void 0 ? _b : '--left', left + 'px');
+            (_c = usedRef.current) === null || _c === void 0 ? void 0 : _c.style.setProperty((_d = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.top) !== null && _d !== void 0 ? _d : '--top', top + 'px');
+            (_e = usedRef.current) === null || _e === void 0 ? void 0 : _e.style.setProperty((_f = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.width) !== null && _f !== void 0 ? _f : '--width', width + 'px');
+            (_g = usedRef.current) === null || _g === void 0 ? void 0 : _g.style.setProperty((_h = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.height) !== null && _h !== void 0 ? _h : '--height', height + 'px');
+            (_j = usedRef.current) === null || _j === void 0 ? void 0 : _j.style.setProperty((_k = propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.ready) !== null && _k !== void 0 ? _k : '--ready', '1');
+        };
+        if (debounceMs) {
+            return (0, utils_1.debounce)(doupdate, debounceMs);
+        }
+        else {
+            return doupdate;
+        }
+    }, [
+        debounceMs,
+        applyToRef,
+        propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.left,
+        propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.top,
+        propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.width,
+        propertyNames === null || propertyNames === void 0 ? void 0 : propertyNames.height,
+    ]);
+    const ref = useBounds(update);
+    return ref;
+}
+exports.useBoundsCssVars = useBoundsCssVars;
+//# sourceMappingURL=useSize.js.map

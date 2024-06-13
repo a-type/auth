@@ -1,0 +1,9 @@
+// @unocss-include
+import { jsx as _jsx } from "react/jsx-runtime";
+import { useFormikContext } from 'formik';
+import { Button } from '../button/Button.js';
+export function SubmitButton(props) {
+    const { isSubmitting, isValid } = useFormikContext();
+    return (_jsx(Button, Object.assign({ loading: isSubmitting, disabled: !isValid, color: "primary", type: "submit" }, props)));
+}
+//# sourceMappingURL=SubmitButton.js.map

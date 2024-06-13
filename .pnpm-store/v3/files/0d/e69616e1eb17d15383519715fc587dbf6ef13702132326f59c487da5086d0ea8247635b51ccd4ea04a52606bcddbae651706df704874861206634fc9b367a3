@@ -1,0 +1,60 @@
+// @unocss-include
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NavBarRoot = exports.NavBarItemPip = exports.NavBarItemIcon = exports.NavBarItemText = exports.NavBarItemIconWrapper = exports.NavBarItem = exports.navBarItemClass = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const clsx_1 = __importStar(require("clsx"));
+const hooks_js_1 = require("../../hooks.js");
+const react_1 = require("react");
+const react_slot_1 = require("@radix-ui/react-slot");
+const icon_js_1 = require("../icon.js");
+exports.navBarItemClass = (0, clsx_1.default)('layer-components:flex layer-components:flex-col layer-components:items-center layer-components:justify-center layer-components:whitespace-nowrap layer-components:py-1 layer-components:px-3 layer-components:bg-transparent layer-components:rounded-md layer-components:border-none layer-components:cursor-pointer layer-components:text-sm layer-components:transition-colors layer-components:h-full layer-components:gap-6px layer-components:relative layer-components:text-gray-7 layer-components:select-none', 'layer-components:sm:flex-row-reverse layer-components:sm:h-auto layer-components:sm:justify-start layer-components:sm:gap-2 layer-components:sm:overflow-visible', 'layer-components:hover:bg-primary-wash', 'layer-components:focus-visible:outline-none layer-components:focus-visible:bg-primary-wash', 'layer-components:active:bg-primary-wash layer-components:sm:active:bg-gray-dark-blend', 'layer-components:[&[data-active=true]]:bg-primary-wash layer-components:[&[data-active=true]]:text-primary-dark');
+exports.NavBarItem = (0, react_1.forwardRef)(function NavBarItem(_a, ref) {
+    var { asChild, className, active } = _a, rest = __rest(_a, ["asChild", "className", "active"]);
+    const Comp = asChild ? react_slot_1.Slot : 'div';
+    return ((0, jsx_runtime_1.jsx)(Comp, Object.assign({ ref: ref, className: (0, clsx_1.default)(exports.navBarItemClass, className), "data-active": active }, rest)));
+});
+exports.NavBarItemIconWrapper = (0, hooks_js_1.withClassName)('div', 'layer-components:relative layer-components:flex layer-components:sm:p-6px layer-components:sm:rounded-full layer-components:sm:bg-gray-blend', 'layer-variants:sm:[*[data-active=true]_&]:bg-primary-light');
+exports.NavBarItemText = (0, hooks_js_1.withClassName)('span', 'layer-components:overflow-hidden layer-components:pl-1 layer-components:inline-block layer-components:text-xxs layer-components:whitespace-nowrap layer-components:text-ellipsis layer-components:sm:text-md layer-components:sm:leading-normal');
+exports.NavBarItemIcon = (0, react_1.forwardRef)(function NavBarItemIcon(_a, ref) {
+    var { children, asChild, className, name = 'placeholder' } = _a, rest = __rest(_a, ["children", "asChild", "className", "name"]);
+    const Comp = asChild ? react_slot_1.Slot : icon_js_1.Icon;
+    return ((0, jsx_runtime_1.jsx)(Comp, Object.assign({ name: name, className: (0, clsx_1.clsx)('layer-components:relative layer-components:z-1 layer-components:flex layer-components:fill-none', 'layer-variants:[*[data-active=true]_&]:fill-primary-light', className) }, rest, { ref: ref }, { children: children })));
+});
+exports.NavBarItemPip = (0, hooks_js_1.withClassName)('div', 'layer-components:absolute layer-components:top-6px layer-components:right-6px layer-components:w-6px layer-components:h-6px layer-components:rounded-full layer-components:bg-attention layer-components:shadow-sm');
+exports.NavBarRoot = (0, hooks_js_1.withClassName)('div', 'layer-components:grid layer-components:[grid-auto-columns:1fr] layer-components:[grid-auto-flow:column] layer-components:justify-items-center layer-components:w-full layer-components:rounded-0 layer-components:overflow-hidden layer-components:z-50 layer-components:p-1 layer-components:h-auto', 'pb-[calc(0.25rem+env(safe-area-inset-bottom,0px))]', 'layer-components:sm:bg-transparent layer-components:sm:flex layer-components:sm:flex-col layer-components:sm:rounded-0 layer-components:sm:border-none layer-components:sm:border-transparent layer-components:sm:shadow-none layer-components:sm:h-min-content layer-components:sm:overflow-y-auto layer-components:sm:overflow-x-hidden layer-components:sm:justify-start layer-components:sm:items-stretch layer-components:sm:gap-2 layer-components:sm:pb-10');
+//# sourceMappingURL=NavBar.js.map

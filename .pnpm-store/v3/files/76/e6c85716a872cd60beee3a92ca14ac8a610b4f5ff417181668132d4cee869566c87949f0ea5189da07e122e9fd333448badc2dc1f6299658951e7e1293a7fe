@@ -1,0 +1,23 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useOnUnmount = void 0;
+const react_1 = require("react");
+const useStableCallback_js_1 = require("./useStableCallback.js");
+/**
+ * Calls a callback with an element when it is unmounted.
+ * @returns a ref to pass to the component
+ */
+function useOnUnmount(callback) {
+    const stableCallback = (0, useStableCallback_js_1.useStableCallback)(callback);
+    const ref = (0, react_1.useRef)(null);
+    return (0, react_1.useCallback)((el) => {
+        console.log(el);
+        if (ref.current && !el) {
+            stableCallback(ref.current);
+        }
+        ref.current = el;
+    }, []);
+}
+exports.useOnUnmount = useOnUnmount;
+//# sourceMappingURL=useOnUnmount.js.map

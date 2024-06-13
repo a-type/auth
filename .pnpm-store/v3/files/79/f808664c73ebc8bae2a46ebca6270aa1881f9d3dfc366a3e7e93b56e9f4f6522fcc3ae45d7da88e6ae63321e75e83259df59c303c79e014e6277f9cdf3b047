@@ -1,0 +1,122 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DocsCalendar = exports.Calendar = void 0;
+var react_1 = __importStar(require("react"));
+var CalendarContext_1 = require("./CalendarContext");
+var constants_1 = require("./constants");
+var dateUtils_1 = require("./dateUtils");
+var eventUtils_1 = require("./eventUtils");
+var useCalendarSelection_1 = __importDefault(require("./useCalendarSelection"));
+var noop = function () { };
+var defaultGetDateEnabled = function () { return true; };
+/**
+ * An all-purpose Calendar primitive which manages day selection and various useful event callbacks.
+ * Rendering is up to you; this component doesn't render any days or interactive elements - just a div
+ * to help track focus within the component.
+ * @public
+ */
+exports.Calendar = (0, react_1.forwardRef)(function (_a, ref) {
+    var providedValue = _a.value, onChange = _a.onChange, month = _a.displayMonth, year = _a.displayYear, _b = _a.onDisplayChange, onMonthChange = _b === void 0 ? noop : _b, providedRangeValue = _a.rangeValue, onRangeChange = _a.onRangeChange, onRangeStartChange = _a.onRangeStartChange, _c = _a.getDateEnabled, getDateEnabled = _c === void 0 ? defaultGetDateEnabled : _c, _d = _a.defaultDate, defaultDate = _d === void 0 ? dateUtils_1.today : _d, onFocus = _a.onFocus, onBlur = _a.onBlur, _e = _a.weekStartsOn, weekStartsOn = _e === void 0 ? constants_1.WeekDay.Sunday : _e, restProps = __rest(_a, ["value", "onChange", "displayMonth", "displayYear", "onDisplayChange", "rangeValue", "onRangeChange", "onRangeStartChange", "getDateEnabled", "defaultDate", "onFocus", "onBlur", "weekStartsOn"]);
+    var _f = (0, useCalendarSelection_1.default)({
+        value: providedValue,
+        onChange: onChange,
+        onMonthChange: onMonthChange,
+        month: month,
+        year: year,
+        rangeValue: providedRangeValue,
+        onRangeChange: onRangeChange,
+        onRangeStartChange: onRangeStartChange,
+        getDateEnabled: getDateEnabled,
+        defaultDate: defaultDate,
+    }), props = _f.props, highlightedDate = _f.highlightedDate, onDaySelect = _f.onDaySelect, onDayHover = _f.onDayHover, rangeValue = _f.rangeValue, value = _f.value, setHighlightedDate = _f.setHighlightedDate;
+    var _g = react_1.default.useState(false), isFocusWithin = _g[0], setIsFocusWithin = _g[1];
+    var context = (0, react_1.useMemo)(function () { return ({
+        setDay: onDaySelect,
+        setDayHovered: onDayHover,
+        highlightedDate: highlightedDate,
+        month: month,
+        year: year,
+        value: value,
+        rangeValue: rangeValue,
+        getDateEnabled: getDateEnabled,
+        isFocusWithin: isFocusWithin,
+        weekStartsOn: weekStartsOn,
+    }); }, [
+        highlightedDate,
+        month,
+        onDayHover,
+        onDaySelect,
+        onMonthChange,
+        onRangeChange,
+        onRangeStartChange,
+        rangeValue,
+        setHighlightedDate,
+        year,
+        value,
+        getDateEnabled,
+        isFocusWithin,
+        weekStartsOn,
+    ]);
+    var handleRootFocus = (0, react_1.useCallback)(function (ev) {
+        // if a day element was focused, update context
+        if ((0, eventUtils_1.isEventTargetDay)(ev)) {
+            setIsFocusWithin(true);
+        }
+        onFocus === null || onFocus === void 0 ? void 0 : onFocus(ev);
+    }, [onFocus]);
+    var handleRootBlur = (0, react_1.useCallback)(function (ev) {
+        setIsFocusWithin(false);
+        onBlur === null || onBlur === void 0 ? void 0 : onBlur(ev);
+    }, [onBlur]);
+    return (react_1.default.createElement(CalendarContext_1.CalendarContextProvider, { value: context },
+        react_1.default.createElement("div", __assign({}, restProps, props, { onFocus: handleRootFocus, onBlur: handleRootBlur, ref: ref }))));
+});
+exports.Calendar.displayName = 'Calendar';
+/** @private docs only! */
+var DocsCalendar = function (props) { return react_1.default.createElement(exports.Calendar, __assign({}, props)); };
+exports.DocsCalendar = DocsCalendar;
+//# sourceMappingURL=Calendar.js.map

@@ -1,0 +1,23 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Default = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const DropdownMenu_js_1 = require("./DropdownMenu.js");
+const icon_js_1 = require("../icon.js");
+const react_dropdown_menu_1 = require("@radix-ui/react-dropdown-menu");
+const meta = {
+    title: 'DropdownMenu',
+    component: DropdownMenu_js_1.DropdownMenu,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+exports.default = meta;
+exports.Default = {
+    args: {
+        children: ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)(DropdownMenu_js_1.DropdownMenuTrigger, { children: "Open" }), (0, jsx_runtime_1.jsxs)(DropdownMenu_js_1.DropdownMenuContent, { children: [(0, jsx_runtime_1.jsxs)(DropdownMenu_js_1.DropdownMenuItem, Object.assign({ color: "destructive" }, { children: [(0, jsx_runtime_1.jsx)(react_dropdown_menu_1.DropdownMenuLabel, { children: "Item 1" }), (0, jsx_runtime_1.jsx)(DropdownMenu_js_1.DropdownMenuItemRightSlot, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "flag" }) })] })), (0, jsx_runtime_1.jsxs)(DropdownMenu_js_1.DropdownMenuItem, { children: [(0, jsx_runtime_1.jsx)(react_dropdown_menu_1.DropdownMenuLabel, { children: "Item 2" }), (0, jsx_runtime_1.jsx)(DropdownMenu_js_1.DropdownMenuItemRightSlot, { children: (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "add_person" }) })] })] })] })),
+    },
+};
+//# sourceMappingURL=DropdownMenu.stories.js.map

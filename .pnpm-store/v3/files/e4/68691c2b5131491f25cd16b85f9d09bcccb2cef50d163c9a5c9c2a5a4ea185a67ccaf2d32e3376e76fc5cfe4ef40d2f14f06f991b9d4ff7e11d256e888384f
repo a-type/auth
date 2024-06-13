@@ -1,0 +1,30 @@
+// @unocss-include
+'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx } from "react/jsx-runtime";
+import { forwardRef } from 'react';
+import { withClassName } from '../../hooks/withClassName.js';
+import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
+export const CollapsibleRoot = CollapsiblePrimitive.Root;
+const CollapsibleContentBase = withClassName(CollapsiblePrimitive.Content, 'overflow-hidden', 'layer-components:[&[data-state=open]]:animate-radix-collapsible-open-vertical layer-components:[&[data-state=open]]:animate-duration-300 layer-components:[&[data-state=open]]:animate-ease-springy layer-components:[&[data-state=closed]]:animate-radix-collapsible-close-vertical layer-components:[&[data-state=closed]]:animate-duration-300 layer-components:[&[data-state=closed]]:animate-ease-springy', 'layer-variants:[&[data-horizontal][data-state=open]]:animate-radix-collapsible-open-horizontal layer-variants:[&[data-horizontal][data-state=open]]:animate-duration-300 layer-variants:[&[data-horizontal][data-state=open]]:animate-ease-springy layer-variants:[&[data-horizontal][data-state=closed]]:animate-radix-collapsible-close-horizontal layer-variants:[&[data-horizontal][data-state=closed]]:animate-duration-300 layer-variants:[&[data-horizontal][data-state=closed]]:animate-ease-springy', 'layer-variants:[&[data-both][data-state=open]]:animate-radix-collapsible-open-both layer-variants:[&[data-both][data-state=open]]:animate-duration-300 layer-variants:[&[data-both][data-state=open]]:animate-ease-springy layer-variants:[&[data-both][data-state=closed]]:animate-radix-collapsible-close-both layer-variants:[&[data-both][data-state=closed]]:animate-duration-300 layer-variants:[&[data-both][data-state=closed]]:animate-ease-springy');
+// specifically removing className... it's causing problems?
+export const CollapsibleContent = forwardRef(function CollapsibleContent(_a, ref) {
+    var { horizontal, both } = _a, props = __rest(_a, ["horizontal", "both"]);
+    return (_jsx(CollapsibleContentBase, Object.assign({ "data-horizontal": horizontal, "data-both": both }, props, { ref: ref })));
+});
+export const CollapsibleTrigger = CollapsiblePrimitive.Trigger;
+export const CollapsibleSimple = (_a) => {
+    var { horizontal, both, children } = _a, props = __rest(_a, ["horizontal", "both", "children"]);
+    return (_jsx(CollapsibleRoot, Object.assign({}, props, { children: _jsx(CollapsibleContent, Object.assign({ horizontal: horizontal, both: both }, { children: children })) })));
+};
+//# sourceMappingURL=Collapsible.js.map

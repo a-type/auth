@@ -1,0 +1,18 @@
+import { MouseEvent, ReactNode } from 'react';
+export interface CameraRootProps {
+    className?: string;
+    onCapture?: (data: File) => void;
+    children?: ReactNode;
+    format?: 'image/png' | 'image/jpeg';
+    facingMode?: 'user' | 'environment';
+}
+export declare const CameraRoot: import("react").ForwardRefExoticComponent<CameraRootProps & import("react").RefAttributes<HTMLDivElement>>;
+export interface CameraShutterButtonProps {
+    className?: string;
+    asChild?: boolean;
+    onClick?: (ev: MouseEvent<HTMLButtonElement>) => void;
+}
+export declare const CameraShutterButton: import("react").ForwardRefExoticComponent<CameraShutterButtonProps & import("react").RefAttributes<HTMLButtonElement>>;
+export interface CameraDeviceSelectorProps {
+}
+export declare const CameraDeviceSelector: (props: CameraDeviceSelectorProps) => import("react/jsx-runtime").JSX.Element | null;

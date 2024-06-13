@@ -1,0 +1,13 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SubmitButton = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const formik_1 = require("formik");
+const Button_js_1 = require("../button/Button.js");
+function SubmitButton(props) {
+    const { isSubmitting, isValid } = (0, formik_1.useFormikContext)();
+    return ((0, jsx_runtime_1.jsx)(Button_js_1.Button, Object.assign({ loading: isSubmitting, disabled: !isValid, color: "primary", type: "submit" }, props)));
+}
+exports.SubmitButton = SubmitButton;
+//# sourceMappingURL=SubmitButton.js.map

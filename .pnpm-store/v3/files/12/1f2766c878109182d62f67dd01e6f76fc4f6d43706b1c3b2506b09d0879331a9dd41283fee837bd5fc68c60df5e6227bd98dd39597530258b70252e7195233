@@ -1,0 +1,29 @@
+// @unocss-include
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as ContextMenu from '@radix-ui/react-context-menu';
+import { forwardRef } from 'react';
+import { withClassName } from '../../hooks/withClassName.js';
+import classNames from 'clsx';
+export const ContextMenuRoot = ContextMenu.Root;
+export const ContextMenuContent = forwardRef(function Content(_a, ref) {
+    var { className, onClick } = _a, props = __rest(_a, ["className", "onClick"]);
+    return (_jsx(ContextMenu.Portal, { children: _jsx(ContextMenu.Content, Object.assign({ className: classNames('layer-components:min-w-120px layer-components:bg-white layer-components:rounded-md layer-components:border-default layer-components:overflow-hidden layer-components:p-2 layer-components:shadow-md layer-components:z-menu', 'layer-components:transform-origin-[var(--radix-context-menu-transform-origin)]', 'layer-components:[&[data-state=open]]:animate-popover-in', 'layer-components:[&[data-state=closed]]:animate-popover-out', 'layer-components:max-h-[var(--radix-context-menu-content-available-height)] layer-components:overflow-y-auto', 'important:motion-reduce:animate-none', className), onClick: (ev) => {
+                ev.stopPropagation();
+                onClick === null || onClick === void 0 ? void 0 : onClick(ev);
+            }, ref: ref }, props)) }));
+});
+export const ContextMenuArrow = withClassName(ContextMenu.Arrow, 'fill-white');
+export const ContextMenuItem = withClassName(ContextMenu.Item, 'flex items-center py-1 px-2 relative pl-25px select-none outline-none cursor-pointer', 'hover:bg-gray2 [&[data-highlighted=true]]:bg-gray2 [&[data-disabled=true]]:opacity-50 [&[data-disabled=true]]:cursor-default disabled:opacity-50 disabled:cursor-default');
+export const ContextMenuTrigger = withClassName(ContextMenu.Trigger, '');
+//# sourceMappingURL=contextMenu.js.map

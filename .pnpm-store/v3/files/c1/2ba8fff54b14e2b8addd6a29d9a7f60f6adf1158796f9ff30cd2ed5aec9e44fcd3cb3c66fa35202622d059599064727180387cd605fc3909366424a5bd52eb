@@ -1,0 +1,22 @@
+/// <reference types="react" resolution-mode="require"/>
+import type { StoryObj } from '@storybook/react';
+import { CardRoot } from './Card.js';
+declare const meta: {
+    title: string;
+    component: import("react").FunctionComponent<Omit<import("react").DetailedHTMLProps<import("react").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & {
+        ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
+    }>;
+    argTypes: {};
+    parameters: {
+        controls: {
+            expanded: boolean;
+        };
+    };
+};
+export default meta;
+type Story = StoryObj<typeof CardRoot>;
+export declare const Default: Story;
+export declare const Compact: Story;
+export declare const NonInteractive: Story;
+export declare const AsChild: Story;
+export declare const AsChildNonInteractive: Story;

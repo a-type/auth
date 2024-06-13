@@ -1,0 +1,9 @@
+/**
+ * Expands a month into a grid of days, filling in days from previous
+ * or next month as necessary.
+ */
+export declare const getMonthDayList: (month: number, year: number, weekStartsOn: number) => {
+    date: Date;
+    isDifferentMonth: boolean;
+    key: string;
+}[];

@@ -1,0 +1,7 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-nocheck
+const react_1 = require("@tiptap/react");
+exports.default = react_1.EditorContent;
+//# sourceMappingURL=EditorContent.js.map

@@ -1,0 +1,37 @@
+// @unocss-include
+"use strict";
+var _a, _b;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useSetTitleBarColor = exports.useTitleBarColor = void 0;
+const react_1 = require("react");
+let defaultColor = '#ffffff';
+if (typeof document !== 'undefined') {
+    defaultColor =
+        (_b = (_a = document.querySelector('meta[name=theme-color]')) === null || _a === void 0 ? void 0 : _a.getAttribute('content')) !== null && _b !== void 0 ? _b : defaultColor;
+}
+function changeThemeColor(color) {
+    // evaluate css var if necessary
+    if (color.startsWith('var(')) {
+        const root = document.documentElement;
+        const cssVar = color.slice(4, -1).trim();
+        color = getComputedStyle(root).getPropertyValue(cssVar);
+    }
+    var metaThemeColor = document.querySelector('meta[name=theme-color]');
+    metaThemeColor === null || metaThemeColor === void 0 ? void 0 : metaThemeColor.setAttribute('content', color);
+}
+function useTitleBarColor(color) {
+    (0, react_1.useEffect)(() => {
+        changeThemeColor(color);
+        return () => {
+            changeThemeColor(defaultColor);
+        };
+    }, [color]);
+}
+exports.useTitleBarColor = useTitleBarColor;
+function useSetTitleBarColor() {
+    const setColor = (0, react_1.useCallback)((color) => changeThemeColor(color), []);
+    const resetColor = (0, react_1.useCallback)(() => changeThemeColor(defaultColor), []);
+    return { setColor, resetColor };
+}
+exports.useSetTitleBarColor = useSetTitleBarColor;
+//# sourceMappingURL=useTitleBarColor.js.map

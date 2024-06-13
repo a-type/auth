@@ -1,0 +1,11 @@
+export declare function stopPropagation(ev: any): void;
+export declare function preventDefault(ev: any): void;
+export declare function isRightClick(ev: {
+    button: number;
+}): boolean;
+export declare function isLeftClick(ev: {
+    button: number;
+}): boolean;
+export declare function isMiddleClick(ev: {
+    button: number;
+}): boolean;

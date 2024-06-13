@@ -1,0 +1,39 @@
+// @unocss-include
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CardGrid = exports.CardMenu = exports.CardActions = exports.CardFooter = exports.CardImage = exports.CardContent = exports.CardTitle = exports.CardMain = exports.CardRoot = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
+const hooks_js_1 = require("../../hooks.js");
+const react_slot_1 = require("@radix-ui/react-slot");
+const clsx_1 = __importDefault(require("clsx"));
+exports.CardRoot = (0, hooks_js_1.withClassName)('div', 'layer-components:flex layer-components:flex-col layer-components:border-light layer-components:rounded-lg layer-components:text-lg layer-components:overflow-hidden layer-components:h-max-content layer-components:relative layer-components:bg-gray-1 layer-components:text-black layer-components:shadow-sm');
+exports.CardMain = (0, react_1.forwardRef)(function CardMain(_a, ref) {
+    var { asChild, className, compact, nonInteractive } = _a, rest = __rest(_a, ["asChild", "className", "compact", "nonInteractive"]);
+    const isInteractive = !nonInteractive && (!!asChild || !!rest.onClick);
+    const Comp = asChild ? react_slot_1.Slot : isInteractive ? 'button' : 'div';
+    return ((0, jsx_runtime_1.jsx)(Comp, Object.assign({ ref: ref, className: (0, clsx_1.default)('layer-components:flex layer-components:flex-col layer-components:gap-1 layer-components:transition layer-components:p-4 layer-components:pb-2 layer-components:flex-1 layer-components:relative layer-components:z-1 layer-components:bg-transparent layer-components:border-none layer-components:text-start layer-components:text-inherit layer-components:text-sm', 'layer-components:md:pt-4', compact && 'layer-variants:p-1 layer-variants:bg-white layer-variants:gap-0', isInteractive &&
+            'layer-components:cursor-pointer layer-components:hover:bg-gray-blend layer-components:hover:color-black layer-components:focus:outline-none layer-components:focus-visible:outline-none layer-components:focus-visible:ring-inset layer-components:focus-visible:ring-4 layer-components:focus-visible:ring-gray-5', className), "data-compact": compact }, rest)));
+});
+exports.CardTitle = (0, hooks_js_1.withClassName)('div', 'layer-components:flex layer-components:flex-col layer-components:gap-1 layer-components:mt-auto layer-components:bg-white layer-components:p-2 layer-components:rounded-lg layer-components:w-auto layer-components:mr-auto layer-components:border layer-components:border-solid layer-components:border-grayDarkBlend layer-components:text-md layer-components:max-h-80px layer-components:overflow-hidden layer-components:text-ellipsis layer-components:max-w-full layer-components:text-inherit', '[data-compact=true]>&:(bg-transparent border-none p-2 whitespace-nowrap text-ellipsis overflow-hidden)');
+exports.CardContent = (0, hooks_js_1.withClassName)('div', 'layer-components:flex layer-components:flex-col layer-components:gap-1 layer-components:p-2');
+exports.CardImage = (0, hooks_js_1.withClassName)('div', 'layer-components:absolute layer-components:z-0 layer-components:right-0 layer-components:top-0 layer-components:bottom-0 layer-components:w-full layer-components:h-full');
+exports.CardFooter = (0, hooks_js_1.withClassName)('div', 'layer-components:flex layer-components:flex-row layer-components:p-2 layer-components:bg-white layer-components:relative layer-components:z-1 layer-components:border-0 layer-components:border-t layer-components:border-t-grayDarkBlend layer-components:border-solid');
+exports.CardActions = (0, hooks_js_1.withClassName)('div', 'layer-components:ml-0 layer-components:mr-auto layer-components:flex layer-components:flex-row layer-components:gap-1 layer-components:items-center');
+exports.CardMenu = (0, hooks_js_1.withClassName)('div', 'layer-components:mr-0 layer-components:ml-auto layer-components:flex layer-components:flex-row layer-components:gap-1 layer-components:items-center');
+exports.CardGrid = (0, hooks_js_1.withClassName)('div', 'layer-components:grid layer-components:grid-cols-[1fr] layer-components:[grid-auto-rows:auto] layer-components:gap-4 layer-components:p-0 layer-components:m-0', 'layer-components:md:grid-cols-[repeat(2,1fr)] layer-components:md:[grid-auto-rows:1fr] layer-components:md:items-end');
+//# sourceMappingURL=Card.js.map

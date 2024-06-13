@@ -1,0 +1,35 @@
+// @unocss-include
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Avatar = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const clsx_1 = __importDefault(require("clsx"));
+const icon_js_1 = require("../icon.js");
+function Avatar(_a) {
+    var { className, popIn = true, imageSrc, name } = _a, rest = __rest(_a, ["className", "popIn", "imageSrc", "name"]);
+    const empty = !name && !imageSrc;
+    return ((0, jsx_runtime_1.jsxs)("div", Object.assign({ "data-pop": popIn, className: (0, clsx_1.default)('layer-components:flex layer-components:items-center layer-components:justify-center layer-components:rounded-full layer-components:border-default layer-components:overflow-hidden layer-components:w-24px layer-components:h-24px layer-components:select-none layer-components:relative layer-components:bg-white layer-components:flex-shrink-0', popIn &&
+            'layer-variants:animate-pop-in-from-half layer-variants:animate-ease-springy layer-variants:animate-duration-200', empty && 'layer-components(border-dashed bg-gray2)', className) }, rest, { children: [!empty && (0, jsx_runtime_1.jsx)(AvatarContent, { name: name, imageSrc: imageSrc }), empty && (0, jsx_runtime_1.jsx)(icon_js_1.Icon, { name: "profile" })] })));
+}
+exports.Avatar = Avatar;
+function AvatarContent({ name, imageSrc, }) {
+    if (imageSrc) {
+        return ((0, jsx_runtime_1.jsx)("img", { className: "w-full h-full object-cover rounded-full", referrerPolicy: "no-referrer", crossOrigin: "anonymous", src: imageSrc, alt: `${name !== null && name !== void 0 ? name : 'user'}'s profile picture` }));
+    }
+    return ((0, jsx_runtime_1.jsx)("div", Object.assign({ className: "color-black items-center justify-center flex text-sm font-bold rounded-full" }, { children: (name === null || name === void 0 ? void 0 : name.charAt(0)) || '?' })));
+}
+//# sourceMappingURL=Avatar.js.map

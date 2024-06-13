@@ -1,0 +1,67 @@
+import { KeyboardEvent } from 'react';
+declare type UseCalendarSelectionArgs = {
+    /** The selected month of the calendar */
+    month: number;
+    /** The selected year of the calendar */
+    year: number;
+    /** Called when the selected month must change to accommodate date selection */
+    onMonthChange: (newValue: {
+        month: number;
+        year: number;
+    }) => any;
+    /** The currently selected day value. incompatible with `rangeValue` */
+    value?: Date | null;
+    /** Called when the currently selected day changes */
+    onChange?: (value: Date | null) => any;
+    /** The currently selected range of days. incompatible with `value` */
+    rangeValue?: {
+        start: Date | null;
+        end: Date | null;
+    };
+    /** Called when the currently selected range of days changes */
+    onRangeChange?: (value: {
+        start: Date | null;
+        end: Date | null;
+    }) => any;
+    /** Called when the user selects the first part of a date range */
+    onRangeStartChange?: (value: Date) => any;
+    /** A function used to determine whether a day can be selected */
+    getDateEnabled?: (date: Date) => boolean;
+    /** A fallback day to focus if no other information is available */
+    defaultDate?: Date;
+};
+declare const _default: ({ onMonthChange, onChange, value, rangeValue, onRangeStartChange, onRangeChange, month, year, getDateEnabled, defaultDate, ...rest }: UseCalendarSelectionArgs) => {
+    props: {
+        onKeyDown: (ev: KeyboardEvent) => void;
+    };
+    highlightedDate: Date | null;
+    setHighlightedDate: import("react").Dispatch<import("react").SetStateAction<Date | null>>;
+    onDaySelect: (value: Date) => void;
+    onDayHover: (value: Date) => boolean;
+    onChange: ((value: Date | null) => any) | undefined;
+    onRangeChange: ((value: {
+        start: Date | null;
+        end: Date | null;
+    }) => any) | undefined;
+    value: Date | null;
+    onMonthChange: (newValue: {
+        month: number;
+        year: number;
+    }) => any;
+    month: number;
+    year: number;
+    rangeValue: {
+        start: Date | null;
+        end: Date | null;
+    } | undefined;
+};
+/**
+ * Manages selection and focus state for the calendar grid control.
+ *
+ * Focus is managed using the 'roving tabindex' method, where the currently
+ * selected day element is given a tabindex=0, while others are given -1.
+ * This makes the only logically focusable element the currently selected
+ * day, so when the user tabs away from the calendar and then comes back,
+ * their cursor is back on the current day.
+ */
+export default _default;

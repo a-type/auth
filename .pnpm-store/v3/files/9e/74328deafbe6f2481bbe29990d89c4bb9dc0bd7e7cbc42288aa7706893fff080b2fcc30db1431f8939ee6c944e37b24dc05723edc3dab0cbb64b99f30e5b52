@@ -1,0 +1,4 @@
+/// <reference types="react" resolution-mode="require"/>
+export declare const Form: import("react").FunctionComponent<Omit<Omit<import("react").DetailedHTMLProps<import("react").FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>, "ref"> & import("react").RefAttributes<HTMLFormElement>, "ref"> & {
+    ref?: ((instance: HTMLFormElement | null) => void) | import("react").RefObject<HTMLFormElement> | null | undefined;
+}>;

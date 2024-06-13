@@ -1,0 +1,16 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CalendarDays = void 0;
+var react_1 = __importDefault(require("react"));
+var _1 = require(".");
+function CalendarDays(_a) {
+    var _b = _a.monthOffset, monthOffset = _b === void 0 ? 0 : _b, children = _a.children;
+    var _c = (0, _1.useCalendarContext)(), month = _c.month, year = _c.year, weekStartsOn = _c.weekStartsOn;
+    var days = (0, _1.useCalendarDayList)(month + monthOffset, year, weekStartsOn);
+    return react_1.default.createElement(react_1.default.Fragment, null, days.map(children));
+}
+exports.CalendarDays = CalendarDays;
+//# sourceMappingURL=CalendarDays.js.map

@@ -1,0 +1,30 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CompareSelectAndButton = exports.Default = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const Select_js_1 = require("./Select.js");
+const button_js_1 = require("../button.js");
+const meta = {
+    title: 'Select',
+    component: Select_js_1.Select,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+    args: {
+        value: 'One',
+    },
+};
+exports.default = meta;
+exports.Default = {
+    render(args) {
+        return ((0, jsx_runtime_1.jsxs)(Select_js_1.Select, Object.assign({}, args, { children: [(0, jsx_runtime_1.jsx)(Select_js_1.SelectTrigger, {}), (0, jsx_runtime_1.jsx)(Select_js_1.SelectContent, { children: ['One', 'Two', 'Three'].map((item) => ((0, jsx_runtime_1.jsx)(Select_js_1.SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })));
+    },
+};
+exports.CompareSelectAndButton = {
+    render(args) {
+        return ((0, jsx_runtime_1.jsxs)("div", Object.assign({ className: "row" }, { children: [(0, jsx_runtime_1.jsxs)(Select_js_1.Select, Object.assign({}, args, { children: [(0, jsx_runtime_1.jsx)(Select_js_1.SelectTrigger, {}), (0, jsx_runtime_1.jsx)(Select_js_1.SelectContent, { children: ['One', 'Two', 'Three'].map((item) => ((0, jsx_runtime_1.jsx)(Select_js_1.SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })), (0, jsx_runtime_1.jsx)(button_js_1.Button, { children: "Button" }), (0, jsx_runtime_1.jsxs)(Select_js_1.Select, Object.assign({}, args, { children: [(0, jsx_runtime_1.jsx)(Select_js_1.SelectTrigger, { size: "small" }), (0, jsx_runtime_1.jsx)(Select_js_1.SelectContent, { children: ['One', 'Two', 'Three'].map((item) => ((0, jsx_runtime_1.jsx)(Select_js_1.SelectItem, Object.assign({ value: item }, { children: item }), item))) })] })), (0, jsx_runtime_1.jsx)(button_js_1.Button, Object.assign({ size: "small" }, { children: "Button" }))] })));
+    },
+};
+//# sourceMappingURL=Select.stories.js.map

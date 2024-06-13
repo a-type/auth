@@ -1,0 +1,16 @@
+// @unocss-include
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Default = void 0;
+const Slider_js_1 = require("./Slider.js");
+const meta = {
+    title: 'Slider',
+    component: Slider_js_1.Slider,
+    argTypes: {},
+    parameters: {
+        controls: { expanded: true },
+    },
+};
+exports.default = meta;
+exports.Default = {};
+//# sourceMappingURL=Slider.stories.js.map
