@@ -14,4 +14,10 @@ export class AuthError extends Error {
   constructor(message: string, public statusCode: number) {
     super(message);
   }
+
+  toResponse() {
+    return new Response(this.message, {
+      status: this.statusCode,
+    });
+  }
 }

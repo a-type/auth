@@ -1,0 +1,20 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "ci:test:unit": {
+      "outputs": [],
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.test.tsx", "**/*.test.ts"]
+    },
+    "test": {
+      "cache": false
+    },
+    "typecheck": {
+      "outputs": [],
+      "inputs": ["**/*.tsx", "**/*.ts", "tsconfig.json"]
+    }
+  }
+}

@@ -11,8 +11,8 @@ yarn-error.log
 /coverage
 
 # Build output
-/build
-/dist
+build/
+dist/
 
 # Environment variables
 .env
@@ -33,3 +33,5 @@ yarn-error.log
 pnpm-store/
 .pnpm
 .pnpm-debug.log
+
+*storybook.log
