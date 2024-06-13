@@ -222,7 +222,7 @@ export function createHandlers({
       .object({
         email: z.string().email(),
         name: z.string().min(1),
-        returnTo: z.string().url().optional(),
+        returnTo: z.string().optional(),
       })
       .parse({ email, name, returnTo });
 
@@ -366,7 +366,7 @@ export function createHandlers({
     const params = z
       .object({
         email: z.string().email(),
-        returnTo: z.string().url().optional().nullable(),
+        returnTo: z.string().optional().nullable(),
         appState: z.string().optional().nullable(),
       })
       .parse({ email, returnTo, appState });
@@ -405,7 +405,7 @@ export function createHandlers({
     const params = z
       .object({
         email: z.string().email(),
-        returnTo: z.string().url().optional().nullable(),
+        returnTo: z.string().optional().nullable(),
         appState: z.string().optional().nullable(),
         code: z.string().min(1),
         newPassword: z.string().min(5),
