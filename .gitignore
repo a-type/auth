@@ -29,3 +29,7 @@ yarn-error.log
 *.komodoproject
 *.komodotools
 *.kate-swp
+
+pnpm-store/
+.pnpm
+.pnpm-debug.log
