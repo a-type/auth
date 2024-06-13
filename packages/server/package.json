@@ -17,7 +17,8 @@
     "dev": "tsc -w",
     "build": "tsc",
     "prepublishOnly": "pnpm build",
-    "test": "vitest"
+    "test": "vitest",
+    "ci:test:unit": "vitest run"
   },
   "dependencies": {
     "cookie": "^0.6.0",

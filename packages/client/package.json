@@ -24,7 +24,7 @@
     "react": "^18"
   },
   "devDependencies": {
-    "@a-type/ui": "0.8.19",
+    "@a-type/ui": "0.8.20",
     "@chromatic-com/storybook": "^1.5.0",
     "@storybook/addon-essentials": "^8.1.8",
     "@storybook/addon-interactions": "^8.1.8",
