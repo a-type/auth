@@ -336,8 +336,8 @@ export function createHandlers({
       .object({
         email: z.string().email(),
         password: z.string().min(1),
-        returnTo: z.string().optional(),
-        appState: z.string().optional(),
+        returnTo: z.string().optional().nullable(),
+        appState: z.string().optional().nullable(),
       })
       .parse({ email, password, returnTo, appState });
 
@@ -351,8 +351,8 @@ export function createHandlers({
     const session = await sessions.createSession(user.id);
     const sessionUpdate = await sessions.updateSession(session);
     return toRedirect(req, sessionUpdate, {
-      returnTo: params.returnTo,
-      appState: params.appState,
+      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+      appState: params.appState ?? undefined,
     });
   }
 
@@ -366,8 +366,8 @@ export function createHandlers({
     const params = z
       .object({
         email: z.string().email(),
-        returnTo: z.string().url().optional(),
-        appState: z.string().optional(),
+        returnTo: z.string().url().optional().nullable(),
+        appState: z.string().optional().nullable(),
       })
       .parse({ email, returnTo, appState });
 
@@ -384,7 +384,7 @@ export function createHandlers({
       to: params.email,
       code,
       returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
-      appState: params.appState,
+      appState: params.appState ?? undefined,
     });
 
     return new Response(JSON.stringify({ ok: true }), {
@@ -405,8 +405,8 @@ export function createHandlers({
     const params = z
       .object({
         email: z.string().email(),
-        returnTo: z.string().url().optional(),
-        appState: z.string().optional(),
+        returnTo: z.string().url().optional().nullable(),
+        appState: z.string().optional().nullable(),
         code: z.string().min(1),
         newPassword: z.string().min(5),
       })
@@ -434,8 +434,8 @@ export function createHandlers({
     const session = await sessions.createSession(user.id);
     const sessionUpdate = await sessions.updateSession(session);
     return toRedirect(req, sessionUpdate, {
-      appState: params.appState,
-      returnTo: params.returnTo,
+      appState: params.appState ?? undefined,
+      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
     });
   }
 
