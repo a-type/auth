@@ -1,6 +1,7 @@
 {
   "name": "@a-type/auth-root",
   "private": true,
+  "packageManager": "pnpm@8.9.2",
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
