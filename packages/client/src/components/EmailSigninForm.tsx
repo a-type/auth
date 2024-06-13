@@ -1,4 +1,4 @@
-import { clsx } from '@a-type/ui';
+import { clsx, toast } from '@a-type/ui';
 import { Button } from '@a-type/ui/components/button';
 import {
   Dialog,
@@ -90,6 +90,7 @@ function ForgotPassword({
               });
               if (response.ok) {
                 setOpen(false);
+                toast.success('Reset email sent. Check your inbox.');
               } else {
                 setErrorMessage('Failed to send reset email. Try again?');
               }

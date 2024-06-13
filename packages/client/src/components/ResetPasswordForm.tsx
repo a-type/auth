@@ -33,7 +33,7 @@ export function ResetPasswordForm({
         required
       />
       <Button className="self-end" color="primary" type="submit">
-        Sign In
+        Reset password
       </Button>
     </form>
   );
