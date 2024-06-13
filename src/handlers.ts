@@ -396,26 +396,47 @@ export function createHandlers({
   }
 
   async function handleVerifyPasswordResetRequest(req: Request) {
-    const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    const email = url.searchParams.get('email');
-    if (!code || !email) {
-      throw new AuthError('Missing code or email', 400);
-    }
-    const dbCode = await db.getVerificationCode?.(email, code);
+    const formData = await req.formData();
+
+    const email = formData.get('email');
+    const returnTo = formData.get('returnTo');
+    const appState = formData.get('appState');
+
+    const params = z
+      .object({
+        email: z.string().email(),
+        returnTo: z.string().url().optional(),
+        appState: z.string().optional(),
+        code: z.string().min(1),
+        newPassword: z.string().min(5),
+      })
+      .parse({ email, returnTo, appState });
+
+    const dbCode = await db.getVerificationCode?.(params.email, params.code);
     if (!dbCode) {
       throw new AuthError('Invalid code', 400);
     }
     if (dbCode.expiresAt < Date.now()) {
       throw new AuthError('Code expired', 400);
     }
-    const user = await db.getUserByEmail(email);
+
+    const user = await db.getUserByEmail(params.email);
     if (!user) {
       throw new AuthError('User not found', 404);
     }
+
+    await db.updateUser(user.id, {
+      plaintextPassword: params.newPassword,
+    });
+
+    await db.consumeVerificationCode?.(params.email, params.code);
+
     const session = await sessions.createSession(user.id);
     const sessionUpdate = await sessions.updateSession(session);
-    return toRedirect(req, sessionUpdate);
+    return toRedirect(req, sessionUpdate, {
+      appState: params.appState,
+      returnTo: params.returnTo,
+    });
   }
 
   async function handleSessionRequest(req: Request) {
