@@ -66,6 +66,7 @@ async function refreshSessionInternal(endpoint: string) {
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
+      credentials: 'include',
     });
     if (response.ok) {
       const body = await response.json();
