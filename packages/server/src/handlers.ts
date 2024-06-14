@@ -402,6 +402,7 @@ export function createHandlers({
     const returnTo = formData.get('returnTo');
     const appState = formData.get('appState');
     const newPassword = formData.get('newPassword');
+    const code = formData.get('code');
 
     const params = z
       .object({
@@ -411,7 +412,7 @@ export function createHandlers({
         code: z.string().min(1),
         newPassword: z.string().min(5),
       })
-      .parse({ email, returnTo, appState, newPassword });
+      .parse({ email, returnTo, appState, newPassword, code });
 
     const dbCode = await db.getVerificationCode?.(params.email, params.code);
     if (!dbCode) {
