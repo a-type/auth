@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.5
+
+### Patch Changes
+
+- 3fbf384: Another missing param, oof
+
 ## 0.6.4
 
 ### Patch Changes
