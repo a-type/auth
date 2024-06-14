@@ -113,7 +113,8 @@ export class SessionManager {
         const expectedKeys = Object.keys(this.options.shortNames);
         for (const key of expectedKeys) {
           if (!keys.includes(key)) {
-            throw new Error(`Session missing unexpected key: ${key}`);
+            console.error(`Session missing unexpected key: ${key}`);
+            throw new AuthError(AuthError.Messages.InvalidSession, 400);
           }
         }
       }
@@ -122,12 +123,12 @@ export class SessionManager {
       // if the JWT is expired, throw a specific error.
       // if it's otherwise invalid, throw a different one.
       if (e instanceof errors.JWTExpired) {
-        throw new AuthError('Session expired', 401);
+        throw new AuthError(AuthError.Messages.SessionExpired, 401);
       } else if (
         e instanceof errors.JWTInvalid ||
         e instanceof errors.JWSInvalid
       ) {
-        throw new AuthError('Invalid session', 400);
+        throw new AuthError(AuthError.Messages.InvalidSession, 400);
       }
       throw e;
     }
@@ -150,7 +151,7 @@ export class SessionManager {
       const accessData = decodeJwt(accessToken);
 
       if (refreshData.payload.jti !== accessData.jti) {
-        throw new AuthError('Invalid refresh token', 400);
+        throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
       }
 
       const session = this.readSessionFromPayload(accessData);
@@ -161,9 +162,9 @@ export class SessionManager {
         err instanceof Error &&
         (err.message.includes('JWTExpired') || err.name === 'JWTExpired')
       ) {
-        throw new AuthError('Refresh token expired', 401);
+        throw new AuthError(AuthError.Messages.RefreshTokenExpired, 401);
       }
-      throw new AuthError('Invalid refresh token', 400);
+      throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
     }
   };
 

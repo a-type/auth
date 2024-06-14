@@ -164,7 +164,7 @@ export function createHandlers({
       const user = await db.getUserByEmail(profile.email);
       if (user) {
         if (!addProvidersToExistingUsers) {
-          throw new AuthError('User already exists', 409);
+          throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
         }
         userId = user.id;
       } else {
@@ -210,7 +210,7 @@ export function createHandlers({
     const name = formData.get('name');
     const returnToRaw = formData.get('returnTo') ?? '';
     if (!name || typeof name !== 'string') {
-      throw new AuthError('Invalid name', 400);
+      throw new AuthError(AuthError.Messages.InvalidName, 400);
     }
     if (!email || typeof email !== 'string') {
       throw new AuthError(AuthError.Messages.MissingEmail, 400);
@@ -420,15 +420,15 @@ export function createHandlers({
 
     const dbCode = await db.getVerificationCode?.(params.email, params.code);
     if (!dbCode) {
-      throw new AuthError('Invalid code', 400);
+      throw new AuthError(AuthError.Messages.InvalidCode, 400);
     }
     if (dbCode.expiresAt < Date.now()) {
-      throw new AuthError('Code expired', 400);
+      throw new AuthError(AuthError.Messages.CodeExpired, 400);
     }
 
     const user = await db.getUserByEmail(params.email);
     if (!user) {
-      throw new AuthError('User not found', 404);
+      throw new AuthError(AuthError.Messages.UserNotFound, 404);
     }
 
     await db.updateUser(user.id, {
@@ -473,7 +473,7 @@ export function createHandlers({
     const refreshToken = sessions.getRefreshToken(req);
 
     if (!accessToken || !refreshToken) {
-      throw new AuthError('Invalid session', 401);
+      throw new AuthError(AuthError.Messages.InvalidSession, 400);
     }
 
     try {
