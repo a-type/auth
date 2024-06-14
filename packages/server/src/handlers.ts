@@ -73,14 +73,15 @@ export function createHandlers({
       headers: Headers;
       searchParams?: URLSearchParams;
     },
-    overrides: {
+    options: {
       returnTo?: string;
       appState?: string;
+      message?: string;
     } = {},
   ) {
     // get returnTo
     const returnTo = resolveReturnTo(
-      overrides.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
+      options.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
     );
     // add search params to destination for appState and session
     const url = new URL(returnTo);
@@ -89,7 +90,10 @@ export function createHandlers({
         url.searchParams.append(key, value);
       }
     }
-    const appState = overrides.appState ?? getAppState(req);
+    if (options.message) {
+      url.searchParams.append('message', options.message);
+    }
+    const appState = options.appState ?? getAppState(req);
     if (appState) {
       url.searchParams.append('appState', appState);
     }
@@ -438,6 +442,7 @@ export function createHandlers({
     return toRedirect(req, sessionUpdate, {
       appState: params.appState ?? undefined,
       returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+      message: 'Password reset successfully',
     });
   }
 
