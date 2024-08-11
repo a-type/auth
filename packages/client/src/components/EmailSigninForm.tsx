@@ -16,6 +16,7 @@ export interface EmailSigninFormProps {
   endpoint: string;
   resetPasswordEndpoint: string;
   className?: string;
+  appState?: any;
 }
 
 export function EmailSigninForm({
@@ -23,13 +24,22 @@ export function EmailSigninForm({
   endpoint,
   resetPasswordEndpoint,
   className,
+  appState,
   ...rest
 }: EmailSigninFormProps) {
+  const url = new URL(endpoint);
+  if (returnTo) {
+    url.searchParams.append('returnTo', returnTo);
+  }
+  if (appState) {
+    url.searchParams.append('appState', JSON.stringify(appState));
+  }
+
   return (
     <form
       className={clsx('flex flex-col gap-2', className)}
       method="post"
-      action={`${endpoint}?returnTo=${returnTo}`}
+      action={url.toString()}
       {...rest}
     >
       <label htmlFor="email" className="font-bold">

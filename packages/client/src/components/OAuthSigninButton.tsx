@@ -7,12 +7,14 @@ export function OAuthSigninButton({
   className,
   inviteId,
   endpoint,
+  appState,
   ...rest
 }: {
   returnTo?: string | null;
   children?: ReactNode;
   inviteId?: string | null;
   endpoint: string;
+  appState?: any;
 } & ButtonProps) {
   const url = new URL(endpoint ?? window.location.origin);
   if (returnTo) {
@@ -20,6 +22,9 @@ export function OAuthSigninButton({
   }
   if (inviteId) {
     url.searchParams.set('inviteId', inviteId);
+  }
+  if (appState) {
+    url.searchParams.set('appState', JSON.stringify(appState));
   }
 
   return (

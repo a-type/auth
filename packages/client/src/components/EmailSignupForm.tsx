@@ -12,6 +12,7 @@ export interface EmailSignupFormProps {
   disabled?: boolean;
   endpoint: string;
   className?: string;
+  appState?: any;
 }
 
 export function EmailSignupForm({
@@ -20,6 +21,7 @@ export function EmailSignupForm({
   disabled,
   endpoint,
   className,
+  appState,
   ...rest
 }: EmailSignupFormProps) {
   const [success, setSuccess] = useState(false);
@@ -46,6 +48,9 @@ export function EmailSignupForm({
           formData.append('name', values.name);
           formData.append('email', values.email);
           formData.append('returnTo', returnTo ?? '');
+          if (appState) {
+            formData.append('appState', JSON.stringify(appState));
+          }
           const response = await fetch(endpoint, {
             method: 'post',
             body: formData,

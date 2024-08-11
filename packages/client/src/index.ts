@@ -4,3 +4,4 @@ export * from './components/EmailSigninForm.js';
 export * from './components/EmailSignupForm.js';
 export * from './components/OAuthSigninButton.js';
 export * from './components/ResetPasswordForm.js';
+export * from './appState.js';
