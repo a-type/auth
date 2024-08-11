@@ -37,3 +37,4 @@ pnpm-store/
 *storybook.log
 
 .turbo/
+.pnpm-store
