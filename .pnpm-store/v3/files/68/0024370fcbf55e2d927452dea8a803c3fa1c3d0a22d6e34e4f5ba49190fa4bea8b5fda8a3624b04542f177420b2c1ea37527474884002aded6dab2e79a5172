@@ -1,4 +1,0 @@
-import { HTMLAttributes } from 'react';
-export declare function PageNowPlaying({ className, unstyled, ...props }: HTMLAttributes<HTMLDivElement> & {
-    unstyled?: boolean;
-}): import("react/jsx-runtime").JSX.Element;

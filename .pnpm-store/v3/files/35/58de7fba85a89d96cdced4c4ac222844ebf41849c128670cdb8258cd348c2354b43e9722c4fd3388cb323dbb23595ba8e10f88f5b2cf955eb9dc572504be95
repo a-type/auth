@@ -1,3 +1,0 @@
-// @unocss-include
-export * from './RelativeTime.js';
-//# sourceMappingURL=index.js.map

@@ -1,3 +1,0 @@
-// @unocss-include
-export * from './dialog/index.js';
-//# sourceMappingURL=dialog.js.map

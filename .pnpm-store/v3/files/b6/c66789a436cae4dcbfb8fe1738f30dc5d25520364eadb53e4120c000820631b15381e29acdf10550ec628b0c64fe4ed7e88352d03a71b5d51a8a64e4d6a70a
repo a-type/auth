@@ -1,5 +1,0 @@
-export declare function useTitleBarColor(color: string): void;
-export declare function useSetTitleBarColor(): {
-    setColor: (color: string) => void;
-    resetColor: () => void;
-};

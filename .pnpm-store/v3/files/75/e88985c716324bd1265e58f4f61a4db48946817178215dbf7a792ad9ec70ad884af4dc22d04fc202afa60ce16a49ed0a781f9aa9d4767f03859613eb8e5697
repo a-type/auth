@@ -1,7 +1,0 @@
-import { ReactNode } from 'react';
-export interface PeekProps {
-    peekHeight?: number;
-    children: ReactNode;
-    className?: string;
-}
-export declare function Peek({ peekHeight, children, className }: PeekProps): import("react/jsx-runtime").JSX.Element;

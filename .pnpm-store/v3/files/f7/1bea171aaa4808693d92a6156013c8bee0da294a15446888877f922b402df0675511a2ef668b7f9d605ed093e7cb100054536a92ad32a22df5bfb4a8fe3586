@@ -1,8 +1,0 @@
-import { HTMLProps } from 'react';
-export interface TextAreaProps extends Omit<HTMLProps<HTMLTextAreaElement>, 'ref'> {
-    className?: string;
-    autoSize?: boolean;
-    autoSelect?: boolean;
-    padBottomPixels?: number;
-}
-export declare const TextArea: import("react").ForwardRefExoticComponent<TextAreaProps & import("react").RefAttributes<HTMLTextAreaElement>>;

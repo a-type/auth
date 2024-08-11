@@ -1,3 +1,0 @@
-// @unocss-include
-export * from './divider/index.js';
-//# sourceMappingURL=divider.js.map

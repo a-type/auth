@@ -1,6 +1,0 @@
-import { HTMLAttributes } from 'react';
-export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
-    compensate?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-    padded?: boolean;
-}
-export declare const Divider: import("react").ForwardRefExoticComponent<DividerProps & import("react").RefAttributes<HTMLDivElement>>;

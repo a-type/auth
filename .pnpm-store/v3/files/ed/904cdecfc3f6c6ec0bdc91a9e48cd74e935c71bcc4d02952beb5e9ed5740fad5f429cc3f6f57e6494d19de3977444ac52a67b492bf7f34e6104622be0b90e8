@@ -1,9 +1,0 @@
-import React from 'react';
-import { useCalendarContext, useCalendarDayList } from '.';
-export function CalendarDays(_a) {
-    var _b = _a.monthOffset, monthOffset = _b === void 0 ? 0 : _b, children = _a.children;
-    var _c = useCalendarContext(), month = _c.month, year = _c.year, weekStartsOn = _c.weekStartsOn;
-    var days = useCalendarDayList(month + monthOffset, year, weekStartsOn);
-    return React.createElement(React.Fragment, null, days.map(children));
-}
-//# sourceMappingURL=CalendarDays.js.map

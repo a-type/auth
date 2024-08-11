@@ -1,7 +1,0 @@
-import { ReactNode } from 'react';
-export interface InfiniteLoadTriggerProps {
-    className?: string;
-    children?: ReactNode;
-    onVisible?: () => void;
-}
-export declare const InfiniteLoadTrigger: import("react").ForwardRefExoticComponent<InfiniteLoadTriggerProps & import("react").RefAttributes<HTMLDivElement>>;

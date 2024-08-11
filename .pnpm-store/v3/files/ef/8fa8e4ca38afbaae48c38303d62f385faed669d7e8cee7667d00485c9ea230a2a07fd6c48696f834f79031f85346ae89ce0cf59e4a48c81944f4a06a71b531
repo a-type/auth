@@ -1,5 +1,0 @@
-/**
- * Calls a callback with an element when it is unmounted.
- * @returns a ref to pass to the component
- */
-export declare function useOnUnmount(callback: (el: HTMLElement) => void): (el: HTMLElement | null) => void;

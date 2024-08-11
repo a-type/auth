@@ -1,4 +1,0 @@
-export interface UploadIconProps {
-    className?: string;
-}
-export declare function UploadIcon(props: UploadIconProps): import("react/jsx-runtime").JSX.Element;

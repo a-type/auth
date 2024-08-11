@@ -1,9 +1,0 @@
-// @unocss-include
-import { createContext, useContext } from 'react';
-const ParticleContext = createContext(null);
-export function useParticles() {
-    const particles = useContext(ParticleContext);
-    return particles;
-}
-export const ParticlesProvider = ParticleContext.Provider;
-//# sourceMappingURL=ParticleContext.js.map

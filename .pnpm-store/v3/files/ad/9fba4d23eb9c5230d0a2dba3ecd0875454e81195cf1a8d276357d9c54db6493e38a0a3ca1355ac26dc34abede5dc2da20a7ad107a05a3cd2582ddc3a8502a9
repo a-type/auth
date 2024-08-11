@@ -1,2 +1,0 @@
-import { HTMLAttributes } from 'react';
-export declare function PageFixedArea({ className, ...props }: HTMLAttributes<HTMLDivElement>): import("react/jsx-runtime").JSX.Element;

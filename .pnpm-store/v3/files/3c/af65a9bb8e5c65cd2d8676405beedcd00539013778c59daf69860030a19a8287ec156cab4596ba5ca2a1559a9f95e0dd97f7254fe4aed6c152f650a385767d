@@ -1,2 +1,0 @@
-import { HTMLAttributes } from 'react';
-export declare function PageNav({ className, children, ...props }: HTMLAttributes<HTMLDivElement>): import("react/jsx-runtime").JSX.Element;

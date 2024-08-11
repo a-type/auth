@@ -1,3 +1,0 @@
-export declare function isEventTargetDay(event: {
-    target: EventTarget;
-}): boolean;

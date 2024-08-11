@@ -1,3 +1,0 @@
-// @unocss-include
-export * from './typography/index.js';
-//# sourceMappingURL=typography.js.map

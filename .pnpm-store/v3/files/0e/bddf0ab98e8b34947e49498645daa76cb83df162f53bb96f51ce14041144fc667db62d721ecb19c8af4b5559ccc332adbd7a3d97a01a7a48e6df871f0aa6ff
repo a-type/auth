@@ -1,7 +1,0 @@
-import { ReactNode } from 'react';
-import { ButtonProps } from '../button/Button.js';
-export interface ActionButtonProps extends ButtonProps {
-    icon?: ReactNode;
-    visible?: boolean;
-}
-export declare const ActionButton: import("react").ForwardRefExoticComponent<ActionButtonProps & import("react").RefAttributes<HTMLButtonElement>>;

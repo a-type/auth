@@ -1,1 +1,0 @@
-export declare function useStableCallback<Fn extends (...args: any[]) => any>(callback: Fn | undefined): (...args: any[]) => any;

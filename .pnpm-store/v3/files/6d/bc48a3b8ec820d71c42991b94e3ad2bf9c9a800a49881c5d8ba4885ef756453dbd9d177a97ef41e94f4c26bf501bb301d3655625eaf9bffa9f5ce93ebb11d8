@@ -1,5 +1,0 @@
-import { HTMLAttributes } from 'react';
-export declare function PageSection({ className, ...props }: HTMLAttributes<HTMLDivElement>): import("react/jsx-runtime").JSX.Element;
-export declare const PageSectionGrid: import("react").FunctionComponent<Omit<import("react").DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & {
-    ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
-}>;

@@ -1,9 +1,0 @@
-/// <reference types="react" resolution-mode="require"/>
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-export declare const CheckboxRoot: import("react").FunctionComponent<Omit<CheckboxPrimitive.CheckboxProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
-    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
-}>;
-export declare function CheckboxIndicator({ children, className, ...props }: CheckboxPrimitive.CheckboxIndicatorProps): import("react/jsx-runtime").JSX.Element;
-export declare const Checkbox: import("react").ForwardRefExoticComponent<Omit<Omit<CheckboxPrimitive.CheckboxProps & import("react").RefAttributes<HTMLButtonElement>, "ref"> & {
-    ref?: ((instance: HTMLButtonElement | null) => void) | import("react").RefObject<HTMLButtonElement> | null | undefined;
-}, "ref"> & import("react").RefAttributes<HTMLButtonElement>>;

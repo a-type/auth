@@ -1,1 +1,0 @@
-{"version":3,"file":"eventUtils.js","sourceRoot":"","sources":["../src/eventUtils.ts"],"names":[],"mappings":";;;AAAA,yCAAmD;AAEnD,SAAgB,gBAAgB,CAAC,KAA8B;IAC7D,OAAO,CACL,KAAK,CAAC,MAAM,YAAY,WAAW;QACnC,CAAC,CAAC,KAAK,CAAC,MAAM,CAAC,YAAY,CAAC,gCAAoB,CAAC,CAClD,CAAC;AACJ,CAAC;AALD,4CAKC"}

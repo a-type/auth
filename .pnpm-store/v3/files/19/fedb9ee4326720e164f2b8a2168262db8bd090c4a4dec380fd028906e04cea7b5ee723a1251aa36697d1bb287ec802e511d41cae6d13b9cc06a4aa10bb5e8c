@@ -1,7 +1,0 @@
-import type { ButtonProps } from './Button.jsx';
-export declare function getButtonClassName({ color, size, toggleable, align, }: {
-    color?: ButtonProps['color'];
-    size?: ButtonProps['size'];
-    toggleable?: boolean;
-    align?: ButtonProps['align'];
-}): string;

@@ -1,5 +1,0 @@
-import { Preset } from 'unocss';
-export default function presetAglio({ spacingIncrement, interFontLocation, }?: {
-    spacingIncrement?: number;
-    interFontLocation?: string;
-}): Preset;

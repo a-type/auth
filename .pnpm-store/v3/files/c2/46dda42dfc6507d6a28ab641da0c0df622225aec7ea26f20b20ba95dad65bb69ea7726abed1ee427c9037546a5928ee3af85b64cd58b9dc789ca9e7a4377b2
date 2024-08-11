@@ -1,8 +1,0 @@
-import { ReactNode } from 'react';
-export interface ActionBarProps {
-    children: ReactNode;
-    className?: string;
-    wrap?: boolean;
-    disableShadow?: boolean;
-}
-export declare function ActionBar({ children, className, wrap, disableShadow, ...rest }: ActionBarProps): import("react/jsx-runtime").JSX.Element;
