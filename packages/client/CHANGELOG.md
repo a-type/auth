@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.7
+
+### Patch Changes
+
+- f885872: Components support appState prop now
+
 ## 1.0.6
 
 ### Patch Changes
