@@ -24,9 +24,8 @@ export function setReturnTo(
       path: '/',
       httpOnly: true,
       sameSite,
-      expires: new Date(Date.now() + 1000 * 30),
+      expires: new Date(Date.now() + 1000 * 60 * 5),
       secure: true,
-      partitioned: sameSite === 'none',
     }),
   );
 }
@@ -56,9 +55,8 @@ export function setAppState(
         path: '/',
         httpOnly: true,
         sameSite,
-        expires: new Date(Date.now() + 1000 * 30),
+        expires: new Date(Date.now() + 1000 * 60 * 5),
         secure: true,
-        partitioned: sameSite === 'none',
       }),
     );
   }
