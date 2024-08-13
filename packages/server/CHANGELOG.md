@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.9
+
+### Patch Changes
+
+- ad72a2d: Tweaks and fix attempts
+
 ## 0.6.8
 
 ### Patch Changes
