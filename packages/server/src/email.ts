@@ -53,26 +53,10 @@ export class Email extends EventEmitter {
     return this.transporter.sendMail({ from: this.user, ...args });
   }
 
-  sendEmailVerification({
-    to,
-    code,
-    returnTo,
-    appState,
-  }: {
-    to: string;
-    code: string;
-    returnTo?: string;
-    appState?: string;
-  }) {
+  sendEmailVerification({ to, code }: { to: string; code: string }) {
     const url = new URL('/verify', this.uiOrigin);
     url.searchParams.set('code', code);
     url.searchParams.set('email', to);
-    if (returnTo) {
-      url.searchParams.set('returnTo', returnTo);
-    }
-    if (appState) {
-      url.searchParams.set('appState', appState);
-    }
     return this.transporter.sendMail({
       from: this.user,
       to,

@@ -242,16 +242,19 @@ export function createHandlers({
     await emailService?.sendEmailVerification({
       to: params.email,
       code,
-      returnTo: params.returnTo || defaultReturnTo,
-      appState,
     });
 
-    return new Response(JSON.stringify({ ok: true }), {
+    const res = new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: {
         'content-type': 'application/json',
       },
     });
+
+    setAppState(res, appState, sessions.sameSite);
+    setReturnTo(res, returnTo, sessions.sameSite);
+
+    return res;
   }
 
   async function handleVerifyEmailRequest(req: Request) {
