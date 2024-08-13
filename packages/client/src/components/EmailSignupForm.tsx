@@ -61,7 +61,7 @@ export function EmailSignupForm({
             setSuccess(true);
           }
         } catch (e) {
-          onError?.(e);
+          onError?.(e as Error);
         }
       }}
       className={clsx('flex flex-col gap-2', className)}
