@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.9
+
+### Patch Changes
+
+- 1297396: add cookies to email signup form
+
 ## 1.0.8
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@a-type/auth-client",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "client tools for the @a-type/auth",
   "publishConfig": {
     "access": "public"
