@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.8
+
+### Patch Changes
+
+- ad72a2d: Tweaks and fix attempts
+
 ## 1.0.7
 
 ### Patch Changes
