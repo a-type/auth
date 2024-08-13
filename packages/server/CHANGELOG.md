@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 0.6.7
+
+### Patch Changes
+
+- 7ee6efd: Attempt to fix appstate flow through signup
+
 ## 0.6.6
 
 ### Patch Changes
