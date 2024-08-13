@@ -1,6 +1,6 @@
 import cookie from 'cookie';
 
-export const RETURN_TO_COOKIE = 'return-to';
+export const RETURN_TO_COOKIE = 'bsc-return-to';
 
 export function getReturnTo(req: Request) {
   const cookies = cookie.parse(req.headers.get('cookie') ?? '');
@@ -24,13 +24,13 @@ export function setReturnTo(
       path: '/',
       httpOnly: true,
       sameSite,
-      expires: new Date(Date.now() + 1000 * 60 * 5),
+      expires: new Date(Date.now() + 1000 * 60 * 10),
       secure: true,
     }),
   );
 }
 
-export const APP_STATE_COOKIE = 'app-state';
+export const APP_STATE_COOKIE = 'bsc-app-state';
 
 export function getAppState(req: Request): string | undefined {
   const cookies = cookie.parse(req.headers.get('cookie') ?? '');
@@ -55,7 +55,7 @@ export function setAppState(
         path: '/',
         httpOnly: true,
         sameSite,
-        expires: new Date(Date.now() + 1000 * 60 * 5),
+        expires: new Date(Date.now() + 1000 * 60 * 10),
         secure: true,
       }),
     );

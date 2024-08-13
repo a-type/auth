@@ -13,15 +13,17 @@ export interface EmailSignupFormProps {
   endpoint: string;
   className?: string;
   appState?: any;
+  onError?: (error: Error) => void;
 }
 
 export function EmailSignupForm({
   returnTo,
-  actionText = 'Start signup',
+  actionText = 'Verify email',
   disabled,
   endpoint,
   className,
   appState,
+  onError,
   ...rest
 }: EmailSignupFormProps) {
   const [success, setSuccess] = useState(false);
@@ -59,7 +61,7 @@ export function EmailSignupForm({
             setSuccess(true);
           }
         } catch (e) {
-          console.error(e);
+          onError?.(e);
         }
       }}
       className={clsx('flex flex-col gap-2', className)}
