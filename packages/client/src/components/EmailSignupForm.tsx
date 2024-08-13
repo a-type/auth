@@ -56,6 +56,7 @@ export function EmailSignupForm({
           const response = await fetch(endpoint, {
             method: 'post',
             body: formData,
+            credentials: 'include',
           });
           if (response.ok) {
             setSuccess(true);
