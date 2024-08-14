@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.10
+
+### Patch Changes
+
+- 3aa8555: Configurable fetch headers
+
 ## 1.0.9
 
 ### Patch Changes
