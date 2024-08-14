@@ -13,18 +13,28 @@ export function createFetch({
   isSessionExpired = defaultIsSessionExpired,
   readBody = false,
   refreshSessionEndpoint,
+  headers,
 }: {
   isSessionExpired?: (response: Response, body: any) => boolean;
   readBody?: boolean;
   refreshSessionEndpoint: string;
+  headers?: Record<string, string>;
 }): typeof window.fetch {
   return async function fetch(input: any, init: any) {
     // ensure cookies are always sent
     if (typeof input === 'object') {
       input.credentials = 'include';
+      input.headers = {
+        ...headers,
+        ...input.headers,
+      };
     }
     if (typeof init === 'object') {
       init.credentials = 'include';
+      init.headers = {
+        ...headers,
+        ...init.headers,
+      };
     }
 
     let response = await window.fetch.bind(window)(input, init);
