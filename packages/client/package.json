@@ -1,42 +1,42 @@
 {
-  "name": "@a-type/auth-client",
-  "version": "1.0.10",
-  "description": "client tools for the @a-type/auth",
-  "publishConfig": {
-    "access": "public"
-  },
-  "type": "module",
-  "main": "dist/esm/index.js",
-  "module": "dist/esm/index.js",
-  "typings": "dist/typings/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "pnpm run build",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
-  },
-  "peerDependencies": {
-    "@a-type/ui": "^0.8.0",
-    "react": "^18"
-  },
-  "devDependencies": {
-    "@a-type/ui": "0.8.20",
-    "@chromatic-com/storybook": "^1.5.0",
-    "@storybook/addon-essentials": "^8.1.8",
-    "@storybook/addon-interactions": "^8.1.8",
-    "@storybook/addon-links": "^8.1.8",
-    "@storybook/addon-onboarding": "^8.1.8",
-    "@storybook/blocks": "^8.1.8",
-    "@storybook/react": "^8.1.8",
-    "@storybook/react-vite": "^8.1.8",
-    "@storybook/test": "^8.1.8",
-    "@types/react": "18.3.3",
-    "react": "18.3.1",
-    "storybook": "^8.1.8",
-    "typescript": "5.4.5"
-  }
+	"name": "@a-type/auth-client",
+	"version": "1.0.10",
+	"description": "client tools for the @a-type/auth",
+	"publishConfig": {
+		"access": "public"
+	},
+	"type": "module",
+	"main": "dist/esm/index.js",
+	"module": "dist/esm/index.js",
+	"typings": "dist/typings/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"build": "tsc",
+		"prepublishOnly": "pnpm run build",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
+	},
+	"peerDependencies": {
+		"@a-type/ui": "^1.0.0",
+		"react": "^18"
+	},
+	"devDependencies": {
+		"@a-type/ui": "1.1.16",
+		"@chromatic-com/storybook": "^1.5.0",
+		"@storybook/addon-essentials": "^8.1.8",
+		"@storybook/addon-interactions": "^8.1.8",
+		"@storybook/addon-links": "^8.1.8",
+		"@storybook/addon-onboarding": "^8.1.8",
+		"@storybook/blocks": "^8.1.8",
+		"@storybook/react": "^8.1.8",
+		"@storybook/react-vite": "^8.1.8",
+		"@storybook/test": "^8.1.8",
+		"@types/react": "18.3.3",
+		"react": "18.3.1",
+		"storybook": "^8.1.8",
+		"typescript": "5.4.5"
+	}
 }
