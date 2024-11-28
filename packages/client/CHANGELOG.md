@@ -1,5 +1,12 @@
 # @a-type/auth-client
 
+## 1.0.11
+
+### Patch Changes
+
+- a0a7f16: update ui peer dep
+- 2ad09a2: Bump for new UI
+
 ## 1.0.10
 
 ### Patch Changes
