@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.12
+
+### Patch Changes
+
+- 0089953: fix peer dep
+
 ## 1.0.11
 
 ### Patch Changes
