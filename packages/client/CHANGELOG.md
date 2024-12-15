@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.13
+
+### Patch Changes
+
+- bb14617: Update deps
+
 ## 1.0.12
 
 ### Patch Changes
