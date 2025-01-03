@@ -37,7 +37,7 @@ export interface AuthUser {
 	fullName: string | null;
 	friendlyName: string | null;
 	email: string;
-	emailVerifiedAt: string | null;
+	emailVerifiedAt: Date | null;
 	imageUrl: string | null;
 	/** the hashed password, please. */
 	password: string | null;
@@ -51,7 +51,7 @@ export interface AuthAccount {
 	providerAccountId: string;
 	refreshToken: string | null;
 	accessToken: string | null;
-	expiresAt: number | null;
+	expiresAt: Date | null;
 	tokenType: string | null;
 	scope: string | null;
 	idToken: string | null;
@@ -60,7 +60,7 @@ export interface AuthAccount {
 export interface AuthVerificationCode {
 	email: string;
 	code: string;
-	expiresAt: number;
+	expiresAt: Date;
 	name: string;
 }
 

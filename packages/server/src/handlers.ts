@@ -267,7 +267,7 @@ export function createHandlers<Context = Request>({
 		await db.insertVerificationCode?.({
 			email: params.email,
 			code,
-			expiresAt: expiresAt.getTime(),
+			expiresAt,
 			name: params.name,
 		});
 		await emailService?.sendEmailVerification(
@@ -326,7 +326,7 @@ export function createHandlers<Context = Request>({
 		if (!dbCode) {
 			throw new AuthError(AuthError.Messages.InvalidCode, 400);
 		}
-		if (dbCode.expiresAt < Date.now()) {
+		if (dbCode.expiresAt < new Date()) {
 			throw new AuthError(AuthError.Messages.CodeExpired, 400);
 		}
 		const user = await db.getUserByEmail(email);
@@ -336,7 +336,7 @@ export function createHandlers<Context = Request>({
 				throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
 			} else {
 				await db.updateUser(user.id, {
-					emailVerifiedAt: new Date().toISOString(),
+					emailVerifiedAt: new Date(),
 					plaintextPassword: password,
 				});
 				userId = user.id;
@@ -348,7 +348,7 @@ export function createHandlers<Context = Request>({
 				email,
 				imageUrl: null,
 				plaintextPassword: password,
-				emailVerifiedAt: new Date().toISOString(),
+				emailVerifiedAt: new Date(),
 			});
 			userId = user.id;
 		}
@@ -428,7 +428,7 @@ export function createHandlers<Context = Request>({
 		await db.insertVerificationCode?.({
 			email: params.email,
 			code,
-			expiresAt: expiresAt.getTime(),
+			expiresAt,
 			name: '',
 		});
 		await emailService?.sendPasswordReset(
@@ -475,7 +475,7 @@ export function createHandlers<Context = Request>({
 		if (!dbCode) {
 			throw new AuthError(AuthError.Messages.InvalidCode, 400);
 		}
-		if (dbCode.expiresAt < Date.now()) {
+		if (dbCode.expiresAt < new Date()) {
 			throw new AuthError(AuthError.Messages.CodeExpired, 400);
 		}
 
