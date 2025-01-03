@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.2.0
+
+### Minor Changes
+
+- 9c4ecd2: Include providers APIs in API overhaul to include Context usage
+
 ## 1.1.0
 
 ### Minor Changes
