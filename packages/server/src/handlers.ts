@@ -134,7 +134,7 @@ export function createHandlers<Context = Request>({
 			throw new Error(`Unknown provider: ${providerName}`);
 		}
 		const provider = providers[providerName as keyof typeof providers];
-		const loginUrl = provider.getLoginUrl();
+		const loginUrl = provider.getLoginUrl(ctx);
 
 		const res = new Response(null, {
 			status: 302,
@@ -172,8 +172,8 @@ export function createHandlers<Context = Request>({
 
 		const provider = providers[providerName as keyof typeof providers];
 
-		const tokens = await provider.getTokens(code);
-		const profile = await provider.getProfile(tokens.accessToken);
+		const tokens = await provider.getTokens(code, ctx);
+		const profile = await provider.getProfile(tokens.accessToken, ctx);
 
 		const db = await getStorage(ctx);
 

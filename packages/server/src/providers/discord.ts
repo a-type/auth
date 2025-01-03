@@ -1,33 +1,46 @@
 import Discord from 'discord-oauth2';
 import { AuthProvider, Profile, Tokens } from './types.js';
 
-export class DiscordProvider implements AuthProvider {
-	private discordAuth;
+export class DiscordProvider<Context = unknown>
+	implements AuthProvider<Context>
+{
+	private discordAuth: Discord | null = null;
+	private getConfig;
 
 	constructor({
-		clientId,
-		clientSecret,
-		redirectUri,
+		getConfig,
 	}: {
-		clientId: string;
-		clientSecret: string;
-		redirectUri: string;
+		getConfig: (ctx: Context) => {
+			clientId: string;
+			clientSecret: string;
+			redirectUri: string;
+		};
 	}) {
+		this.getConfig = getConfig;
+	}
+
+	private getDiscordAuth(ctx: Context) {
+		if (this.discordAuth) {
+			return this.discordAuth;
+		}
+
+		const { clientId, clientSecret, redirectUri } = this.getConfig(ctx);
 		this.discordAuth = new Discord({
 			clientId,
 			clientSecret,
 			redirectUri,
 		});
+		return this.discordAuth;
 	}
 
-	getLoginUrl(): string {
-		return this.discordAuth.generateAuthUrl({
+	getLoginUrl(ctx: Context): string {
+		return this.getDiscordAuth(ctx).generateAuthUrl({
 			scope: ['identify', 'email'],
 		});
 	}
 
-	async getTokens(code: string): Promise<Tokens> {
-		const res = await this.discordAuth.tokenRequest({
+	async getTokens(code: string, ctx: Context): Promise<Tokens> {
+		const res = await this.getDiscordAuth(ctx).tokenRequest({
 			code,
 			scope: ['identify', 'email'],
 			grantType: 'authorization_code',
@@ -43,8 +56,8 @@ export class DiscordProvider implements AuthProvider {
 			expiresAt: new Date(res.expires_in),
 		};
 	}
-	async getProfile(accessToken: string): Promise<Profile> {
-		const profile = await this.discordAuth.getUser(accessToken);
+	async getProfile(accessToken: string, ctx: Context): Promise<Profile> {
+		const profile = await this.getDiscordAuth(ctx).getUser(accessToken);
 		if (!profile.email) {
 			throw new Error('Failed to fetch profile: email not provided');
 		}

@@ -1,29 +1,39 @@
-import { google } from 'googleapis';
+import { Auth, google } from 'googleapis';
 import { AuthProvider, Profile, Tokens } from './types.js';
 
-export class GoogleProvider implements AuthProvider {
-	private googleOAuth;
-	private clientId;
+export class GoogleProvider<Context = unknown>
+	implements AuthProvider<Context>
+{
+	private getConfig;
+	private googleOauth: Auth.OAuth2Client | null = null;
 
 	constructor({
-		clientId,
-		clientSecret,
-		redirectUri,
+		getConfig,
 	}: {
-		clientId: string;
-		clientSecret: string;
-		redirectUri: string;
+		getConfig: (ctx: Context) => {
+			clientId: string;
+			clientSecret: string;
+			redirectUri: string;
+		};
 	}) {
-		this.clientId = clientId;
-		this.googleOAuth = new google.auth.OAuth2(
-			clientId,
-			clientSecret,
-			redirectUri,
-		);
+		this.getConfig = getConfig;
 	}
 
-	getLoginUrl(): string {
-		return this.googleOAuth.generateAuthUrl({
+	private getGoogleOAuth(ctx: Context) {
+		if (this.googleOauth) {
+			return this.googleOauth;
+		}
+
+		const { clientId, clientSecret, redirectUri } = this.getConfig(ctx);
+		this.googleOauth = google.oauth2({
+			version: 'v2',
+			auth: new google.auth.OAuth2(clientId, clientSecret, redirectUri),
+		}) as any;
+		return this.googleOauth!;
+	}
+
+	getLoginUrl(ctx: Context): string {
+		return this.getGoogleOAuth(ctx).generateAuthUrl({
 			access_type: 'online',
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',
@@ -32,9 +42,10 @@ export class GoogleProvider implements AuthProvider {
 			include_granted_scopes: true,
 		});
 	}
-	async getTokens(code: string): Promise<Tokens> {
+	async getTokens(code: string, ctx: Context): Promise<Tokens> {
+		const { clientId } = this.getConfig(ctx);
 		const tokens = await new Promise<Tokens>((resolve, reject) => {
-			this.googleOAuth.getToken(code, (err, tokens) => {
+			this.getGoogleOAuth(ctx).getToken(code, (err, tokens) => {
 				if (err) {
 					reject(err);
 				} else if (!tokens) {
@@ -53,17 +64,17 @@ export class GoogleProvider implements AuthProvider {
 		});
 
 		if (tokens.idToken) {
-			await this.googleOAuth.verifyIdToken({
+			await this.getGoogleOAuth(ctx).verifyIdToken({
 				idToken: tokens.idToken,
-				audience: this.clientId,
+				audience: clientId,
 			});
 		}
 
 		return tokens;
 	}
-	getProfile = async (accessToken: string): Promise<Profile> => {
-		this.googleOAuth.setCredentials({ access_token: accessToken });
-		const resp = await this.googleOAuth.request({
+	getProfile = async (accessToken: string, ctx: Context): Promise<Profile> => {
+		this.getGoogleOAuth(ctx).setCredentials({ access_token: accessToken });
+		const resp = await this.getGoogleOAuth(ctx).request({
 			url: 'https://www.googleapis.com/oauth2/v3/userinfo',
 		});
 		if (resp.status !== 200) {

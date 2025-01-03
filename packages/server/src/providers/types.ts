@@ -1,7 +1,7 @@
-export interface AuthProvider {
-	getLoginUrl(): string;
-	getTokens(code: string): Promise<Tokens>;
-	getProfile(accessToken: string): Promise<Profile>;
+export interface AuthProvider<Context = unknown> {
+	getLoginUrl(ctx: Context): string;
+	getTokens(code: string, ctx: Context): Promise<Tokens>;
+	getProfile(accessToken: string, ctx: Context): Promise<Profile>;
 }
 
 export interface Profile {
