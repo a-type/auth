@@ -29,7 +29,7 @@ export function createHandlers<Context = Request>({
 	 * object.
 	 */
 	adapter?: ServerAdapter<Context>;
-	providers: Record<string, AuthProvider>;
+	providers: Record<string, AuthProvider<Context>>;
 	/**
 	 * Gets the database interface used to store user and account data.
 	 * This is passed the same context value which you pass to the handler.
