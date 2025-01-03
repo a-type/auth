@@ -15,8 +15,7 @@ import { Session, SessionManager } from './session.js';
 export function createHandlers<Context = Request>({
 	providers,
 	getStorage,
-	defaultReturnToPath: defaultReturnTo = '/',
-	returnToOrigin,
+	getRedirectConfig,
 	email: emailService,
 	sessions,
 	getPublicSession = (session) => session,
@@ -36,18 +35,22 @@ export function createHandlers<Context = Request>({
 	 * This is passed the same context value which you pass to the handler.
 	 */
 	getStorage: (ctx: Context) => AuthDB | Promise<AuthDB>;
-	/**
-	 * A default path to land on after login if none
-	 * was specified in the original request.
-	 */
+
 	defaultReturnToPath?: string;
-	/**
-	 * Which origin your login process returns the user to.
-	 * In a 'real' auth system this would be a list of allowed origins
-	 * which could be controlled by the app. But since this is just for
-	 * me and my apps don't need that, I just set it manually. It's easier!
-	 */
-	returnToOrigin: string;
+	getRedirectConfig: (ctx: Context) => {
+		/**
+		 * Which origin your login process returns the user to.
+		 * In a 'real' auth system this would be a list of allowed origins
+		 * which could be controlled by the app. But since this is just for
+		 * me and my apps don't need that, I just set it manually. It's easier!
+		 */
+		defaultReturnToOrigin: string;
+		/**
+		 * A default path to land on after login if none
+		 * was specified in the original request.
+		 */
+		defaultReturnToPath?: string;
+	};
 	/**
 	 * The Email service to use for sending verification emails.
 	 */
@@ -62,7 +65,7 @@ export function createHandlers<Context = Request>({
 	 * Allows adapting what Session data is provided to the user when they
 	 * request their own session info.
 	 */
-	getPublicSession?: (session: Session) => Record<string, any>;
+	getPublicSession?: (session: Session, ctx: Context) => Record<string, any>;
 	/**
 	 * When a user logs in or signs up with the same email from a different provider,
 	 * but already has an account, should we add the new provider to the existing account?
@@ -78,8 +81,24 @@ export function createHandlers<Context = Request>({
 		}
 	}
 
-	function resolveReturnTo(path: string) {
-		return new URL(path, returnToOrigin).toString();
+	/**
+	 * Does not allow app-specified return to origins, only the default.
+	 * TODO: allow app-specified origins
+	 */
+	function resolveReturnTo(path: string | undefined, ctx: Context) {
+		// full URLs not allowed
+		if (path !== undefined && URL.canParse(path)) {
+			throw new AuthError(
+				'Invalid returnTo. Full URLs are not supported, only paths',
+				400,
+			);
+		}
+		const { defaultReturnToOrigin, defaultReturnToPath } =
+			getRedirectConfig(ctx);
+		return new URL(
+			path ?? defaultReturnToPath ?? '/',
+			defaultReturnToOrigin,
+		).toString();
 	}
 
 	/**
@@ -88,7 +107,7 @@ export function createHandlers<Context = Request>({
 	 * Also appends appState if available, and session data.
 	 */
 	function toRedirect(
-		req: Request,
+		ctx: Context,
 		session: {
 			headers: Headers;
 			searchParams?: URLSearchParams;
@@ -99,10 +118,9 @@ export function createHandlers<Context = Request>({
 			message?: string;
 		} = {},
 	) {
+		const req = adapter.getRawRequest(ctx);
 		// get returnTo
-		const returnTo = resolveReturnTo(
-			options.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
-		);
+		const returnTo = resolveReturnTo(options.returnTo ?? getReturnTo(req), ctx);
 		// add search params to destination for appState and session
 		const url = new URL(returnTo);
 		if (session.searchParams) {
@@ -146,7 +164,9 @@ export function createHandlers<Context = Request>({
 		const sameSite = sessions.getIsSameSite(ctx);
 		setReturnTo(
 			res,
-			url.searchParams.get('returnTo') ?? defaultReturnTo,
+			url.searchParams.get('returnTo') ??
+				getRedirectConfig(ctx).defaultReturnToPath ??
+				'/',
 			sameSite,
 		);
 		setAppState(res, url.searchParams.get('appState'), sameSite);
@@ -220,13 +240,12 @@ export function createHandlers<Context = Request>({
 		const session = await sessions.createSession(userId, ctx);
 		const sessionUpdate = await sessions.updateSession(session, ctx);
 
-		return toRedirect(req, sessionUpdate);
+		return toRedirect(ctx, sessionUpdate);
 	}
 
 	async function handleLogoutRequest(ctx: Context) {
 		const session = sessions.clearSession(ctx);
-		const req = adapter.getRawRequest(ctx);
-		return toRedirect(req, session);
+		return toRedirect(ctx, session);
 	}
 
 	async function handleSendEmailVerificationRequest(ctx: Context) {
@@ -250,7 +269,7 @@ export function createHandlers<Context = Request>({
 			throw new AuthError('Invalid returnTo', 400);
 		}
 
-		const returnTo = resolveReturnTo(returnToRaw);
+		const returnTo = resolveReturnTo(returnToRaw, ctx);
 		const appState = formData.get('appState') as string | undefined;
 
 		const params = z
@@ -367,7 +386,7 @@ export function createHandlers<Context = Request>({
 		await db.consumeVerificationCode?.(email, code);
 		const session = await sessions.createSession(userId, ctx);
 		const sessionUpdate = await sessions.updateSession(session, ctx);
-		return toRedirect(req, sessionUpdate);
+		return toRedirect(ctx, sessionUpdate);
 	}
 
 	async function handleEmailLoginRequest(ctx: Context) {
@@ -398,8 +417,8 @@ export function createHandlers<Context = Request>({
 		}
 		const session = await sessions.createSession(user.id, ctx);
 		const sessionUpdate = await sessions.updateSession(session, ctx);
-		return toRedirect(req, sessionUpdate, {
-			returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+		return toRedirect(ctx, sessionUpdate, {
+			returnTo: resolveReturnTo(params.returnTo ?? undefined, ctx),
 			appState: params.appState ?? undefined,
 		});
 	}
@@ -435,7 +454,7 @@ export function createHandlers<Context = Request>({
 			{
 				to: params.email,
 				code,
-				returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+				returnTo: resolveReturnTo(params.returnTo ?? undefined, ctx),
 				appState: params.appState ?? undefined,
 			},
 			ctx,
@@ -492,9 +511,9 @@ export function createHandlers<Context = Request>({
 
 		const session = await sessions.createSession(user.id, ctx);
 		const sessionUpdate = await sessions.updateSession(session, ctx);
-		return toRedirect(req, sessionUpdate, {
+		return toRedirect(ctx, sessionUpdate, {
 			appState: params.appState ?? undefined,
-			returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+			returnTo: resolveReturnTo(params.returnTo ?? undefined, ctx),
 			message: 'Password reset successfully',
 		});
 	}
@@ -511,7 +530,7 @@ export function createHandlers<Context = Request>({
 		}
 		// refresh session
 		return new Response(
-			JSON.stringify({ session: getPublicSession(session) }),
+			JSON.stringify({ session: getPublicSession(session, ctx) }),
 			{
 				status: 200,
 				headers: {
