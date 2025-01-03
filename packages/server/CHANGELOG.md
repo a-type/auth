@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.2.1
+
+### Patch Changes
+
+- 6c3b29b: fix missing generic
+
 ## 1.2.0
 
 ### Minor Changes
