@@ -1,540 +1,580 @@
-import { AuthDB } from './db.js';
+import * as z from 'zod';
+import { rawAdapter, ServerAdapter } from './adapter.js';
+import {
+	getAppState,
+	getReturnTo,
+	setAppState,
+	setReturnTo,
+} from './appState.js';
+import { AuthDB, authDbSupportsEmail } from './db.js';
 import { Email } from './email.js';
 import { AuthError } from './error.js';
 import { AuthProvider } from './providers/types.js';
-import {
-  RETURN_TO_COOKIE,
-  getAppState,
-  getReturnTo,
-  setAppState,
-  setReturnTo,
-} from './appState.js';
 import { Session, SessionManager } from './session.js';
-import * as z from 'zod';
-import { Auth } from 'googleapis';
 
-export function createHandlers({
-  providers,
-  db,
-  defaultReturnToPath: defaultReturnTo = '/',
-  returnToOrigin,
-  email: emailService,
-  sessions,
-  getPublicSession = (session) => session,
-  addProvidersToExistingUsers = true,
+export function createHandlers<Context = Request>({
+	providers,
+	getStorage,
+	defaultReturnToPath: defaultReturnTo = '/',
+	returnToOrigin,
+	email: emailService,
+	sessions,
+	getPublicSession = (session) => session,
+	addProvidersToExistingUsers = true,
+	adapter = rawAdapter as ServerAdapter<Context>,
 }: {
-  providers: Record<string, AuthProvider>;
-  db: AuthDB;
-  /**
-   * A default path to land on after login if none
-   * was specified in the original request.
-   */
-  defaultReturnToPath?: string;
-  /**
-   * Which origin your login process returns the user to.
-   * In a 'real' auth system this would be a list of allowed origins
-   * which could be controlled by the app. But since this is just for
-   * me and my apps don't need that, I just set it manually. It's easier!
-   */
-  returnToOrigin: string;
-  email?: Email;
-  sessions: SessionManager;
-  getPublicSession?: (session: Session) => Record<string, any>;
-  /**
-   * When a user logs in or signs up with the same email from a different provider,
-   * but already has an account, should we add the new provider to the existing account?
-   * If false, we'll throw an error.
-   */
-  addProvidersToExistingUsers?: boolean;
+	/**
+	 * Adapters are used to extract the raw request object from the context object
+	 * passed to each handler. This lets you connect handlers to different server
+	 * frameworks. By default, handlers assume you are passing the raw HTTP Request
+	 * object.
+	 */
+	adapter?: ServerAdapter<Context>;
+	providers: Record<string, AuthProvider>;
+	/**
+	 * Gets the database interface used to store user and account data.
+	 * This is passed the same context value which you pass to the handler.
+	 */
+	getStorage: (ctx: Context) => AuthDB | Promise<AuthDB>;
+	/**
+	 * A default path to land on after login if none
+	 * was specified in the original request.
+	 */
+	defaultReturnToPath?: string;
+	/**
+	 * Which origin your login process returns the user to.
+	 * In a 'real' auth system this would be a list of allowed origins
+	 * which could be controlled by the app. But since this is just for
+	 * me and my apps don't need that, I just set it manually. It's easier!
+	 */
+	returnToOrigin: string;
+	/**
+	 * The Email service to use for sending verification emails.
+	 */
+	email?: Email;
+	/**
+	 * Instantiate a SessionManager with configuration for your application and
+	 * pass it to this option. The Context type configured for the SessionManager
+	 * must match the Context type you pass to the handlers.
+	 */
+	sessions: SessionManager<Context>;
+	/**
+	 * Allows adapting what Session data is provided to the user when they
+	 * request their own session info.
+	 */
+	getPublicSession?: (session: Session) => Record<string, any>;
+	/**
+	 * When a user logs in or signs up with the same email from a different provider,
+	 * but already has an account, should we add the new provider to the existing account?
+	 * If false, we'll throw an error.
+	 */
+	addProvidersToExistingUsers?: boolean;
 }) {
-  const supportsEmail =
-    !!db.insertVerificationCode &&
-    !!db.getUserByEmailAndPassword &&
-    !!db.getVerificationCode &&
-    !!db.consumeVerificationCode;
-  if (emailService && !supportsEmail) {
-    throw new Error(
-      'Implement optional db fields "insertVerificationCode", "getUserByEmailAndPassword", "getVerificationCode", and "consumeVerificationCode" to support email',
-    );
-  }
+	function validateEmailConfig(db: AuthDB) {
+		if (emailService && !authDbSupportsEmail(db)) {
+			throw new Error(
+				'Implement optional db fields "insertVerificationCode", "getUserByEmailAndPassword", "getVerificationCode", and "consumeVerificationCode" to support email',
+			);
+		}
+	}
 
-  function resolveReturnTo(path: string) {
-    return new URL(path, returnToOrigin).toString();
-  }
+	function resolveReturnTo(path: string) {
+		return new URL(path, returnToOrigin).toString();
+	}
 
-  /**
-   * Redirects the response back to wherever the user meant to return to.
-   * Reads from the returnTo cookie, or a query param on the request URL.
-   * Also appends appState if available, and session data.
-   */
-  function toRedirect(
-    req: Request,
-    session: {
-      headers: Headers;
-      searchParams?: URLSearchParams;
-    },
-    options: {
-      returnTo?: string;
-      appState?: string;
-      message?: string;
-    } = {},
-  ) {
-    // get returnTo
-    const returnTo = resolveReturnTo(
-      options.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
-    );
-    // add search params to destination for appState and session
-    const url = new URL(returnTo);
-    if (session.searchParams) {
-      for (const [key, value] of session.searchParams) {
-        url.searchParams.append(key, value);
-      }
-    }
-    if (options.message) {
-      url.searchParams.append('message', options.message);
-    }
-    const appState = options.appState ?? getAppState(req);
-    if (appState) {
-      url.searchParams.append('appState', appState);
-    }
+	/**
+	 * Redirects the response back to wherever the user meant to return to.
+	 * Reads from the returnTo cookie, or a query param on the request URL.
+	 * Also appends appState if available, and session data.
+	 */
+	function toRedirect(
+		req: Request,
+		session: {
+			headers: Headers;
+			searchParams?: URLSearchParams;
+		},
+		options: {
+			returnTo?: string;
+			appState?: string;
+			message?: string;
+		} = {},
+	) {
+		// get returnTo
+		const returnTo = resolveReturnTo(
+			options.returnTo ?? getReturnTo(req) ?? defaultReturnTo,
+		);
+		// add search params to destination for appState and session
+		const url = new URL(returnTo);
+		if (session.searchParams) {
+			for (const [key, value] of session.searchParams) {
+				url.searchParams.append(key, value);
+			}
+		}
+		if (options.message) {
+			url.searchParams.append('message', options.message);
+		}
+		const appState = options.appState ?? getAppState(req);
+		if (appState) {
+			url.searchParams.append('appState', appState);
+		}
 
-    session.headers.set('location', url.toString());
+		session.headers.set('location', url.toString());
 
-    return new Response(null, {
-      status: 302,
-      headers: session.headers,
-    });
-  }
+		return new Response(null, {
+			status: 302,
+			headers: session.headers,
+		});
+	}
 
-  function handleOAuthLoginRequest(req: Request, opts: { provider: string }) {
-    const url = new URL(req.url);
-    const providerName = opts.provider;
-    if (!(providerName in providers)) {
-      throw new Error(`Unknown provider: ${providerName}`);
-    }
-    const provider = providers[providerName as keyof typeof providers];
-    const loginUrl = provider.getLoginUrl();
+	function handleOAuthLoginRequest(ctx: Context, opts: { provider: string }) {
+		const req = adapter.getRawRequest(ctx);
+		const url = new URL(req.url);
+		const providerName = opts.provider;
+		if (!(providerName in providers)) {
+			throw new Error(`Unknown provider: ${providerName}`);
+		}
+		const provider = providers[providerName as keyof typeof providers];
+		const loginUrl = provider.getLoginUrl();
 
-    const res = new Response(null, {
-      status: 302,
-      headers: {
-        location: loginUrl,
-      },
-    });
+		const res = new Response(null, {
+			status: 302,
+			headers: {
+				location: loginUrl,
+			},
+		});
 
-    setReturnTo(
-      res,
-      url.searchParams.get('returnTo') ?? defaultReturnTo,
-      sessions.sameSite,
-    );
-    setAppState(res, url.searchParams.get('appState'), sessions.sameSite);
+		const sameSite = sessions.getIsSameSite(ctx);
+		setReturnTo(
+			res,
+			url.searchParams.get('returnTo') ?? defaultReturnTo,
+			sameSite,
+		);
+		setAppState(res, url.searchParams.get('appState'), sameSite);
 
-    return res;
-  }
+		return res;
+	}
 
-  async function handleOAuthCallbackRequest(
-    req: Request,
-    opts: { provider: string },
-  ) {
-    const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    if (!code) {
-      throw new AuthError(AuthError.Messages.MissingCode, 400);
-    }
+	async function handleOAuthCallbackRequest(
+		ctx: Context,
+		opts: { provider: string },
+	) {
+		const req = adapter.getRawRequest(ctx);
+		const url = new URL(req.url);
+		const code = url.searchParams.get('code');
+		if (!code) {
+			throw new AuthError(AuthError.Messages.MissingCode, 400);
+		}
 
-    const providerName = opts.provider;
-    if (!(providerName in providers)) {
-      throw new Error(`Unknown provider: ${providerName}`);
-    }
+		const providerName = opts.provider;
+		if (!(providerName in providers)) {
+			throw new Error(`Unknown provider: ${providerName}`);
+		}
 
-    const provider = providers[providerName as keyof typeof providers];
+		const provider = providers[providerName as keyof typeof providers];
 
-    const tokens = await provider.getTokens(code);
-    const profile = await provider.getProfile(tokens.accessToken);
+		const tokens = await provider.getTokens(code);
+		const profile = await provider.getProfile(tokens.accessToken);
 
-    const account = await db.getAccountByProviderAccountId(
-      providerName,
-      profile.id,
-    );
+		const db = await getStorage(ctx);
 
-    let userId: string;
-    if (account) {
-      userId = account.userId;
-    } else {
-      const user = await db.getUserByEmail(profile.email);
-      if (user) {
-        if (!addProvidersToExistingUsers) {
-          throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
-        }
-        userId = user.id;
-      } else {
-        const user = await db.insertUser({
-          fullName: profile.fullName,
-          friendlyName: profile.friendlyName ?? null,
-          email: profile.email,
-          emailVerifiedAt: null,
-          imageUrl: profile.avatarUrl ?? null,
-          plaintextPassword: null,
-        });
-        userId = user.id;
-      }
-      await db.insertAccount({
-        userId,
-        type: 'oauth',
-        provider: providerName,
-        providerAccountId: profile.id,
-        refreshToken: tokens.refreshToken,
-        accessToken: tokens.accessToken,
-        expiresAt: tokens.expiresAt,
-        tokenType: tokens.tokenType,
-        scope: tokens.scope,
-        idToken: tokens.idToken ?? null,
-      });
-    }
+		const account = await db.getAccountByProviderAccountId(
+			providerName,
+			profile.id,
+		);
 
-    const session = await sessions.createSession(userId);
-    const sessionUpdate = await sessions.updateSession(session);
+		let userId: string;
+		if (account) {
+			userId = account.userId;
+		} else {
+			const user = await db.getUserByEmail(profile.email);
+			if (user) {
+				if (!addProvidersToExistingUsers) {
+					throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
+				}
+				userId = user.id;
+			} else {
+				const user = await db.insertUser({
+					fullName: profile.fullName,
+					friendlyName: profile.friendlyName ?? null,
+					email: profile.email,
+					emailVerifiedAt: null,
+					imageUrl: profile.avatarUrl ?? null,
+					plaintextPassword: null,
+				});
+				userId = user.id;
+			}
+			await db.insertAccount({
+				userId,
+				type: 'oauth',
+				provider: providerName,
+				providerAccountId: profile.id,
+				refreshToken: tokens.refreshToken,
+				accessToken: tokens.accessToken,
+				expiresAt: tokens.expiresAt,
+				tokenType: tokens.tokenType,
+				scope: tokens.scope,
+				idToken: tokens.idToken ?? null,
+			});
+		}
 
-    return toRedirect(req, sessionUpdate);
-  }
+		const session = await sessions.createSession(userId, ctx);
+		const sessionUpdate = await sessions.updateSession(session, ctx);
 
-  async function handleLogoutRequest(req: Request) {
-    const session = sessions.clearSession();
-    return toRedirect(req, session);
-  }
+		return toRedirect(req, sessionUpdate);
+	}
 
-  async function handleSendEmailVerificationRequest(req: Request) {
-    const formData = await req.formData();
+	async function handleLogoutRequest(ctx: Context) {
+		const session = sessions.clearSession(ctx);
+		const req = adapter.getRawRequest(ctx);
+		return toRedirect(req, session);
+	}
 
-    const email = formData.get('email');
-    const name = formData.get('name');
-    const returnToRaw = formData.get('returnTo') ?? '';
-    if (!name || typeof name !== 'string') {
-      throw new AuthError(AuthError.Messages.InvalidName, 400);
-    }
-    if (!email || typeof email !== 'string') {
-      throw new AuthError(AuthError.Messages.MissingEmail, 400);
-    }
-    if (typeof returnToRaw !== 'string') {
-      throw new AuthError('Invalid returnTo', 400);
-    }
+	async function handleSendEmailVerificationRequest(ctx: Context) {
+		const req = adapter.getRawRequest(ctx);
+		const db = await getStorage(ctx);
 
-    const returnTo = resolveReturnTo(returnToRaw);
-    const appState = formData.get('appState') as string | undefined;
+		validateEmailConfig(db);
 
-    const params = z
-      .object({
-        email: z.string().email(),
-        name: z.string().min(1),
-        returnTo: z.string().optional(),
-      })
-      .parse({ email, name, returnTo });
+		const formData = await req.formData();
 
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 36);
-    const code = Math.floor(Math.random() * 100000).toString();
-    await db.insertVerificationCode?.({
-      email: params.email,
-      code,
-      expiresAt: expiresAt.getTime(),
-      name: params.name,
-    });
-    await emailService?.sendEmailVerification({
-      to: params.email,
-      code,
-    });
+		const email = formData.get('email');
+		const name = formData.get('name');
+		const returnToRaw = formData.get('returnTo') ?? '';
+		if (!name || typeof name !== 'string') {
+			throw new AuthError(AuthError.Messages.InvalidName, 400);
+		}
+		if (!email || typeof email !== 'string') {
+			throw new AuthError(AuthError.Messages.MissingEmail, 400);
+		}
+		if (typeof returnToRaw !== 'string') {
+			throw new AuthError('Invalid returnTo', 400);
+		}
 
-    const res = new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
+		const returnTo = resolveReturnTo(returnToRaw);
+		const appState = formData.get('appState') as string | undefined;
 
-    setAppState(res, appState, sessions.sameSite);
-    setReturnTo(res, returnTo, sessions.sameSite);
+		const params = z
+			.object({
+				email: z.string().email(),
+				name: z.string().min(1),
+				returnTo: z.string().optional(),
+			})
+			.parse({ email, name, returnTo });
 
-    return res;
-  }
+		const expiresAt = new Date();
+		expiresAt.setHours(expiresAt.getHours() + 36);
+		const code = Math.floor(Math.random() * 100000).toString();
+		await db.insertVerificationCode?.({
+			email: params.email,
+			code,
+			expiresAt: expiresAt.getTime(),
+			name: params.name,
+		});
+		await emailService?.sendEmailVerification(
+			{
+				to: params.email,
+				code,
+			},
+			ctx,
+		);
 
-  async function handleVerifyEmailRequest(req: Request) {
-    const formData = await req.formData();
+		const res = new Response(JSON.stringify({ ok: true }), {
+			status: 200,
+			headers: {
+				'content-type': 'application/json',
+			},
+		});
 
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const code = formData.get('code');
+		const sameSite = sessions.getIsSameSite(ctx);
+		setAppState(res, appState, sameSite);
+		setReturnTo(res, returnTo, sameSite);
 
-    if (!code) {
-      throw new AuthError(AuthError.Messages.MissingCode, 400);
-    }
-    if (!email) {
-      throw new AuthError(AuthError.Messages.MissingEmail, 400);
-    }
-    if (!password) {
-      throw new AuthError(AuthError.Messages.MissingPassword, 400);
-    }
-    if (typeof email !== 'string') {
-      throw new AuthError(AuthError.Messages.InvalidEmail, 400);
-    }
-    if (typeof code !== 'string') {
-      throw new AuthError(AuthError.Messages.InvalidCode, 400);
-    }
-    if (typeof password !== 'string') {
-      throw new AuthError(AuthError.Messages.InvalidPassword, 400);
-    }
+		return res;
+	}
 
-    const dbCode = await db.getVerificationCode?.(email, code);
-    if (!dbCode) {
-      throw new AuthError(AuthError.Messages.InvalidCode, 400);
-    }
-    if (dbCode.expiresAt < Date.now()) {
-      throw new AuthError(AuthError.Messages.CodeExpired, 400);
-    }
-    const user = await db.getUserByEmail(email);
-    let userId: string;
-    if (user) {
-      if (!addProvidersToExistingUsers || user.password) {
-        throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
-      } else {
-        await db.updateUser(user.id, {
-          emailVerifiedAt: new Date().toISOString(),
-          plaintextPassword: password,
-        });
-        userId = user.id;
-      }
-    } else {
-      const user = await db.insertUser({
-        fullName: dbCode.name,
-        friendlyName: null,
-        email,
-        imageUrl: null,
-        plaintextPassword: password,
-        emailVerifiedAt: new Date().toISOString(),
-      });
-      userId = user.id;
-    }
-    await db.insertAccount({
-      userId,
-      type: 'email',
-      provider: 'email',
-      providerAccountId: email,
-      refreshToken: null,
-      accessToken: null,
-      expiresAt: null,
-      tokenType: null,
-      scope: null,
-      idToken: null,
-    });
-    await db.consumeVerificationCode?.(email, code);
-    const session = await sessions.createSession(userId);
-    const sessionUpdate = await sessions.updateSession(session);
-    return toRedirect(req, sessionUpdate);
-  }
+	async function handleVerifyEmailRequest(ctx: Context) {
+		const req = adapter.getRawRequest(ctx);
+		const db = await getStorage(ctx);
+		validateEmailConfig(db);
 
-  async function handleEmailLoginRequest(req: Request) {
-    const formData = await req.formData();
+		const formData = await req.formData();
 
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const returnTo = formData.get('returnTo') ?? undefined;
-    const appState = formData.get('appState') ?? undefined;
+		const email = formData.get('email');
+		const password = formData.get('password');
+		const code = formData.get('code');
 
-    const params = z
-      .object({
-        email: z.string().email(),
-        password: z.string().min(1),
-        returnTo: z.string().optional().nullable(),
-        appState: z.string().optional().nullable(),
-      })
-      .parse({ email, password, returnTo, appState });
+		if (!code) {
+			throw new AuthError(AuthError.Messages.MissingCode, 400);
+		}
+		if (!email) {
+			throw new AuthError(AuthError.Messages.MissingEmail, 400);
+		}
+		if (!password) {
+			throw new AuthError(AuthError.Messages.MissingPassword, 400);
+		}
+		if (typeof email !== 'string') {
+			throw new AuthError(AuthError.Messages.InvalidEmail, 400);
+		}
+		if (typeof code !== 'string') {
+			throw new AuthError(AuthError.Messages.InvalidCode, 400);
+		}
+		if (typeof password !== 'string') {
+			throw new AuthError(AuthError.Messages.InvalidPassword, 400);
+		}
 
-    const user = await db.getUserByEmailAndPassword?.(
-      params.email,
-      params.password,
-    );
-    if (!user) {
-      throw new AuthError(AuthError.Messages.InvalidPassword, 401);
-    }
-    const session = await sessions.createSession(user.id);
-    const sessionUpdate = await sessions.updateSession(session);
-    return toRedirect(req, sessionUpdate, {
-      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
-      appState: params.appState ?? undefined,
-    });
-  }
+		const dbCode = await db.getVerificationCode?.(email, code);
+		if (!dbCode) {
+			throw new AuthError(AuthError.Messages.InvalidCode, 400);
+		}
+		if (dbCode.expiresAt < Date.now()) {
+			throw new AuthError(AuthError.Messages.CodeExpired, 400);
+		}
+		const user = await db.getUserByEmail(email);
+		let userId: string;
+		if (user) {
+			if (!addProvidersToExistingUsers || user.password) {
+				throw new AuthError(AuthError.Messages.UserAlreadyExists, 409);
+			} else {
+				await db.updateUser(user.id, {
+					emailVerifiedAt: new Date().toISOString(),
+					plaintextPassword: password,
+				});
+				userId = user.id;
+			}
+		} else {
+			const user = await db.insertUser({
+				fullName: dbCode.name,
+				friendlyName: null,
+				email,
+				imageUrl: null,
+				plaintextPassword: password,
+				emailVerifiedAt: new Date().toISOString(),
+			});
+			userId = user.id;
+		}
+		await db.insertAccount({
+			userId,
+			type: 'email',
+			provider: 'email',
+			providerAccountId: email,
+			refreshToken: null,
+			accessToken: null,
+			expiresAt: null,
+			tokenType: null,
+			scope: null,
+			idToken: null,
+		});
+		await db.consumeVerificationCode?.(email, code);
+		const session = await sessions.createSession(userId, ctx);
+		const sessionUpdate = await sessions.updateSession(session, ctx);
+		return toRedirect(req, sessionUpdate);
+	}
 
-  async function handleResetPasswordRequest(req: Request) {
-    const formData = await req.formData();
+	async function handleEmailLoginRequest(ctx: Context) {
+		const req = adapter.getRawRequest(ctx);
+		const db = await getStorage(ctx);
+		const formData = await req.formData();
 
-    const email = formData.get('email');
-    const returnTo = formData.get('returnTo');
-    const appState = formData.get('appState');
+		const email = formData.get('email');
+		const password = formData.get('password');
+		const returnTo = formData.get('returnTo') ?? undefined;
+		const appState = formData.get('appState') ?? undefined;
 
-    const params = z
-      .object({
-        email: z.string().email(),
-        returnTo: z.string().optional().nullable(),
-        appState: z.string().optional().nullable(),
-      })
-      .parse({ email, returnTo, appState });
+		const params = z
+			.object({
+				email: z.string().email(),
+				password: z.string().min(1),
+				returnTo: z.string().optional().nullable(),
+				appState: z.string().optional().nullable(),
+			})
+			.parse({ email, password, returnTo, appState });
 
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 36);
-    const code = Math.floor(Math.random() * 10000000).toString();
-    await db.insertVerificationCode?.({
-      email: params.email,
-      code,
-      expiresAt: expiresAt.getTime(),
-      name: '',
-    });
-    await emailService?.sendPasswordReset({
-      to: params.email,
-      code,
-      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
-      appState: params.appState ?? undefined,
-    });
+		const user = await db.getUserByEmailAndPassword?.(
+			params.email,
+			params.password,
+		);
+		if (!user) {
+			throw new AuthError(AuthError.Messages.InvalidPassword, 401);
+		}
+		const session = await sessions.createSession(user.id, ctx);
+		const sessionUpdate = await sessions.updateSession(session, ctx);
+		return toRedirect(req, sessionUpdate, {
+			returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+			appState: params.appState ?? undefined,
+		});
+	}
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-  }
+	async function handleResetPasswordRequest(ctx: Context) {
+		const req = adapter.getRawRequest(ctx);
+		const db = await getStorage(ctx);
+		validateEmailConfig(db);
+		const formData = await req.formData();
 
-  async function handleVerifyPasswordResetRequest(req: Request) {
-    const formData = await req.formData();
+		const email = formData.get('email');
+		const returnTo = formData.get('returnTo');
+		const appState = formData.get('appState');
 
-    const email = formData.get('email');
-    const returnTo = formData.get('returnTo');
-    const appState = formData.get('appState');
-    const newPassword = formData.get('newPassword');
-    const code = formData.get('code');
+		const params = z
+			.object({
+				email: z.string().email(),
+				returnTo: z.string().optional().nullable(),
+				appState: z.string().optional().nullable(),
+			})
+			.parse({ email, returnTo, appState });
 
-    const params = z
-      .object({
-        email: z.string().email(),
-        returnTo: z.string().optional().nullable(),
-        appState: z.string().optional().nullable(),
-        code: z.string().min(1),
-        newPassword: z.string().min(5),
-      })
-      .parse({ email, returnTo, appState, newPassword, code });
+		const expiresAt = new Date();
+		expiresAt.setHours(expiresAt.getHours() + 36);
+		const code = Math.floor(Math.random() * 10000000).toString();
+		await db.insertVerificationCode?.({
+			email: params.email,
+			code,
+			expiresAt: expiresAt.getTime(),
+			name: '',
+		});
+		await emailService?.sendPasswordReset(
+			{
+				to: params.email,
+				code,
+				returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+				appState: params.appState ?? undefined,
+			},
+			ctx,
+		);
 
-    const dbCode = await db.getVerificationCode?.(params.email, params.code);
-    if (!dbCode) {
-      throw new AuthError(AuthError.Messages.InvalidCode, 400);
-    }
-    if (dbCode.expiresAt < Date.now()) {
-      throw new AuthError(AuthError.Messages.CodeExpired, 400);
-    }
+		return new Response(JSON.stringify({ ok: true }), {
+			status: 200,
+			headers: {
+				'content-type': 'application/json',
+			},
+		});
+	}
 
-    const user = await db.getUserByEmail(params.email);
-    if (!user) {
-      throw new AuthError(AuthError.Messages.UserNotFound, 404);
-    }
+	async function handleVerifyPasswordResetRequest(ctx: Context) {
+		const req = adapter.getRawRequest(ctx);
+		const db = await getStorage(ctx);
+		validateEmailConfig(db);
+		const formData = await req.formData();
 
-    await db.updateUser(user.id, {
-      plaintextPassword: params.newPassword,
-    });
+		const email = formData.get('email');
+		const returnTo = formData.get('returnTo');
+		const appState = formData.get('appState');
+		const newPassword = formData.get('newPassword');
+		const code = formData.get('code');
 
-    await db.consumeVerificationCode?.(params.email, params.code);
+		const params = z
+			.object({
+				email: z.string().email(),
+				returnTo: z.string().optional().nullable(),
+				appState: z.string().optional().nullable(),
+				code: z.string().min(1),
+				newPassword: z.string().min(5),
+			})
+			.parse({ email, returnTo, appState, newPassword, code });
 
-    const session = await sessions.createSession(user.id);
-    const sessionUpdate = await sessions.updateSession(session);
-    return toRedirect(req, sessionUpdate, {
-      appState: params.appState ?? undefined,
-      returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
-      message: 'Password reset successfully',
-    });
-  }
+		const dbCode = await db.getVerificationCode?.(params.email, params.code);
+		if (!dbCode) {
+			throw new AuthError(AuthError.Messages.InvalidCode, 400);
+		}
+		if (dbCode.expiresAt < Date.now()) {
+			throw new AuthError(AuthError.Messages.CodeExpired, 400);
+		}
 
-  async function handleSessionRequest(req: Request) {
-    const session = await sessions.getSession(req);
-    if (!session) {
-      return new Response(JSON.stringify({ session: null }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-    }
-    // refresh session
-    return new Response(
-      JSON.stringify({ session: getPublicSession(session) }),
-      {
-        status: 200,
-        headers: {
-          'content-type': 'application/json',
-        },
-      },
-    );
-  }
+		const user = await db.getUserByEmail(params.email);
+		if (!user) {
+			throw new AuthError(AuthError.Messages.UserNotFound, 404);
+		}
 
-  async function handleRefreshSessionRequest(req: Request) {
-    const accessToken = sessions.getAccessToken(req);
-    const refreshToken = sessions.getRefreshToken(req);
+		await db.updateUser(user.id, {
+			plaintextPassword: params.newPassword,
+		});
 
-    if (!accessToken || !refreshToken) {
-      throw new AuthError(AuthError.Messages.InvalidSession, 400);
-    }
+		await db.consumeVerificationCode?.(params.email, params.code);
 
-    try {
-      const { headers } = await sessions.refreshSession(
-        accessToken,
-        refreshToken,
-      );
-      headers.append('content-type', 'application/json');
+		const session = await sessions.createSession(user.id, ctx);
+		const sessionUpdate = await sessions.updateSession(session, ctx);
+		return toRedirect(req, sessionUpdate, {
+			appState: params.appState ?? undefined,
+			returnTo: resolveReturnTo(params.returnTo || defaultReturnTo),
+			message: 'Password reset successfully',
+		});
+	}
 
-      return new Response(
-        JSON.stringify({
-          ok: true,
-        }),
-        {
-          status: 200,
-          headers,
-        },
-      );
-    } catch (err) {
-      console.error('Refresh session error', err);
-      if (err instanceof AuthError && err.statusCode === 401) {
-        const { headers } = sessions.clearSession();
-        headers.append('content-type', 'application/json');
+	async function handleSessionRequest(ctx: Context) {
+		const session = await sessions.getSession(ctx);
+		if (!session) {
+			return new Response(JSON.stringify({ session: null }), {
+				status: 200,
+				headers: {
+					'content-type': 'application/json',
+				},
+			});
+		}
+		// refresh session
+		return new Response(
+			JSON.stringify({ session: getPublicSession(session) }),
+			{
+				status: 200,
+				headers: {
+					'content-type': 'application/json',
+				},
+			},
+		);
+	}
 
-        return new Response(
-          JSON.stringify({
-            ok: false,
-          }),
-          {
-            status: 401,
-            headers,
-          },
-        );
-      }
-      return new Response(
-        JSON.stringify({
-          ok: false,
-        }),
-        {
-          status: 400,
-          headers: {
-            'content-type': 'application/json',
-          },
-        },
-      );
-    }
-  }
+	async function handleRefreshSessionRequest(ctx: Context) {
+		try {
+			const { headers } = await sessions.refreshSession(ctx);
+			headers.append('content-type', 'application/json');
 
-  return {
-    handleOAuthLoginRequest,
-    handleOAuthCallbackRequest,
-    handleLogoutRequest,
-    handleSendEmailVerificationRequest,
-    handleVerifyEmailRequest,
-    handleEmailLoginRequest,
-    handleResetPasswordRequest,
-    handleVerifyPasswordResetRequest,
-    handleSessionRequest,
-    handleRefreshSessionRequest,
-  };
+			return new Response(
+				JSON.stringify({
+					ok: true,
+				}),
+				{
+					status: 200,
+					headers,
+				},
+			);
+		} catch (err) {
+			console.error('Refresh session error', err);
+			if (err instanceof AuthError && err.statusCode === 401) {
+				const { headers } = sessions.clearSession(ctx);
+				headers.append('content-type', 'application/json');
+
+				return new Response(
+					JSON.stringify({
+						ok: false,
+					}),
+					{
+						status: 401,
+						headers,
+					},
+				);
+			}
+			return new Response(
+				JSON.stringify({
+					ok: false,
+				}),
+				{
+					status: 400,
+					headers: {
+						'content-type': 'application/json',
+					},
+				},
+			);
+		}
+	}
+
+	return {
+		handleOAuthLoginRequest,
+		handleOAuthCallbackRequest,
+		handleLogoutRequest,
+		handleSendEmailVerificationRequest,
+		handleVerifyEmailRequest,
+		handleEmailLoginRequest,
+		handleResetPasswordRequest,
+		handleVerifyPasswordResetRequest,
+		handleSessionRequest,
+		handleRefreshSessionRequest,
+	};
 }

@@ -1,297 +1,339 @@
 import { parse, serialize } from 'cookie';
-import {
-  SignJWT,
-  jwtVerify,
-  decodeJwt,
-  errors,
-  JWTPayload,
-  compactVerify,
-} from 'jose';
-import { AuthError } from './error.js';
 import { randomUUID } from 'crypto';
+import {
+	compactVerify,
+	decodeJwt,
+	errors,
+	JWTPayload,
+	jwtVerify,
+	SignJWT,
+} from 'jose';
+import { rawAdapter, ServerAdapter } from './adapter.js';
+import { AuthError } from './error.js';
 
 export interface Session {
-  userId: string;
+	userId: string;
 }
 
 export type ShortNames = {
-  [key in keyof Session]: string;
+	[key in keyof Session]: string;
 };
 
 export const defaultShortNames = {
-  userId: 'sub',
+	userId: 'sub',
 };
 
-export class SessionManager {
-  private secret;
-  private shortNamesBackwards: Record<string, keyof Session>;
+const textEncoder = new TextEncoder();
 
-  constructor(
-    private options: {
-      secret: string;
-      cookieName: string;
-      refreshTokenDurationMinutes?: number;
-      /**
-       * The HTTP request path the client will make a request to
-       * when refreshing their session. The refresh token cookie
-       * is limited to this path to prevent sending it in every
-       * request.
-       */
-      refreshPath: string;
-      refreshTokenCookieName: string;
-      shortNames: ShortNames;
-      mode?: 'production' | 'development';
-      createSession: (userId: string) => Promise<Session>;
-      issuer?: string;
-      audience?: string;
-      expiration?: string;
-      /** Specify a client domain */
-      clientDomain?: string;
-      cookieOptions?: {
-        partitioned?: boolean;
-        sameSite?: 'strict' | 'lax' | 'none';
-      };
-    },
-  ) {
-    this.secret = new TextEncoder().encode(options.secret);
-    this.shortNamesBackwards = Object.fromEntries(
-      Object.entries(options.shortNames).map(([key, value]) => [value, key]),
-    ) as any;
-    // validate shortnames don't repeat
-    const values = Object.values(options.shortNames);
-    if (new Set(values).size !== values.length) {
-      throw new Error('Short names must be unique');
-    }
-  }
+export class SessionManager<Context = unknown> {
+	private shortNamesBackwards: Record<string, keyof Session>;
+	private getSessionConfig;
+	private adapter;
+	private shortNames = defaultShortNames;
 
-  public get sameSite() {
-    return this.options.cookieOptions?.sameSite ?? 'lax';
-  }
-  get partitioned() {
-    return this.options.cookieOptions?.partitioned ?? this.sameSite === 'none';
-  }
+	constructor(options: {
+		adapter?: ServerAdapter<Context>;
+		getSessionConfig: (ctx: Context) => {
+			secret: string;
+			cookieName: string;
+			refreshTokenDurationMinutes?: number;
+			/**
+			 * The HTTP request path the client will make a request to
+			 * when refreshing their session. The refresh token cookie
+			 * is limited to this path to prevent sending it in every
+			 * request.
+			 */
+			refreshPath: string;
+			refreshTokenCookieName: string;
+			mode?: 'production' | 'development';
+			createSession: (userId: string) => Promise<Session>;
+			issuer?: string;
+			audience?: string;
+			expiration?: string;
+			/** Specify a client domain */
+			clientDomain?: string;
+			cookieOptions?: {
+				partitioned?: boolean;
+				sameSite?: 'strict' | 'lax' | 'none';
+			};
+		};
+		shortNames?: ShortNames;
+	}) {
+		this.getSessionConfig = options.getSessionConfig;
+		this.adapter = options.adapter ?? (rawAdapter as ServerAdapter<Context>);
+		this.shortNames = options.shortNames ?? defaultShortNames;
+		this.shortNamesBackwards = Object.fromEntries(
+			Object.entries(this.shortNames).map(([key, value]) => [value, key]),
+		) as any;
+		// validate shortnames don't repeat
+		const values = Object.values(this.shortNames);
+		if (new Set(values).size !== values.length) {
+			throw new Error('Short names must be unique');
+		}
+	}
 
-  createSession = async (userId: string): Promise<Session> => {
-    return this.options.createSession(userId);
-  };
+	public getIsSameSite = (ctx: Context) => {
+		const { cookieOptions } = this.getSessionConfig(ctx);
+		return cookieOptions?.sameSite ?? 'lax';
+	};
+	getIsPartitioned = (ctx: Context) => {
+		const { cookieOptions } = this.getSessionConfig(ctx);
+		return cookieOptions?.partitioned ?? this.getIsSameSite(ctx) === 'none';
+	};
 
-  getAccessToken = (req: { headers: Headers }) => {
-    const cookieHeader = req.headers.get('cookie') ?? '';
-    const cookies = parse(cookieHeader);
-    const cookieValue = cookies[this.options.cookieName];
-    if (!cookieValue) {
-      return null;
-    }
-    return cookieValue;
-  };
+	createSession = async (userId: string, ctx: Context): Promise<Session> => {
+		const { createSession } = this.getSessionConfig(ctx);
+		return createSession(userId);
+	};
 
-  getRefreshToken = (req: { headers: Headers }) => {
-    const cookieHeader = req.headers.get('cookie') ?? '';
-    const cookies = parse(cookieHeader);
-    const cookieValue = cookies[this.options.refreshTokenCookieName];
-    if (!cookieValue) {
-      return null;
-    }
-    return cookieValue;
-  };
+	getAccessToken = (ctx: Context) => {
+		const { cookieName } = this.getSessionConfig(ctx);
+		const req = this.adapter.getRawRequest(ctx);
+		const cookieHeader = req.headers.get('cookie') ?? '';
+		const cookies = parse(cookieHeader);
+		const cookieValue = cookies[cookieName];
+		if (!cookieValue) {
+			return null;
+		}
+		return cookieValue;
+	};
 
-  getSession = async (req: { headers: Headers }) => {
-    const cookieValue = this.getAccessToken(req);
-    if (!cookieValue) return null;
+	getRefreshToken = (ctx: Context) => {
+		const { refreshTokenCookieName } = this.getSessionConfig(ctx);
+		const req = this.adapter.getRawRequest(ctx);
+		const cookieHeader = req.headers.get('cookie') ?? '';
+		const cookies = parse(cookieHeader);
+		const cookieValue = cookies[refreshTokenCookieName];
+		if (!cookieValue) {
+			return null;
+		}
+		return cookieValue;
+	};
 
-    // read the JWT from the cookie
-    try {
-      const jwt = await jwtVerify(cookieValue, this.secret, {
-        issuer: this.options.issuer,
-        audience: this.options.audience,
-      });
-      // convert the JWT claims to a session object
-      const session: Session = this.readSessionFromPayload(jwt.payload);
-      // in dev mode, validate session has the right keys
-      if (this.options.mode === 'development') {
-        const keys = Object.keys(session);
-        const expectedKeys = Object.keys(this.options.shortNames);
-        for (const key of expectedKeys) {
-          if (!keys.includes(key)) {
-            console.error(`Session missing unexpected key: ${key}`);
-            throw new AuthError(AuthError.Messages.InvalidSession, 400);
-          }
-        }
-      }
-      return session;
-    } catch (e) {
-      // if the JWT is expired, throw a specific error.
-      // if it's otherwise invalid, throw a different one.
-      if (e instanceof errors.JWTExpired) {
-        throw new AuthError(AuthError.Messages.SessionExpired, 401);
-      } else if (
-        e instanceof errors.JWTInvalid ||
-        e instanceof errors.JWSInvalid
-      ) {
-        throw new AuthError(AuthError.Messages.InvalidSession, 400);
-      }
-      throw e;
-    }
-  };
+	getSession = async (ctx: Context) => {
+		const { secret, issuer, audience, mode } = this.getSessionConfig(ctx);
+		const encodedSecret = textEncoder.encode(secret);
+		const cookieValue = this.getAccessToken(ctx);
+		if (!cookieValue) return null;
 
-  /**
-   * Refresh the session by re-signing the JWT with a new expiration time.
-   * Requires a valid refresh token.
-   */
-  refreshSession = async (accessToken: string, refreshToken: string) => {
-    try {
-      const refreshData = await jwtVerify(refreshToken, this.secret, {
-        issuer: this.options.issuer,
-        audience: this.options.audience,
-      });
+		// read the JWT from the cookie
+		try {
+			const jwt = await jwtVerify(cookieValue, encodedSecret, {
+				issuer,
+				audience,
+			});
+			// convert the JWT claims to a session object
+			const session: Session = this.readSessionFromPayload(jwt.payload);
+			// in dev mode, validate session has the right keys
+			if (mode === 'development') {
+				const keys = Object.keys(session);
+				const expectedKeys = Object.keys(this.shortNames);
+				for (const key of expectedKeys) {
+					if (!keys.includes(key)) {
+						console.error(`Session missing expected key: ${key}`);
+						throw new AuthError(AuthError.Messages.InvalidSession, 400);
+					}
+				}
+			}
+			return session;
+		} catch (e) {
+			// if the JWT is expired, throw a specific error.
+			// if it's otherwise invalid, throw a different one.
+			if (e instanceof errors.JWTExpired) {
+				throw new AuthError(AuthError.Messages.SessionExpired, 401);
+			} else if (
+				e instanceof errors.JWTInvalid ||
+				e instanceof errors.JWSInvalid
+			) {
+				throw new AuthError(AuthError.Messages.InvalidSession, 400);
+			}
+			throw e;
+		}
+	};
 
-      // verify the signature of the token
-      await compactVerify(accessToken, this.secret);
+	/**
+	 * Refresh the session by re-signing the JWT with a new expiration time.
+	 * Requires a valid refresh token.
+	 */
+	refreshSession = async (ctx: Context) => {
+		const accessToken = this.getAccessToken(ctx);
+		const refreshToken = this.getRefreshToken(ctx);
 
-      const accessData = decodeJwt(accessToken);
+		if (!accessToken) {
+			throw new AuthError(AuthError.Messages.InvalidSession, 400);
+		}
+		if (!refreshToken) {
+			throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
+		}
 
-      if (refreshData.payload.jti !== accessData.jti) {
-        throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
-      }
+		const { secret, issuer, audience } = this.getSessionConfig(ctx);
+		const encodedSecret = textEncoder.encode(secret);
+		try {
+			const refreshData = await jwtVerify(refreshToken, encodedSecret, {
+				issuer,
+				audience,
+			});
 
-      const session = this.readSessionFromPayload(accessData);
+			// verify the signature of the token
+			await compactVerify(accessToken, encodedSecret);
 
-      return this.updateSession(session);
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        (err.message.includes('JWTExpired') || err.name === 'JWTExpired')
-      ) {
-        throw new AuthError(AuthError.Messages.RefreshTokenExpired, 401);
-      }
-      throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
-    }
-  };
+			const accessData = decodeJwt(accessToken);
 
-  updateSession = async (session: Session): Promise<{ headers: Headers }> => {
-    const headers = new Headers();
+			if (refreshData.payload.jti !== accessData.jti) {
+				throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
+			}
 
-    const jti = randomUUID();
-    const accessTokenBuilder = this.getAccessTokenBuilder(session, jti);
-    const jwt = await accessTokenBuilder.sign(this.secret);
+			const session = this.readSessionFromPayload(accessData);
 
-    const authCookie = serialize(this.options.cookieName, jwt, {
-      httpOnly: true,
-      sameSite: this.sameSite,
-      path: '/',
-      secure: this.options.mode === 'production',
-      // sync access token expiration to refresh token - an expired token
-      // will still be presented to the server, but the server will reject it
-      // as expired. the api can then tell the client the token is expired
-      // and the refresh should be used. once the access token cookie is expired
-      // and removed, it will instead trigger a fully logged out state.
-      expires: this.getRefreshTokenExpirationTime(),
-    });
-    headers.append('Set-Cookie', authCookie);
+			return this.updateSession(session, ctx);
+		} catch (err) {
+			if (
+				err instanceof Error &&
+				(err.message.includes('JWTExpired') || err.name === 'JWTExpired')
+			) {
+				throw new AuthError(AuthError.Messages.RefreshTokenExpired, 401);
+			}
+			throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
+		}
+	};
 
-    const refreshTokenBuilder = this.getRefreshTokenBuilder(jti);
-    const refreshToken = await refreshTokenBuilder.sign(this.secret);
-    const refreshCookie = serialize(
-      this.options.refreshTokenCookieName,
-      refreshToken,
-      {
-        httpOnly: true,
-        sameSite: this.sameSite,
-        path: this.options.refreshPath,
-        secure: this.options.mode === 'production',
-        expires: this.getRefreshTokenExpirationTime(),
-        partitioned: this.partitioned,
-      },
-    );
-    headers.append('Set-Cookie', refreshCookie);
+	updateSession = async (
+		session: Session,
+		ctx: Context,
+	): Promise<{ headers: Headers }> => {
+		const { secret, cookieName, mode, refreshTokenCookieName, refreshPath } =
+			this.getSessionConfig(ctx);
+		const encodedSecret = textEncoder.encode(secret);
+		const headers = new Headers();
 
-    return {
-      headers,
-    };
-  };
+		const jti = randomUUID();
+		const accessTokenBuilder = this.getAccessTokenBuilder(session, jti, ctx);
+		const jwt = await accessTokenBuilder.sign(encodedSecret);
 
-  clearSession = (): { headers: Headers } => {
-    const headers = new Headers();
-    const cookie = serialize(this.options.cookieName, '', {
-      httpOnly: true,
-      sameSite: this.sameSite,
-      path: '/',
-      secure: this.options.mode === 'production',
-      expires: new Date(0),
-    });
-    headers.append('Set-Cookie', cookie);
-    const refreshCookie = serialize(this.options.refreshTokenCookieName, '', {
-      httpOnly: true,
-      sameSite: this.sameSite,
-      path: this.options.refreshPath,
-      secure: this.options.mode === 'production',
-      expires: new Date(0),
-      partitioned: this.partitioned,
-    });
-    headers.append('Set-Cookie', refreshCookie);
-    return {
-      headers,
-    };
-  };
+		const sameSite = this.getIsSameSite(ctx);
 
-  private getAccessTokenBuilder = (session: Session, jti: string) => {
-    const builder = new SignJWT(
-      Object.fromEntries(
-        Object.entries(session).map(([key, value]) => [
-          this.getShortName(key),
-          value,
-        ]),
-      ) as any,
-    )
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime(this.options.expiration ?? '12h')
-      .setSubject(session.userId)
-      .setJti(jti);
+		const authCookie = serialize(cookieName, jwt, {
+			httpOnly: true,
+			sameSite,
+			path: '/',
+			secure: mode === 'production',
+			// sync access token expiration to refresh token - an expired token
+			// will still be presented to the server, but the server will reject it
+			// as expired. the api can then tell the client the token is expired
+			// and the refresh should be used. once the access token cookie is expired
+			// and removed, it will instead trigger a fully logged out state.
+			expires: this.getRefreshTokenExpirationTime(ctx),
+		});
+		headers.append('Set-Cookie', authCookie);
 
-    if (this.options.issuer) {
-      builder.setIssuer(this.options.issuer);
-    }
-    if (this.options.audience) {
-      builder.setAudience(this.options.audience);
-    }
-    return builder;
-  };
+		const refreshTokenBuilder = this.getRefreshTokenBuilder(jti, ctx);
+		const refreshToken = await refreshTokenBuilder.sign(encodedSecret);
+		const refreshCookie = serialize(refreshTokenCookieName, refreshToken, {
+			httpOnly: true,
+			sameSite,
+			path: refreshPath,
+			secure: mode === 'production',
+			expires: this.getRefreshTokenExpirationTime(ctx),
+			partitioned: this.getIsPartitioned(ctx),
+		});
+		headers.append('Set-Cookie', refreshCookie);
 
-  private getRefreshTokenBuilder = (jti: string) => {
-    const refreshTokenBuilder = new SignJWT({
-      jti,
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime(this.getRefreshTokenExpirationTime());
+		return {
+			headers,
+		};
+	};
 
-    if (this.options.issuer) {
-      refreshTokenBuilder.setIssuer(this.options.issuer);
-    }
-    if (this.options.audience) {
-      refreshTokenBuilder.setAudience(this.options.audience);
-    }
+	clearSession = (ctx: Context): { headers: Headers } => {
+		const { cookieName, mode, refreshTokenCookieName, refreshPath } =
+			this.getSessionConfig(ctx);
+		const headers = new Headers();
+		const sameSite = this.getIsSameSite(ctx);
+		const cookie = serialize(cookieName, '', {
+			httpOnly: true,
+			sameSite,
+			path: '/',
+			secure: mode === 'production',
+			expires: new Date(0),
+		});
+		headers.append('Set-Cookie', cookie);
+		const refreshCookie = serialize(refreshTokenCookieName, '', {
+			httpOnly: true,
+			sameSite,
+			path: refreshPath,
+			secure: mode === 'production',
+			expires: new Date(0),
+			partitioned: this.getIsPartitioned(ctx),
+		});
+		headers.append('Set-Cookie', refreshCookie);
+		return {
+			headers,
+		};
+	};
 
-    return refreshTokenBuilder;
-  };
+	private getAccessTokenBuilder = (
+		session: Session,
+		jti: string,
+		ctx: Context,
+	) => {
+		const { expiration, issuer, audience } = this.getSessionConfig(ctx);
+		const builder = new SignJWT(
+			Object.fromEntries(
+				Object.entries(session).map(([key, value]) => [
+					this.getShortName(key),
+					value,
+				]),
+			) as any,
+		)
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime(expiration ?? '12h')
+			.setSubject(session.userId)
+			.setJti(jti);
 
-  private getRefreshTokenExpirationTime = () => {
-    const msFromNow =
-      (this.options.refreshTokenDurationMinutes ?? 60 * 24 * 14) * 60 * 1000;
-    return new Date(Date.now() + msFromNow);
-  };
+		if (issuer) {
+			builder.setIssuer(issuer);
+		}
+		if (audience) {
+			builder.setAudience(audience);
+		}
+		return builder;
+	};
 
-  private getShortName = (key: string) => {
-    return (this.options.shortNames as any)[key];
-  };
-  private getLongName = (shortName: string) => {
-    return this.shortNamesBackwards[shortName];
-  };
+	private getRefreshTokenBuilder = (jti: string, ctx: Context) => {
+		const { issuer, audience } = this.getSessionConfig(ctx);
+		const refreshTokenBuilder = new SignJWT({
+			jti,
+		})
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime(this.getRefreshTokenExpirationTime(ctx));
 
-  private readSessionFromPayload = (jwt: JWTPayload): Session => {
-    return Object.fromEntries(
-      Object.entries(jwt).map(([key, value]) => [this.getLongName(key), value]),
-    ) as any;
-  };
+		if (issuer) {
+			refreshTokenBuilder.setIssuer(issuer);
+		}
+		if (audience) {
+			refreshTokenBuilder.setAudience(audience);
+		}
+
+		return refreshTokenBuilder;
+	};
+
+	private getRefreshTokenExpirationTime = (ctx: Context) => {
+		const { refreshTokenDurationMinutes } = this.getSessionConfig(ctx);
+		const msFromNow = (refreshTokenDurationMinutes ?? 60 * 24 * 14) * 60 * 1000;
+		return new Date(Date.now() + msFromNow);
+	};
+
+	private getShortName = (key: string) => {
+		return (this.shortNames as any)[key];
+	};
+	private getLongName = (shortName: string) => {
+		return this.shortNamesBackwards[shortName];
+	};
+
+	private readSessionFromPayload = (jwt: JWTPayload): Session => {
+		return Object.fromEntries(
+			Object.entries(jwt).map(([key, value]) => [this.getLongName(key), value]),
+		) as any;
+	};
 }
