@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.1.0
+
+### Minor Changes
+
+- 115d4e4: Change date types in API to use Date
+
 ## 1.0.0
 
 ### Major Changes
