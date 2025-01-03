@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.0.0
+
+### Major Changes
+
+- c104abc: Large refactoring of server interfaces to support Workers-style bindings
+
 ## 0.6.9
 
 ### Patch Changes
