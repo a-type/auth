@@ -54,7 +54,7 @@ export function createHandlers<Context = Request>({
 	/**
 	 * The Email service to use for sending verification emails.
 	 */
-	email?: Email;
+	email?: Email<Context>;
 	/**
 	 * Instantiate a SessionManager with configuration for your application and
 	 * pass it to this option. The Context type configured for the SessionManager
