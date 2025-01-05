@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { rawAdapter, ServerAdapter } from './adapter.js';
+import { ServerAdapter } from './adapter.js';
 import {
 	getAppState,
 	getReturnTo,
@@ -20,7 +20,7 @@ export function createHandlers<Context = Request>({
 	sessions,
 	getPublicSession = (session) => session,
 	addProvidersToExistingUsers = true,
-	adapter = rawAdapter as ServerAdapter<Context>,
+	adapter,
 }: {
 	/**
 	 * Adapters are used to extract the raw request object from the context object
@@ -28,7 +28,7 @@ export function createHandlers<Context = Request>({
 	 * frameworks. By default, handlers assume you are passing the raw HTTP Request
 	 * object.
 	 */
-	adapter?: ServerAdapter<Context>;
+	adapter: ServerAdapter<Context>;
 	providers: Record<string, AuthProvider<Context>>;
 	/**
 	 * Gets the database interface used to store user and account data.
