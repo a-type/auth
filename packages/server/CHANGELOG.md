@@ -1,5 +1,12 @@
 # @a-type/auth
 
+## 1.2.3
+
+### Patch Changes
+
+- 5d3a1b5: Export adapters. Require an adapter to avoid mismatching.
+- bc1f1b0: Trying to fix a bug with return to validation
+
 ## 1.2.2
 
 ### Patch Changes
