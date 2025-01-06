@@ -86,15 +86,19 @@ export function createHandlers<Context = Request>({
 	 * TODO: allow app-specified origins
 	 */
 	function resolveReturnTo(path: string | undefined, ctx: Context) {
-		// full URLs not allowed
-		if (path !== undefined && URL.canParse(path)) {
+		const { defaultReturnToOrigin, defaultReturnToPath } =
+			getRedirectConfig(ctx);
+		// full URLs not allowed unless they match the default origin
+		if (
+			path !== undefined &&
+			URL.canParse(path) &&
+			URL.parse(path)?.origin !== defaultReturnToOrigin
+		) {
 			throw new AuthError(
-				'Invalid returnTo. Full URLs are not supported, only paths',
+				`Invalid returnTo. Full URLs are not supported, only paths (got: ${path})`,
 				400,
 			);
 		}
-		const { defaultReturnToOrigin, defaultReturnToPath } =
-			getRedirectConfig(ctx);
 		return new URL(
 			path ?? defaultReturnToPath ?? '/',
 			defaultReturnToOrigin,
