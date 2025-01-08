@@ -1,6 +1,6 @@
 {
 	"name": "@a-type/auth-fetch",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "drop-in fetch replacement with auto session refreshing for @a-type/auth",
 	"publishConfig": {
 		"access": "public"
