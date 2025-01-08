@@ -2,7 +2,7 @@
 
 My personal library for API authentication.
 
-Designed to plug into itty-router based servers.
+Designed to plug into Hono and similar servers.
 
 Made for me since I keep making new projects that need auth. It's so particular and poorly documented you probably won't find it useful, but it's just easier to make this stuff open source.
 
@@ -37,12 +37,8 @@ Password reset works fairly similarly - send a request to send the password rese
 
 ## Client
 
-`@a-type/auth-client` includes tools for React-based clients to integrate quickly with a backend powered by `@a-type/auth`.
+`@a-type/auth-ui` includes tools for React-based clients to integrate quickly with a backend powered by `@a-type/auth`. It requires my personal UI library as a peer dep (`@a-type/ui`). YMMV on whether this is helpful, but you can also just read the source and re-implement to your liking.
 
-Use `createFetch` to make a `fetch`-alike which automatically refreshes the session and retries the request upon session expiration.
+`@a-type/auth-fetch` is a `fetch` wrapper which automatically refreshes the session and retries the request upon a session expiration.
 
 By default it expects a session expiration response to be a 401 with a header `x-auth-error: session-expired`. It's up to your server integration to provide this with the way it handles and responds after a `Session expired` AuthError. You can do this relatively easily by just returning `AuthError.toResponse()`. Or you can override the logic for deciding session expiration with the fetch params.
-
-The client lib also contains several React components using my UI library which cover the forms required for login/signup and password resets. My UI library is a peer dep. If you're not me and reading this, that's probably annoying. But if you are me, you're already using my UI library, so...
-
-Yeah, sorry, this isn't exactly a generic auth solution! I just make a lot of new projects and I hate reinventing the wheel.
