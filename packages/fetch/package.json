@@ -1,0 +1,23 @@
+{
+	"name": "@a-type/auth-fetch",
+	"version": "1.0.13",
+	"description": "drop-in fetch replacement with auto session refreshing for @a-type/auth",
+	"publishConfig": {
+		"access": "public"
+	},
+	"type": "module",
+	"main": "dist/esm/index.js",
+	"module": "dist/esm/index.js",
+	"typings": "dist/typings/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"build": "tsc",
+		"prepublishOnly": "pnpm run build"
+	},
+	"devDependencies": {
+		"typescript": "5.4.5"
+	}
+}
