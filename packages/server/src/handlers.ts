@@ -509,6 +509,8 @@ export function createHandlers<Context = Request>({
 
 		await db.updateUser(user.id, {
 			plaintextPassword: params.newPassword,
+			// automatically verify email if it wasn't already
+			emailVerifiedAt: user.emailVerifiedAt ?? new Date(),
 		});
 
 		await db.consumeVerificationCode?.(params.email, params.code);
