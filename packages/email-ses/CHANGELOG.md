@@ -1,5 +1,11 @@
 # @a-type/auth-email-ses
 
+## 2.1.0
+
+### Minor Changes
+
+- 9ff30eb: Use the actual current SES SDK lol
+
 ## 2.0.0
 
 ### Patch Changes
