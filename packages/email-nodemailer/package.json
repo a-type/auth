@@ -24,9 +24,7 @@
 	"scripts": {
 		"dev": "tsc -w",
 		"build": "tsc",
-		"prepublishOnly": "pnpm build",
-		"test": "vitest",
-		"ci:test:unit": "vitest run"
+		"prepublishOnly": "pnpm build"
 	},
 	"dependencies": {
 		"nodemailer": "^6.9.16"
