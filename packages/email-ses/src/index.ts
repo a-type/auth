@@ -1,10 +1,10 @@
 import { EmailProvider } from '@a-type/auth';
-import AWS from 'aws-sdk';
+import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 
 export class SesEmailProvider<Context = unknown>
 	implements EmailProvider<Context>
 {
-	private transport: AWS.SES | null = null;
+	private transport: SESv2Client | null = null;
 	private getConnectionInfo;
 	constructor({
 		getConnectionInfo,
@@ -24,18 +24,16 @@ export class SesEmailProvider<Context = unknown>
 				transport: this.transport,
 			};
 		}
+
 		const info = await this.getConnectionInfo(ctx);
-		const transport = new AWS.SES({
-			apiVersion: '2010-12-01',
-			region: info.region,
-			credentials: {
-				accessKeyId: info.accessKeyId,
-				secretAccessKey: info.secretAccessKey,
-			},
-		});
-		this.transport = transport;
 		return {
-			transport: this.transport,
+			transport: new SESv2Client({
+				region: info.region,
+				credentials: {
+					accessKeyId: info.accessKeyId,
+					secretAccessKey: info.secretAccessKey,
+				},
+			}),
 		};
 	}
 
@@ -51,29 +49,28 @@ export class SesEmailProvider<Context = unknown>
 	) => {
 		const { transport: ses } = await this.initConnection(ctx);
 
-		const params = {
+		const { from, to, subject, text, html } = args;
+		const command = new SendEmailCommand({
+			Content: {
+				Simple: {
+					Body: {
+						Html: {
+							Data: html,
+						},
+						Text: {
+							Data: text,
+						},
+					},
+					Subject: {
+						Data: subject,
+					},
+				},
+			},
 			Destination: {
-				ToAddresses: [args.to],
+				ToAddresses: [to],
 			},
-			Message: {
-				Body: {
-					Html: {
-						Charset: 'UTF-8',
-						Data: args.html,
-					},
-					Text: {
-						Charset: 'UTF-8',
-						Data: args.text,
-					},
-				},
-				Subject: {
-					Charset: 'UTF-8',
-					Data: args.subject,
-				},
-			},
-			Source: args.from,
-		};
-
-		await ses.sendEmail(params).promise();
+			FromEmailAddress: from,
+		});
+		await ses.send(command);
 	};
 }

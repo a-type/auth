@@ -26,9 +26,6 @@
 		"build": "tsc",
 		"prepublishOnly": "pnpm build"
 	},
-	"dependencies": {
-		"aws-sdk": "^2.1692.0"
-	},
 	"peerDependencies": {
 		"@a-type/auth": "workspace:*"
 	},
@@ -38,5 +35,8 @@
 	},
 	"keywords": [],
 	"author": "Grant Forrest (@a-type)",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"@aws-sdk/client-sesv2": "^3.726.1"
+	}
 }
