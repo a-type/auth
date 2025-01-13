@@ -1,5 +1,15 @@
 # @a-type/auth
 
+## 1.3.0
+
+### Minor Changes
+
+- 3474c0b: Refactored Email layer to support alternative email providers and removed Nodemailer dependency from core
+
+### Patch Changes
+
+- c47468a: Automatically verify email on password reset
+
 ## 1.2.3
 
 ### Patch Changes
