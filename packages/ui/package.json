@@ -37,6 +37,6 @@
 		"@types/react": "19.0.1",
 		"react": "19.0.0",
 		"storybook": "^8.1.8",
-		"typescript": "5.4.5"
+		"typescript": "catalog:"
 	}
 }

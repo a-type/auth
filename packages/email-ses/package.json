@@ -1,7 +1,7 @@
 {
-	"name": "@a-type/auth",
-	"version": "1.2.3",
-	"description": "My personal auth request handlers",
+	"name": "@a-type/auth-email-ses",
+	"version": "1.0.0",
+	"description": "SES-based email support for @a-type/auth",
 	"module": "dist/esm/index.js",
 	"main": "dist/esm/index.js",
 	"typings": "dist/typings/index.d.ts",
@@ -29,18 +29,14 @@
 		"ci:test:unit": "vitest run"
 	},
 	"dependencies": {
-		"cookie": "^0.6.0",
-		"discord-oauth2": "^2.12.0",
-		"googleapis": "^129.0.0",
-		"jose": "^5.2.2",
-		"zod": "^3.22.4"
+		"aws-sdk": "^2.1692.0"
+	},
+	"peerDependencies": {
+		"@a-type/auth": "workspace:*"
 	},
 	"devDependencies": {
-		"@types/cookie": "^0.6.0",
-		"@types/node": "^20.10.6",
-		"@types/simple-oauth2": "^5.0.7",
-		"typescript": "catalog:",
-		"vitest": "1.3.1"
+		"@a-type/auth": "workspace:*",
+		"typescript": "catalog:"
 	},
 	"keywords": [],
 	"author": "Grant Forrest (@a-type)",
