@@ -67,6 +67,9 @@ importers:
 
   packages/server:
     dependencies:
+      cloudflare-workers-and-google-oauth:
+        specifier: ^2.0.0
+        version: 2.0.0
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
@@ -2352,6 +2355,9 @@ packages:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
 
+  cloudflare-workers-and-google-oauth@2.0.0:
+    resolution: {integrity: sha512-cjKpp33I9JjS0tjdGOwioG0ivNV71Kae5hmMEfPWh4tz4yCa8NufNgvNmbQ0aWywokSPNfw3BYq+4tErdNFXtg==}
+
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
@@ -2424,6 +2430,9 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
+
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css.escape@1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
@@ -3099,6 +3108,9 @@ packages:
 
   jose@5.9.2:
     resolution: {integrity: sha512-ILI2xx/I57b20sd7rHZvgiiQrmp2mcotwsAH+5ajbpFQbrYVQdNHYlQhoA5cFb78CgtBOxtC05TeA+mcgkuCqQ==}
+
+  js-base64@3.7.7:
+    resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -6300,10 +6312,10 @@ snapshots:
   '@storybook/addon-docs@8.3.2(storybook@8.3.2)(webpack-sources@3.2.3)':
     dependencies:
       '@mdx-js/react': 3.0.1(@types/react@18.3.3)(react@18.3.1)
-      '@storybook/blocks': 8.3.2(react-dom@18.3.1(react@19.0.0))(react@18.3.1)(storybook@8.3.2)
+      '@storybook/blocks': 8.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.2)
       '@storybook/csf-plugin': 8.3.2(storybook@8.3.2)(webpack-sources@3.2.3)
       '@storybook/global': 5.0.0
-      '@storybook/react-dom-shim': 8.3.2(react-dom@18.3.1(react@19.0.0))(react@18.3.1)(storybook@8.3.2)
+      '@storybook/react-dom-shim': 8.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.2)
       '@types/react': 18.3.3
       fs-extra: 11.2.0
       react: 18.3.1
@@ -6382,6 +6394,27 @@ snapshots:
       memoizerific: 1.11.3
       storybook: 8.3.2
 
+  '@storybook/blocks@8.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.2)':
+    dependencies:
+      '@storybook/csf': 0.1.11
+      '@storybook/global': 5.0.0
+      '@storybook/icons': 1.2.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/lodash': 4.17.5
+      color-convert: 2.0.1
+      dequal: 2.0.3
+      lodash: 4.17.21
+      markdown-to-jsx: 7.5.0(react@18.3.1)
+      memoizerific: 1.11.3
+      polished: 4.3.1
+      react-colorful: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      storybook: 8.3.2
+      telejson: 7.2.0
+      ts-dedent: 2.2.0
+      util-deprecate: 1.0.2
+    optionalDependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@storybook/blocks@8.3.2(react-dom@18.3.1(react@18.3.1))(react@19.0.0)(storybook@8.3.2)':
     dependencies:
       '@storybook/csf': 0.1.11
@@ -6401,27 +6434,6 @@ snapshots:
       util-deprecate: 1.0.2
     optionalDependencies:
       react: 19.0.0
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@storybook/blocks@8.3.2(react-dom@18.3.1(react@19.0.0))(react@18.3.1)(storybook@8.3.2)':
-    dependencies:
-      '@storybook/csf': 0.1.11
-      '@storybook/global': 5.0.0
-      '@storybook/icons': 1.2.12(react-dom@18.3.1(react@19.0.0))(react@18.3.1)
-      '@types/lodash': 4.17.5
-      color-convert: 2.0.1
-      dequal: 2.0.3
-      lodash: 4.17.21
-      markdown-to-jsx: 7.5.0(react@18.3.1)
-      memoizerific: 1.11.3
-      polished: 4.3.1
-      react-colorful: 5.6.1(react-dom@18.3.1(react@19.0.0))(react@18.3.1)
-      storybook: 8.3.2
-      telejson: 7.2.0
-      ts-dedent: 2.2.0
-      util-deprecate: 1.0.2
-    optionalDependencies:
-      react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/builder-vite@8.3.2(storybook@8.3.2)(typescript@5.7.3)(vite@5.4.6(@types/node@22.10.6))(webpack-sources@3.2.3)':
@@ -6480,14 +6492,14 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
+  '@storybook/icons@1.2.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@storybook/icons@1.2.12(react-dom@18.3.1(react@18.3.1))(react@19.0.0)':
     dependencies:
       react: 19.0.0
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@storybook/icons@1.2.12(react-dom@18.3.1(react@19.0.0))(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/instrumenter@8.3.2(storybook@8.3.2)':
@@ -6505,15 +6517,15 @@ snapshots:
     dependencies:
       storybook: 8.3.2
 
-  '@storybook/react-dom-shim@8.3.2(react-dom@18.3.1(react@18.3.1))(react@19.0.0)(storybook@8.3.2)':
+  '@storybook/react-dom-shim@8.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.2)':
     dependencies:
-      react: 19.0.0
+      react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.3.2
 
-  '@storybook/react-dom-shim@8.3.2(react-dom@18.3.1(react@19.0.0))(react@18.3.1)(storybook@8.3.2)':
+  '@storybook/react-dom-shim@8.3.2(react-dom@18.3.1(react@18.3.1))(react@19.0.0)(storybook@8.3.2)':
     dependencies:
-      react: 18.3.1
+      react: 19.0.0
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.3.2
 
@@ -7232,6 +7244,11 @@ snapshots:
 
   clone@1.0.4: {}
 
+  cloudflare-workers-and-google-oauth@2.0.0:
+    dependencies:
+      crypto-js: 4.2.0
+      js-base64: 3.7.7
+
   clsx@2.1.1: {}
 
   color-convert@1.9.3:
@@ -7301,6 +7318,8 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  crypto-js@4.2.0: {}
 
   css.escape@1.5.1: {}
 
@@ -8097,6 +8116,8 @@ snapshots:
 
   jose@5.9.2: {}
 
+  js-base64@3.7.7: {}
+
   js-tokens@4.0.0: {}
 
   js-tokens@9.0.0: {}
@@ -8616,14 +8637,14 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
+  react-colorful@5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   react-colorful@5.6.1(react-dom@18.3.1(react@18.3.1))(react@19.0.0):
     dependencies:
       react: 19.0.0
-      react-dom: 18.3.1(react@18.3.1)
-
-  react-colorful@5.6.1(react-dom@18.3.1(react@19.0.0))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
   react-confetti@6.1.0(react@19.0.0):
