@@ -25,10 +25,11 @@ export class GoogleProvider<Context = unknown>
 		}
 
 		const { clientId, clientSecret, redirectUri } = this.getConfig(ctx);
-		this.googleOauth = google.oauth2({
-			version: 'v2',
-			auth: new google.auth.OAuth2(clientId, clientSecret, redirectUri),
-		}) as any;
+		this.googleOauth = new google.auth.OAuth2(
+			clientId,
+			clientSecret,
+			redirectUri,
+		);
 		return this.googleOauth!;
 	}
 
