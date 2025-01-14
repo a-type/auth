@@ -1,5 +1,12 @@
 # @a-type/auth-email-ses
 
+## 2.1.1
+
+### Patch Changes
+
+- Updated dependencies [7edbc9a]
+  - @a-type/auth@1.3.1
+
 ## 2.1.0
 
 ### Minor Changes

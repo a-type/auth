@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.1
+
+### Patch Changes
+
+- 7edbc9a: Fix google oauth implementation
+
 ## 1.3.0
 
 ### Minor Changes
