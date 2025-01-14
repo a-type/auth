@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.15
+
+### Patch Changes
+
+- 660277c: restructure built files
+
 ## 1.0.13
 
 ### Patch Changes

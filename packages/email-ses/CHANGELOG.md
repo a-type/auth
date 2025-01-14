@@ -1,5 +1,13 @@
 # @a-type/auth-email-ses
 
+## 2.1.4
+
+### Patch Changes
+
+- 660277c: restructure built files
+- Updated dependencies [660277c]
+  - @a-type/auth@1.3.4
+
 ## 2.1.3
 
 ### Patch Changes
