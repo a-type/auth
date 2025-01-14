@@ -2,26 +2,25 @@
 	"name": "@a-type/auth-email-ses",
 	"version": "2.1.2",
 	"description": "SES-based email support for @a-type/auth",
-	"module": "dist/esm/index.js",
-	"main": "dist/esm/index.js",
-	"typings": "dist/typings/index.d.ts",
+	"module": "dist/index.js",
+	"main": "dist/index.js",
+	"typings": "dist/index.d.ts",
 	"type": "module",
 	"publishConfig": {
 		"access": "public",
 		"exports": {
 			".": {
-				"import": "./dist/esm/index.js",
-				"default": "./dist/esm/index.js",
-				"typings": "./dist/typings/index.d.ts"
+				"import": "./dist/index.js",
+				"default": "./dist/index.js",
+				"typings": "./dist/index.d.ts"
 			}
 		}
 	},
 	"exports": {
 		".": {
-			"development": "./src/index.ts",
-			"import": "./dist/esm/index.js",
-			"default": "./dist/esm/index.js",
-			"typings": "./dist/typings/index.d.ts"
+			"import": "./dist/index.js",
+			"default": "./dist/index.js",
+			"typings": "./dist/index.d.ts"
 		}
 	},
 	"files": [
