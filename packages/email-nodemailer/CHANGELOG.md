@@ -1,5 +1,12 @@
 # @a-type/auth-email-nodemailer
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [7edbc9a]
+  - @a-type/auth@1.3.1
+
 ## 2.0.0
 
 ### Patch Changes
