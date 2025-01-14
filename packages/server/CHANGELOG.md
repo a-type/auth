@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.4
+
+### Patch Changes
+
+- 660277c: restructure built files
+
 ## 1.3.3
 
 ### Patch Changes
