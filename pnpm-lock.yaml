@@ -67,9 +67,6 @@ importers:
 
   packages/server:
     dependencies:
-      cloudflare-workers-and-google-oauth:
-        specifier: ^2.0.0
-        version: 2.0.0
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
@@ -2355,9 +2352,6 @@ packages:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
 
-  cloudflare-workers-and-google-oauth@2.0.0:
-    resolution: {integrity: sha512-cjKpp33I9JjS0tjdGOwioG0ivNV71Kae5hmMEfPWh4tz4yCa8NufNgvNmbQ0aWywokSPNfw3BYq+4tErdNFXtg==}
-
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
@@ -2430,9 +2424,6 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
-
-  crypto-js@4.2.0:
-    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css.escape@1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
@@ -3108,9 +3099,6 @@ packages:
 
   jose@5.9.2:
     resolution: {integrity: sha512-ILI2xx/I57b20sd7rHZvgiiQrmp2mcotwsAH+5ajbpFQbrYVQdNHYlQhoA5cFb78CgtBOxtC05TeA+mcgkuCqQ==}
-
-  js-base64@3.7.7:
-    resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -7244,11 +7232,6 @@ snapshots:
 
   clone@1.0.4: {}
 
-  cloudflare-workers-and-google-oauth@2.0.0:
-    dependencies:
-      crypto-js: 4.2.0
-      js-base64: 3.7.7
-
   clsx@2.1.1: {}
 
   color-convert@1.9.3:
@@ -7318,8 +7301,6 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-
-  crypto-js@4.2.0: {}
 
   css.escape@1.5.1: {}
 
@@ -8115,8 +8096,6 @@ snapshots:
   isexe@2.0.0: {}
 
   jose@5.9.2: {}
-
-  js-base64@3.7.7: {}
 
   js-tokens@4.0.0: {}
 
