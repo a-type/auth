@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.3
+
+### Patch Changes
+
+- 1428dce: Add experimental CF-compatible google oauth
+
 ## 1.3.2
 
 ### Patch Changes
