@@ -1,5 +1,13 @@
 # @a-type/auth-email-ses
 
+## 2.1.2
+
+### Patch Changes
+
+- 230f680: Remove custom development export condition
+- Updated dependencies [230f680]
+  - @a-type/auth@1.3.2
+
 ## 2.1.1
 
 ### Patch Changes

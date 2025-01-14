@@ -1,5 +1,13 @@
 # @a-type/auth-email-nodemailer
 
+## 2.0.2
+
+### Patch Changes
+
+- 230f680: Remove custom development export condition
+- Updated dependencies [230f680]
+  - @a-type/auth@1.3.2
+
 ## 2.0.1
 
 ### Patch Changes

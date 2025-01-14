@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.2
+
+### Patch Changes
+
+- 230f680: Remove custom development export condition
+
 ## 1.3.1
 
 ### Patch Changes
