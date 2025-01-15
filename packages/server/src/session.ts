@@ -50,11 +50,19 @@ export class SessionManager<Context = unknown> {
 			issuer?: string;
 			audience?: string;
 			expiration?: string;
-			/** Specify a client domain */
-			clientDomain?: string;
 			cookieOptions?: {
 				partitioned?: boolean;
 				sameSite?: 'strict' | 'lax' | 'none';
+				/**
+				 * Allows specifying a domain for the cookie besides the one serving the request. This allows setting
+				 * cookies for the root domain from a subdomain, for example.
+				 */
+				domain?: string;
+				/**
+				 * The path the cookie is limited to. Defaults to `/` to allow the cookie to be sent with all requests.
+				 * Not recommended to change this unless you have a specific reason to do so.
+				 */
+				path?: string;
 			};
 		};
 		shortNames?: ShortNames;
@@ -201,8 +209,14 @@ export class SessionManager<Context = unknown> {
 		session: Session,
 		ctx: Context,
 	): Promise<{ headers: Headers }> => {
-		const { secret, cookieName, mode, refreshTokenCookieName, refreshPath } =
-			this.getSessionConfig(ctx);
+		const {
+			secret,
+			cookieName,
+			cookieOptions,
+			mode,
+			refreshTokenCookieName,
+			refreshPath,
+		} = this.getSessionConfig(ctx);
 		const encodedSecret = textEncoder.encode(secret);
 		const headers = new Headers();
 
@@ -215,7 +229,8 @@ export class SessionManager<Context = unknown> {
 		const authCookie = serialize(cookieName, jwt, {
 			httpOnly: true,
 			sameSite,
-			path: '/',
+			path: cookieOptions?.path ?? '/',
+			domain: cookieOptions?.domain,
 			secure: mode === 'production',
 			// sync access token expiration to refresh token - an expired token
 			// will still be presented to the server, but the server will reject it
