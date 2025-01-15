@@ -94,7 +94,7 @@ export class GoogleCloudflareProvider<Context = unknown>
 	private verifyIdToken = async (idToken: string, ctx: Context) => {
 		const config = this.getConfig(ctx);
 		await jwtVerify(idToken, this.jwks, {
-			issuer: 'https://accounts.google.com',
+			issuer: 'accounts.google.com',
 			audience: config.clientId,
 		});
 	};
