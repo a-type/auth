@@ -56,7 +56,7 @@ export class GoogleCloudflareProvider<Context = unknown>
 		};
 		const url = new URL('https://accounts.google.com/o/oauth2/token');
 
-		const body = new FormData();
+		const body = new URLSearchParams();
 		for (const [key, value] of Object.entries(params)) {
 			body.append(key, value);
 		}
@@ -70,6 +70,7 @@ export class GoogleCloudflareProvider<Context = unknown>
 		});
 
 		if (!resp.ok) {
+			console.error('Failed to fetch Google tokens', await resp.text());
 			throw new Error('Failed to fetch tokens');
 		}
 
@@ -105,6 +106,7 @@ export class GoogleCloudflareProvider<Context = unknown>
 			},
 		});
 		if (resp.status !== 200) {
+			console.error('Failed to fetch Google profile', await resp.text());
 			throw new Error('Failed to fetch profile');
 		}
 		const profile = (await resp.json()) as GoogleOAuthProfile;
