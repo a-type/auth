@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.7
+
+### Patch Changes
+
+- df6fac9: Allow setting cookie domain and path
+
 ## 1.3.6
 
 ### Patch Changes
