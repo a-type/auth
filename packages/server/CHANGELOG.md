@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.6
+
+### Patch Changes
+
+- cbb7640: adjust iss value for google oauth verification
+
 ## 1.3.5
 
 ### Patch Changes

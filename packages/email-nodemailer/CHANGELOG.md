@@ -1,5 +1,12 @@
 # @a-type/auth-email-nodemailer
 
+## 2.0.6
+
+### Patch Changes
+
+- Updated dependencies [cbb7640]
+  - @a-type/auth@1.3.6
+
 ## 2.0.5
 
 ### Patch Changes
