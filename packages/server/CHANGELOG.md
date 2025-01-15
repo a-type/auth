@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.5
+
+### Patch Changes
+
+- 3d9db88: Add error logs
+
 ## 1.3.4
 
 ### Patch Changes
