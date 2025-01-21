@@ -97,4 +97,31 @@ export class Email<Context = unknown> {
 			ctx,
 		);
 	};
+
+	sendCustomEmail = async (
+		{
+			to,
+			subject,
+			text,
+			html,
+		}: {
+			to: string;
+			subject: string;
+			text: string;
+			html: string;
+		},
+		ctx: Context,
+	) => {
+		const info = await this.config.getConfig(ctx);
+		await this.config.provider.sendMail(
+			{
+				from: info.from,
+				to,
+				subject,
+				text,
+				html,
+			},
+			ctx,
+		);
+	};
 }
