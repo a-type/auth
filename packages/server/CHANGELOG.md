@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.8
+
+### Patch Changes
+
+- f421429: Add custom email send method
+
 ## 1.3.7
 
 ### Patch Changes
