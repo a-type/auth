@@ -26,7 +26,7 @@ export function EmailSignupForm({
 	if (success) {
 		return (
 			<div className={clsx('flex flex-col gap-2', className)} {...rest}>
-				<p className="text-lg">Check your email for a verification code.</p>
+				<p className="text-lg">Check your email for a verification link.</p>
 			</div>
 		);
 	}
