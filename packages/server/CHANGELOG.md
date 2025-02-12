@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.9
+
+### Patch Changes
+
+- 296044b: Widen allowed Date types returned by database abstractions
+
 ## 1.3.8
 
 ### Patch Changes
