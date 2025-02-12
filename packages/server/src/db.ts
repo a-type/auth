@@ -15,7 +15,7 @@ export interface AuthDB {
 	insertAccount(
 		account: Omit<AuthAccount, 'id'>,
 	): Promise<Pick<AuthAccount, 'id'>>;
-	getUserByEmail(email: string): Promise<AuthUser | undefined>;
+	getUserByEmail(email: string): Promise<WidenDates<AuthUser> | undefined>;
 	getAccountByProviderAccountId(
 		provider: string,
 		providerAccountId: string,
@@ -25,12 +25,18 @@ export interface AuthDB {
 	getVerificationCode?(
 		email: string,
 		code: string,
-	): Promise<AuthVerificationCode | undefined>;
+	): Promise<WidenDates<AuthVerificationCode> | undefined>;
 	getUserByEmailAndPassword?(
 		email: string,
 		password: string,
-	): Promise<AuthUser | undefined>;
+	): Promise<WidenDates<AuthUser> | undefined>;
 }
+
+type WidenDates<T extends Record<any, any>> = {
+	[P in keyof T]: WidenDate<T[P]>;
+};
+
+type WidenDate<T> = T extends Date ? T | string | number : T;
 
 export interface AuthUser {
 	id: string;

@@ -416,6 +416,7 @@ export function createHandlers<Context = Request>({
 			params.email,
 			params.password,
 		);
+		user?.emailVerifiedAt;
 		if (!user) {
 			throw new AuthError(AuthError.Messages.InvalidPassword, 401);
 		}
@@ -510,7 +511,9 @@ export function createHandlers<Context = Request>({
 		await db.updateUser(user.id, {
 			plaintextPassword: params.newPassword,
 			// automatically verify email if it wasn't already
-			emailVerifiedAt: user.emailVerifiedAt ?? new Date(),
+			emailVerifiedAt: user.emailVerifiedAt
+				? new Date(user.emailVerifiedAt)
+				: new Date(),
 		});
 
 		await db.consumeVerificationCode?.(params.email, params.code);
