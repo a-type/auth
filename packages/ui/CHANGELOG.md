@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.16
+
+### Patch Changes
+
+- ff95793: Change terminology
+
 ## 1.0.15
 
 ### Patch Changes
