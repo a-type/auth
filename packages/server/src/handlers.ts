@@ -6,7 +6,7 @@ import {
 	setAppState,
 	setReturnTo,
 } from './appState.js';
-import { AuthDB, authDbSupportsEmail } from './db.js';
+import { AuthDB, authDbSupportsEmail, AuthUser } from './db.js';
 import { Email } from './email.js';
 import { AuthError } from './error.js';
 import { AuthProvider } from './providers/types.js';
@@ -21,6 +21,7 @@ export function createHandlers<Context = Request>({
 	getPublicSession = (session) => session,
 	addProvidersToExistingUsers = true,
 	adapter,
+	onUserCreated,
 }: {
 	/**
 	 * Adapters are used to extract the raw request object from the context object
@@ -72,6 +73,17 @@ export function createHandlers<Context = Request>({
 	 * If false, we'll throw an error.
 	 */
 	addProvidersToExistingUsers?: boolean;
+	/**
+	 * A hook to do something when a new user is created in the system,
+	 * like send an email.
+	 */
+	onUserCreated?: (
+		user: Pick<
+			AuthUser,
+			'id' | 'friendlyName' | 'fullName' | 'email' | 'imageUrl'
+		>,
+		ctx: Context,
+	) => void;
 }) {
 	function validateEmailConfig(db: AuthDB) {
 		if (emailService && !authDbSupportsEmail(db)) {
@@ -217,15 +229,26 @@ export function createHandlers<Context = Request>({
 				}
 				userId = user.id;
 			} else {
-				const user = await db.insertUser({
+				const userData = {
 					fullName: profile.fullName,
 					friendlyName: profile.friendlyName ?? null,
 					email: profile.email,
 					emailVerifiedAt: null,
 					imageUrl: profile.avatarUrl ?? null,
 					plaintextPassword: null,
-				});
+				};
+				const user = await db.insertUser(userData);
 				userId = user.id;
+				onUserCreated?.(
+					{
+						fullName: profile.fullName,
+						friendlyName: profile.friendlyName ?? null,
+						email: profile.email,
+						imageUrl: profile.avatarUrl ?? null,
+						id: user.id,
+					},
+					ctx,
+				);
 			}
 			await db.insertAccount({
 				userId,
@@ -365,14 +388,25 @@ export function createHandlers<Context = Request>({
 				userId = user.id;
 			}
 		} else {
-			const user = await db.insertUser({
+			const userData = {
 				fullName: dbCode.name,
 				friendlyName: null,
 				email,
 				imageUrl: null,
 				plaintextPassword: password,
 				emailVerifiedAt: new Date(),
-			});
+			};
+			const user = await db.insertUser(userData);
+			onUserCreated?.(
+				{
+					fullName: dbCode.name,
+					friendlyName: null,
+					email,
+					imageUrl: null,
+					id: user.id,
+				},
+				ctx,
+			);
 			userId = user.id;
 		}
 		await db.insertAccount({
