@@ -13,15 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: setup node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 22
 
-      - name: install pnpm
-        run: npm i pnpm@latest -g
-      - name: setup pnpm config
-        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 9.15.2
 
       - name: Install dependencies
         run: pnpm install
