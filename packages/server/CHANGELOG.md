@@ -1,5 +1,12 @@
 # @a-type/auth
 
+## 1.3.10
+
+### Patch Changes
+
+- 2df06f7: Allow more returnto origins
+- 3003882: Hook for doing something when a user is created
+
 ## 1.3.9
 
 ### Patch Changes
