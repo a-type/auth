@@ -51,6 +51,7 @@ export function createHandlers<Context = Request>({
 		 * was specified in the original request.
 		 */
 		defaultReturnToPath?: string;
+		allowedReturnToOrigin: (origin: string) => boolean;
 	};
 	/**
 	 * The Email service to use for sending verification emails.
@@ -98,13 +99,18 @@ export function createHandlers<Context = Request>({
 	 * TODO: allow app-specified origins
 	 */
 	function resolveReturnTo(path: string | undefined, ctx: Context) {
-		const { defaultReturnToOrigin, defaultReturnToPath } =
-			getRedirectConfig(ctx);
+		const {
+			defaultReturnToOrigin,
+			defaultReturnToPath,
+			allowedReturnToOrigin,
+		} = getRedirectConfig(ctx);
 		// full URLs not allowed unless they match the default origin
 		if (
 			path !== undefined &&
 			URL.canParse(path) &&
-			URL.parse(path)?.origin !== defaultReturnToOrigin
+			URL.parse(path)?.origin !== defaultReturnToOrigin &&
+			(!allowedReturnToOrigin ||
+				!allowedReturnToOrigin(URL.parse(path)!.origin))
 		) {
 			throw new AuthError(
 				`Invalid returnTo. Full URLs are not supported, only paths (got: ${path})`,
