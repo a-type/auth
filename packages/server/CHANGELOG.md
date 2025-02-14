@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.11
+
+### Patch Changes
+
+- a46612f: domain to other cookies
+
 ## 1.3.10
 
 ### Patch Changes
