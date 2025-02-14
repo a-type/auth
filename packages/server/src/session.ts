@@ -250,6 +250,7 @@ export class SessionManager<Context = unknown> {
 			secure: mode === 'production',
 			expires: this.getRefreshTokenExpirationTime(ctx),
 			partitioned: this.getIsPartitioned(ctx),
+			domain: cookieOptions?.domain,
 		});
 		headers.append('Set-Cookie', refreshCookie);
 
@@ -259,8 +260,13 @@ export class SessionManager<Context = unknown> {
 	};
 
 	clearSession = (ctx: Context): { headers: Headers } => {
-		const { cookieName, mode, refreshTokenCookieName, refreshPath } =
-			this.getSessionConfig(ctx);
+		const {
+			cookieName,
+			mode,
+			refreshTokenCookieName,
+			refreshPath,
+			cookieOptions,
+		} = this.getSessionConfig(ctx);
 		const headers = new Headers();
 		const sameSite = this.getIsSameSite(ctx);
 		const cookie = serialize(cookieName, '', {
@@ -269,6 +275,7 @@ export class SessionManager<Context = unknown> {
 			path: '/',
 			secure: mode === 'production',
 			expires: new Date(0),
+			domain: cookieOptions?.domain,
 		});
 		headers.append('Set-Cookie', cookie);
 		const refreshCookie = serialize(refreshTokenCookieName, '', {
@@ -278,6 +285,7 @@ export class SessionManager<Context = unknown> {
 			secure: mode === 'production',
 			expires: new Date(0),
 			partitioned: this.getIsPartitioned(ctx),
+			domain: cookieOptions?.domain,
 		});
 		headers.append('Set-Cookie', refreshCookie);
 		return {
