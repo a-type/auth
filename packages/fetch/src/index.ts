@@ -5,6 +5,8 @@ function defaultIsSessionExpired(response: Response, body: any) {
 	);
 }
 
+let lastSuccessfulRefresh: number | null = null;
+
 /**
  * A wrapped fetch() function that automatically refreshes the session
  * if it has expired and retries the original request.
@@ -13,11 +15,13 @@ export function createFetch({
 	isSessionExpired = defaultIsSessionExpired,
 	readBody = false,
 	refreshSessionEndpoint,
+	logoutEndpoint,
 	headers,
 }: {
 	isSessionExpired?: (response: Response, body: any) => boolean;
 	readBody?: boolean;
 	refreshSessionEndpoint: string;
+	logoutEndpoint: string;
 	headers?: Record<string, string>;
 }): typeof window.fetch {
 	return async function fetch(input: any, init: any) {
@@ -46,14 +50,34 @@ export function createFetch({
 		}
 
 		if (isSessionExpired(response, body)) {
+			// if we refreshed less than 5 seconds ago, don't try again.
+			// since the refresh was successful, something must be wrong with the cookie
+			// configuration... in order to avoid an infinite loop, we'll just log the user out
+			if (lastSuccessfulRefresh && Date.now() - lastSuccessfulRefresh < 5000) {
+				console.error(
+					'session remained expired after a successful refresh. something is wrong. logging out to reset cookies.',
+				);
+				// log the user out
+				await fetch(logoutEndpoint, {
+					method: 'POST',
+					credentials: 'include',
+				});
+				return response;
+			}
 			// if the session expired, we need to refresh it
 			const refreshSuccess = await refreshSession(refreshSessionEndpoint);
 			if (refreshSuccess) {
+				lastSuccessfulRefresh = Date.now();
 				// retry the original request
 				return fetch(input, init);
 			} else {
 				// failed to refresh the session - the user needs
-				// to log in again
+				// to log in again. log out just to be safe.
+				console.error('failed to refresh session. logging out.');
+				await fetch(logoutEndpoint, {
+					method: 'POST',
+					credentials: 'include',
+				});
 			}
 		}
 
