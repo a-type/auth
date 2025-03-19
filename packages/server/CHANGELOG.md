@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.12
+
+### Patch Changes
+
+- 4e17eed: Improve error handling. Should now wrap all known internal errors with AuthError.
+
 ## 1.3.11
 
 ### Patch Changes
