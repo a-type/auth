@@ -148,14 +148,17 @@ export class SessionManager<Context = unknown> {
 			// if the JWT is expired, throw a specific error.
 			// if it's otherwise invalid, throw a different one.
 			if (e instanceof errors.JWTExpired) {
-				throw new AuthError(AuthError.Messages.SessionExpired, 401);
+				throw new AuthError(AuthError.Messages.SessionExpired, 401, e);
 			} else if (
 				e instanceof errors.JWTInvalid ||
-				e instanceof errors.JWSInvalid
+				e instanceof errors.JWSInvalid ||
+				e instanceof errors.JWKSInvalid ||
+				e instanceof errors.JWSSignatureVerificationFailed ||
+				e instanceof errors.JWTClaimValidationFailed
 			) {
-				throw new AuthError(AuthError.Messages.InvalidSession, 400);
+				throw new AuthError(AuthError.Messages.InvalidSession, 400, e);
 			}
-			throw e;
+			throw new AuthError(AuthError.Messages.InternalError, 500, e);
 		}
 	};
 
@@ -197,11 +200,13 @@ export class SessionManager<Context = unknown> {
 		} catch (err) {
 			if (
 				err instanceof Error &&
-				(err.message.includes('JWTExpired') || err.name === 'JWTExpired')
+				(err.message.includes('JWTExpired') ||
+					err.name === 'JWTExpired' ||
+					err instanceof errors.JWTExpired)
 			) {
-				throw new AuthError(AuthError.Messages.RefreshTokenExpired, 401);
+				throw new AuthError(AuthError.Messages.RefreshTokenExpired, 401, err);
 			}
-			throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400);
+			throw new AuthError(AuthError.Messages.InvalidRefreshToken, 400, err);
 		}
 	};
 
