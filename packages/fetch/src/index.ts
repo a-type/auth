@@ -6,6 +6,7 @@ function defaultIsSessionExpired(response: Response, body: any) {
 }
 
 let lastSuccessfulRefresh: number | null = null;
+let stopRefreshAttempts = false;
 
 /**
  * A wrapped fetch() function that automatically refreshes the session
@@ -86,6 +87,7 @@ export function createFetch({
 }
 
 export async function refreshSession(endpoint: string) {
+	if (stopRefreshAttempts) return false;
 	if (!refreshPromise) {
 		refreshPromise = refreshSessionInternal(endpoint);
 		refreshPromise.finally(() => {
@@ -109,8 +111,15 @@ async function refreshSessionInternal(endpoint: string) {
 			} else {
 				console.error('session refresh failed', body);
 			}
-		} else if (response.status === 401 || response.status === 403) {
+		} else if (
+			response.status === 401 ||
+			response.status === 403 ||
+			response.status === 400
+		) {
+			// a 4xx error means something was wrong with the token... there's really
+			// nothing else to do, time to give up.
 			console.error('session refresh failed', response.status);
+			stopRefreshAttempts = true;
 		} else {
 			console.error('session refresh failed', response.status);
 		}
