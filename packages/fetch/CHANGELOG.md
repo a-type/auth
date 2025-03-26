@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.0.1
+
+### Patch Changes
+
+- b1388e1: Better refresh failure handling
+
 ## 2.0.0
 
 ### Major Changes
