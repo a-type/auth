@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.17
+
+### Patch Changes
+
+- 1690784: Update peer dep ranges
+
 ## 1.0.16
 
 ### Patch Changes
