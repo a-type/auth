@@ -9,6 +9,7 @@ export interface EmailSignupFormProps {
 	className?: string;
 	appState?: any;
 	onError?: (error: Error) => void;
+	disableName?: boolean;
 }
 
 export function EmailSignupForm({
@@ -19,6 +20,7 @@ export function EmailSignupForm({
 	className,
 	appState,
 	onError,
+	disableName = false,
 	...rest
 }: EmailSignupFormProps) {
 	const [success, setSuccess] = useState(false);
@@ -42,7 +44,9 @@ export function EmailSignupForm({
 				try {
 					// this API accepts form data
 					const formData = new FormData();
-					formData.append('name', values.name);
+					if (!disableName) {
+						formData.append('name', values.name);
+					}
 					formData.append('email', values.email);
 					formData.append('returnTo', returnTo ?? '');
 					if (appState) {
@@ -63,7 +67,14 @@ export function EmailSignupForm({
 			className={clsx('flex flex-col gap-2', className)}
 			{...rest}
 		>
-			<TextField name="name" label="Name" autoComplete="given-name" required />
+			{!disableName && (
+				<TextField
+					name="name"
+					label="Name"
+					autoComplete="given-name"
+					required
+				/>
+			)}
 			<TextField
 				name="email"
 				type="email"
