@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.0.18
+
+### Patch Changes
+
+- f1b7da4: Allow email signup without name
+
 ## 1.0.17
 
 ### Patch Changes
