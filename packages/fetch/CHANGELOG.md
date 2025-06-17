@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.0.2
+
+### Patch Changes
+
+- da5057d: Add error capture for refresh failures
+
 ## 2.0.1
 
 ### Patch Changes
