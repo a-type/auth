@@ -110,6 +110,22 @@ async function refreshSessionInternal(endpoint: string) {
 				console.info('session refreshed');
 			} else {
 				console.error('session refresh failed', body);
+				// store a reason as this stuff is hard to debug post-hoc...
+				try {
+					localStorage.setItem(
+						'auth:lastRefreshFailure',
+						JSON.stringify({
+							timestamp: Date.now(),
+							response: {
+								status: response.status,
+								statusText: response.statusText,
+								headers: response.headers,
+								body,
+							},
+						} as Record<string, any>),
+					);
+				} finally {
+				}
 			}
 		} else if (
 			response.status === 401 ||
@@ -120,9 +136,42 @@ async function refreshSessionInternal(endpoint: string) {
 			// nothing else to do, time to give up.
 			console.error('session refresh failed', response.status);
 			stopRefreshAttempts = true;
+			// store a reason as this stuff is hard to debug post-hoc...
+			try {
+				localStorage.setItem(
+					'auth:lastRefreshFailure',
+					JSON.stringify({
+						timestamp: Date.now(),
+						response: {
+							status: response.status,
+							statusText: response.statusText,
+							headers: response.headers,
+							body: await response.json().catch(() => null),
+						},
+					} as Record<string, any>),
+				);
+			} finally {
+			}
 		} else {
 			console.error('session refresh failed', response.status);
+			// store a reason as this stuff is hard to debug post-hoc...
+			try {
+				localStorage.setItem(
+					'auth:lastRefreshFailure',
+					JSON.stringify({
+						timestamp: Date.now(),
+						response: {
+							status: response.status,
+							statusText: response.statusText,
+							headers: response.headers,
+							body: await response.text().catch(() => null),
+						},
+					} as Record<string, any>),
+				);
+			} finally {
+			}
 		}
+
 		return response.ok;
 	} catch (e) {
 		console.error(e);
