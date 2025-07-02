@@ -242,7 +242,7 @@ export class SessionManager<Context = unknown> {
 			// as expired. the api can then tell the client the token is expired
 			// and the refresh should be used. once the access token cookie is expired
 			// and removed, it will instead trigger a fully logged out state.
-			expires: this.getRefreshTokenExpirationTime(ctx),
+			maxAge: this.getCookieMaxAge(ctx),
 		});
 		headers.append('Set-Cookie', authCookie);
 
@@ -253,7 +253,7 @@ export class SessionManager<Context = unknown> {
 			sameSite,
 			path: refreshPath,
 			secure: mode === 'production',
-			expires: this.getRefreshTokenExpirationTime(ctx),
+			maxAge: this.getCookieMaxAge(ctx),
 			partitioned: this.getIsPartitioned(ctx),
 			domain: cookieOptions?.domain,
 		});
@@ -279,7 +279,7 @@ export class SessionManager<Context = unknown> {
 			sameSite,
 			path: '/',
 			secure: mode === 'production',
-			expires: new Date(0),
+			maxAge: -1, // expire immediately
 			domain: cookieOptions?.domain,
 		});
 		headers.append('Set-Cookie', cookie);
@@ -288,7 +288,7 @@ export class SessionManager<Context = unknown> {
 			sameSite,
 			path: refreshPath,
 			secure: mode === 'production',
-			expires: new Date(0),
+			maxAge: -1, // expire immediately
 			partitioned: this.getIsPartitioned(ctx),
 			domain: cookieOptions?.domain,
 		});
@@ -346,10 +346,13 @@ export class SessionManager<Context = unknown> {
 		return refreshTokenBuilder;
 	};
 
-	private getRefreshTokenExpirationTime = (ctx: Context) => {
+	private getCookieMaxAge = (ctx: Context) => {
 		const { refreshTokenDurationMinutes } = this.getSessionConfig(ctx);
-		const msFromNow = (refreshTokenDurationMinutes ?? 60 * 24 * 14) * 60 * 1000;
-		return new Date(Date.now() + msFromNow);
+		return (refreshTokenDurationMinutes ?? 60 * 24 * 14) * 60; // default to 14 days
+	};
+	private getRefreshTokenExpirationTime = (ctx: Context) => {
+		const maxAge = this.getCookieMaxAge(ctx);
+		return new Date(Date.now() + maxAge * 1000);
 	};
 
 	private getShortName = (key: string) => {

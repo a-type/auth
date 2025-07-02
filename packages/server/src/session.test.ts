@@ -41,6 +41,17 @@ describe('Session tools', () => {
 		expect(authToken).toBeTruthy();
 		expect(refreshToken).toBeTruthy();
 
+		expect(
+			getFullCookie(cookies, 'session')?.includes(
+				`Max-Age=1209600; Path=/; HttpOnly; SameSite=Lax`,
+			),
+		).toBeTruthy();
+		expect(
+			getFullCookie(cookies, 'refreshToken')?.includes(
+				`Max-Age=1209600; Path=/refresh; HttpOnly; SameSite=Lax`,
+			),
+		).toBeTruthy();
+
 		// verify refresh token cookie is scoped to the right path
 		expect(sessionHeaders.get('Set-Cookie')!).toMatch(/Path=\/refresh/);
 
@@ -177,8 +188,7 @@ describe('Session tools', () => {
 });
 
 function getCookie(cookieHeader: string, name: string) {
-	const cookies = cookieHeader.split(',').map((c) => c.trim());
-	const match = cookies.find((c) => c.startsWith(name));
+	const match = getFullCookie(cookieHeader, name);
 	if (!match) {
 		return null;
 	}
@@ -186,4 +196,14 @@ function getCookie(cookieHeader: string, name: string) {
 	const pieces = match.split(';');
 	const value = pieces.shift()!.split('=')[1];
 	return value;
+}
+
+function getFullCookie(cookieHeader: string, name: string) {
+	const cookies = cookieHeader.split(',').map((c) => c.trim());
+	const match = cookies.find((c) => c.startsWith(name));
+	if (!match) {
+		return null;
+	}
+
+	return match;
 }

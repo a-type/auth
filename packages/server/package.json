@@ -47,7 +47,7 @@
 		"@types/node": "^20.10.6",
 		"@types/simple-oauth2": "^5.0.7",
 		"typescript": "catalog:",
-		"vitest": "1.3.1"
+		"vitest": "catalog:"
 	},
 	"keywords": [],
 	"author": "Grant Forrest (@a-type)",
