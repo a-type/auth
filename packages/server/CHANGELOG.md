@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.13
+
+### Patch Changes
+
+- 68b3bb2: Use max-age instead of expires in cookies
+
 ## 1.3.12
 
 ### Patch Changes
