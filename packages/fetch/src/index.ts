@@ -26,6 +26,11 @@ export function createFetch({
 	headers?: Record<string, string>;
 }): typeof window.fetch {
 	return async function fetch(input: any, init: any) {
+		// if we are refreshing the session, don't start the request until it's done
+		if (refreshPromise) {
+			await refreshPromise.catch(() => {});
+		}
+
 		// apply credentials=include and any extra headers
 		let mutatedInit: RequestInit = {};
 		if (typeof input === 'object') {
