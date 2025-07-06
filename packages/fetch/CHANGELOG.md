@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.1.0
+
+### Minor Changes
+
+- 566b6fa: Await refresh before starting requests
+
 ## 2.0.2
 
 ### Patch Changes
