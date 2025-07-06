@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.1.1
+
+### Patch Changes
+
+- fa874f1: adjust refresh failure heuristics
+
 ## 2.1.0
 
 ### Minor Changes
