@@ -26,6 +26,7 @@ export function createFetch({
 	headers?: Record<string, string>;
 }): typeof window.fetch {
 	return async function fetch(input: any, init: any) {
+		const startTime = Date.now();
 		// if we are refreshing the session, don't start the request until it's done
 		if (refreshPromise) {
 			await refreshPromise.catch(() => {});
@@ -59,16 +60,23 @@ export function createFetch({
 			// if we refreshed less than 5 seconds ago, don't try again.
 			// since the refresh was successful, something must be wrong with the cookie
 			// configuration... in order to avoid an infinite loop, we'll just log the user out
-			if (lastSuccessfulRefresh && Date.now() - lastSuccessfulRefresh < 5000) {
-				console.error(
-					'session remained expired after a successful refresh. something is wrong. logging out to reset cookies.',
-				);
-				// log the user out
-				await fetch(logoutEndpoint, {
-					method: 'POST',
-					credentials: 'include',
-				});
-				return response;
+			if (lastSuccessfulRefresh) {
+				const timeSinceLastRefresh = startTime - lastSuccessfulRefresh;
+				// > 0 check is to avoid hitting this for requests that began before the refresh.
+				// i.e. if multiple requests are made in quick succession, one may complete before
+				// the triggered refresh is finished, but it should retry the request
+				// and not hit this condition.
+				if (timeSinceLastRefresh < 5000 && timeSinceLastRefresh > 0) {
+					console.error(
+						'session remained expired after a successful refresh. something is wrong. logging out to reset cookies.',
+					);
+					// log the user out
+					await fetch(logoutEndpoint, {
+						method: 'POST',
+						credentials: 'include',
+					});
+					return response;
+				}
 			}
 			// if the session expired, we need to refresh it
 			const refreshSuccess = await refreshSession(refreshSessionEndpoint);
