@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.16
+
+### Patch Changes
+
+- 4e9d758: Again
+
 ## 1.3.15
 
 ### Patch Changes
