@@ -292,7 +292,7 @@ export function createHandlers<Context = Request>({
 		const email = formData.get('email');
 		const name = formData.get('name');
 		const returnToRaw = formData.get('returnTo') ?? '';
-		if (!name || typeof name !== 'string') {
+		if (name && typeof name !== 'string') {
 			throw new AuthError(AuthError.Messages.InvalidName, 400);
 		}
 		if (!email || typeof email !== 'string') {
@@ -308,7 +308,7 @@ export function createHandlers<Context = Request>({
 		const params = z
 			.object({
 				email: z.string().email(),
-				name: z.string().min(1),
+				name: z.string().min(1).optional(),
 				returnTo: z.string().optional(),
 			})
 			.parse({ email, name, returnTo });
@@ -320,7 +320,7 @@ export function createHandlers<Context = Request>({
 			email: params.email,
 			code,
 			expiresAt,
-			name: params.name,
+			name: params.name || '',
 		});
 		await emailService?.sendEmailVerification(
 			{
