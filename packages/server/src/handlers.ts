@@ -290,7 +290,7 @@ export function createHandlers<Context = Request>({
 		const formData = await req.formData();
 
 		const email = formData.get('email');
-		const name = formData.get('name');
+		const name = formData.get('name') ?? '';
 		const returnToRaw = formData.get('returnTo') ?? '';
 		if (name && typeof name !== 'string') {
 			throw new AuthError(AuthError.Messages.InvalidName, 400);
