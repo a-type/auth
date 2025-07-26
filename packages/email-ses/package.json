@@ -1,6 +1,6 @@
 {
 	"name": "@a-type/auth-email-ses",
-	"version": "2.1.13",
+	"version": "2.1.14",
 	"description": "SES-based email support for @a-type/auth",
 	"module": "dist/index.js",
 	"main": "dist/index.js",

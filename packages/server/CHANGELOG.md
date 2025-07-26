@@ -1,5 +1,11 @@
 # @a-type/auth
 
+## 1.3.14
+
+### Patch Changes
+
+- 5d4d364: Make name optional for email signup
+
 ## 1.3.13
 
 ### Patch Changes

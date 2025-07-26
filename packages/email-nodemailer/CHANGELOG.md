@@ -1,5 +1,12 @@
 # @a-type/auth-email-nodemailer
 
+## 2.0.14
+
+### Patch Changes
+
+- Updated dependencies [5d4d364]
+  - @a-type/auth@1.3.14
+
 ## 2.0.13
 
 ### Patch Changes
