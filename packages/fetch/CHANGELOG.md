@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.1.2
+
+### Patch Changes
+
+- b6e1d71: Remove problematic heuristic
+
 ## 2.1.1
 
 ### Patch Changes
