@@ -308,7 +308,7 @@ export function createHandlers<Context = Request>({
 		const params = z
 			.object({
 				email: z.string().email(),
-				name: z.string().min(1).optional(),
+				name: z.string().optional(),
 				returnTo: z.string().optional(),
 			})
 			.parse({ email, name, returnTo });
