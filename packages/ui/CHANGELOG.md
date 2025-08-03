@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 1.1.0
+
+### Minor Changes
+
+- 127dda9: Fix returnTo in email login form, maybe
+
 ## 1.0.18
 
 ### Patch Changes
