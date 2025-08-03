@@ -57,6 +57,9 @@ export function EmailSigninForm({
 				type="password"
 				required
 			/>
+			<input type="hidden" name="csrfToken" value={appState?.csrfToken || ''} />
+			<input type="hidden" name="returnTo" value={returnTo} />
+			<input type="hidden" name="appState" value={JSON.stringify(appState)} />
 			<Button type="submit" className="self-end" color="primary">
 				Sign In
 			</Button>
