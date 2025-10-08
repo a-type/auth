@@ -7,11 +7,6 @@ env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
 
-permissions:
-  contents: write
-  pull-requests: write
-  actions: read
-
 jobs:
   version:
     timeout-minutes: 15
@@ -43,5 +38,5 @@ jobs:
         with:
           publish: pnpm ci:publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_PAT }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
