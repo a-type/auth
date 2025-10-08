@@ -6,6 +6,12 @@ on:
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
 jobs:
   version:
     timeout-minutes: 15
