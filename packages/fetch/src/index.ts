@@ -18,12 +18,14 @@ export function createFetch({
 	refreshSessionEndpoint,
 	logoutEndpoint,
 	headers,
+	onLoggedOut,
 }: {
 	isSessionExpired?: (response: Response, body: any) => boolean;
 	readBody?: boolean;
 	refreshSessionEndpoint: string;
 	logoutEndpoint: string;
 	headers?: Record<string, string>;
+	onLoggedOut?: () => void;
 }): typeof window.fetch {
 	return async function fetch(input: any, init: any) {
 		const startTime = Date.now();
@@ -71,6 +73,7 @@ export function createFetch({
 					method: 'POST',
 					credentials: 'include',
 				});
+				onLoggedOut?.();
 			}
 		}
 
