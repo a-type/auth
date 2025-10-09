@@ -1,5 +1,11 @@
 # @a-type/auth-fetch
 
+## 2.1.3
+
+### Patch Changes
+
+- 067497b: Add a hook for refresh failure logout
+
 ## 2.1.2
 
 ### Patch Changes
