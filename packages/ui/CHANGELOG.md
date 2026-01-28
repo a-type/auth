@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 2.0.0
+
+### Major Changes
+
+- ffaa3c9: upgrade to ui v5
+
 ## 1.1.0
 
 ### Minor Changes
