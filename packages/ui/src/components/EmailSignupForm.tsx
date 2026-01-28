@@ -86,7 +86,7 @@ export function EmailSignupForm({
 				disabled={disabled}
 				type="submit"
 				className="self-end"
-				color="primary"
+				emphasis="primary"
 			>
 				{actionText}
 			</SubmitButton>

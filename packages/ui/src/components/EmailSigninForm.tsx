@@ -60,7 +60,7 @@ export function EmailSigninForm({
 			<input type="hidden" name="csrfToken" value={appState?.csrfToken || ''} />
 			<input type="hidden" name="returnTo" value={returnTo} />
 			<input type="hidden" name="appState" value={JSON.stringify(appState)} />
-			<Button type="submit" className="self-end" color="primary">
+			<Button type="submit" className="self-end" emphasis="primary">
 				Sign In
 			</Button>
 			<ForgotPassword className="self-end" endpoint={resetPasswordEndpoint} />
@@ -79,10 +79,13 @@ function ForgotPassword({
 	const [errorMessage, setErrorMessage] = useState('');
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild className={className}>
-				<button className="bg-transparent border-none p-0 color-black underline cursor-pointer">
-					Forgot password?
-				</button>
+			<DialogTrigger
+				className={className}
+				render={
+					<button className="bg-transparent border-none p-0 color-black underline cursor-pointer" />
+				}
+			>
+				Forgot password?
 			</DialogTrigger>
 			<DialogContent>
 				<FormikForm
@@ -90,7 +93,7 @@ function ForgotPassword({
 					initialValues={{
 						email: '',
 					}}
-					onSubmit={async (values, helpers) => {
+					onSubmit={async (values, _helpers) => {
 						try {
 							const formData = new FormData();
 							formData.append('email', values.email);
@@ -120,9 +123,7 @@ function ForgotPassword({
 						<p className="text-attention-dark py-3">{errorMessage}</p>
 					)}
 					<DialogActions>
-						<DialogClose asChild>
-							<Button>Cancel</Button>
-						</DialogClose>
+						<DialogClose>Cancel</DialogClose>
 						<Button color="primary" type="submit" className="self-end">
 							Send reset email
 						</Button>

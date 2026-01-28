@@ -30,7 +30,7 @@ export function ResetPasswordForm({
 				autoComplete="new-password"
 				required
 			/>
-			<Button className="self-end" color="primary" type="submit">
+			<Button className="self-end" emphasis="primary" type="submit">
 				Reset password
 			</Button>
 		</form>
