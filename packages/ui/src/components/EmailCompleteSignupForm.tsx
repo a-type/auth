@@ -23,12 +23,15 @@ export function EmailCompleteSignupForm({
 		>
 			<input type="hidden" name="code" value={code} />
 			<input type="hidden" name="email" value={email} />
-			<label htmlFor="password">Password</label>
+			<label htmlFor="password" className="w-full">
+				Password
+			</label>
 			<Input
 				name="password"
 				type="password"
 				autoComplete="new-password"
 				required
+				className="w-full"
 			/>
 			<Button className="self-end" emphasis="primary" type="submit">
 				Sign In

@@ -23,12 +23,15 @@ export function ResetPasswordForm({
 		>
 			<input type="hidden" name="code" value={code} />
 			<input type="hidden" name="email" value={email} />
-			<label htmlFor="newPassword">New Password</label>
+			<label htmlFor="newPassword" className="w-full">
+				New Password
+			</label>
 			<Input
 				name="newPassword"
 				type="password"
 				autoComplete="new-password"
 				required
+				className="w-full"
 			/>
 			<Button className="self-end" emphasis="primary" type="submit">
 				Reset password

@@ -39,16 +39,16 @@ export function EmailSigninForm({
 
 	return (
 		<form
-			className={clsx('flex flex-col gap-2', className)}
+			className={clsx('flex flex-col gap-2 items-stretch', className)}
 			method="post"
 			action={url.toString()}
 			{...rest}
 		>
-			<label htmlFor="email" className="font-bold">
+			<label htmlFor="email" className="font-bold w-full">
 				Email
 			</label>
-			<Input name="email" autoComplete="email" required />
-			<label htmlFor="password" className="font-bold">
+			<Input name="email" autoComplete="email" required className="w-full" />
+			<label htmlFor="password" className="font-bold w-full">
 				Password
 			</label>
 			<Input
@@ -56,6 +56,7 @@ export function EmailSigninForm({
 				name="password"
 				type="password"
 				required
+				className="w-full"
 			/>
 			<input type="hidden" name="csrfToken" value={appState?.csrfToken || ''} />
 			<input type="hidden" name="returnTo" value={returnTo} />

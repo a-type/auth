@@ -73,6 +73,7 @@ export function EmailSignupForm({
 					label="Name"
 					autoComplete="given-name"
 					required
+					className="w-full"
 				/>
 			)}
 			<TextField
@@ -81,6 +82,7 @@ export function EmailSignupForm({
 				label="Email"
 				autoComplete="email"
 				required
+				className="w-full"
 			/>
 			<SubmitButton
 				disabled={disabled}
