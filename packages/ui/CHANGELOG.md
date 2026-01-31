@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 2.0.1
+
+### Patch Changes
+
+- 3b9804a: fix text field widths
+
 ## 2.0.0
 
 ### Major Changes
