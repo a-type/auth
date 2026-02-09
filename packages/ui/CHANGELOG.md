@@ -1,5 +1,11 @@
 # @a-type/auth-client
 
+## 2.0.2
+
+### Patch Changes
+
+- 5fc363e: Add unocss include comments
+
 ## 2.0.1
 
 ### Patch Changes
